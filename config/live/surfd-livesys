@@ -1,0 +1,35 @@
+#!/usr/bin/bash
+# surfd-livesys — prepare the live session: a password-less "liveuser"
+# with automatic login. Runs only on live media (rd.live.image); every
+# change lands in the live overlay and never reaches an installed system.
+set -eu
+
+if ! id liveuser >/dev/null 2>&1; then
+    useradd --create-home --comment "surfd Live User" --groups wheel liveuser
+    passwd --delete liveuser >/dev/null
+fi
+echo 'liveuser ALL=(ALL) NOPASSWD: ALL' > /etc/sudoers.d/surfd-live
+chmod 0440 /etc/sudoers.d/surfd-live
+
+# Log straight into the desktop once; the normal login screen appears
+# after logging out.
+cat > /etc/surfd/greetd/config.toml <<'CONF'
+[terminal]
+vt = 1
+
+[initial_session]
+command = "surfd-session"
+user = "liveuser"
+
+[default_session]
+command = "/usr/libexec/surfd/surfd-greeter"
+user = "surfd-greeter"
+CONF
+
+# Tell the Welcome app to open on its "Install surfd" page.
+install -d -o liveuser -g liveuser /home/liveuser/.config/surfd
+touch /home/liveuser/.config/surfd/.live-session
+chown liveuser:liveuser /home/liveuser/.config/surfd/.live-session
+
+# No point refreshing metadata or firmware lists on a live image.
+systemctl --no-block stop dnf-makecache.timer fwupd-refresh.timer 2>/dev/null || :

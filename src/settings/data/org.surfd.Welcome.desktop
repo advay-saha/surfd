@@ -1,0 +1,10 @@
+[Desktop Entry]
+Name=Welcome to surfd
+Comment=Pick your look and learn the essential keys
+Exec=surf-welcome
+Icon=org.surfd.Welcome
+Terminal=false
+Type=Application
+Categories=Settings;GTK;
+Keywords=tour;start;introduction;help;
+StartupNotify=true

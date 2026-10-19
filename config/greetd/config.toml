@@ -1,0 +1,9 @@
+# surfd login screen (greetd). The greeter is gtkgreet running in a tiny
+# Sway; see /etc/surfd/greetd/sway-config. Theme it with:
+#   sudo surfctl greeter sync      (copies your surfd theme here)
+[terminal]
+vt = 1
+
+[default_session]
+command = "/usr/libexec/surfd/surfd-greeter"
+user = "surfd-greeter"

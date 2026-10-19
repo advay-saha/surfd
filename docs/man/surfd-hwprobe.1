@@ -1,0 +1,21 @@
+.TH SURFD-HWPROBE 1 "October 2026" "surfd 0.1.0" "User Commands"
+.SH NAME
+surfd-hwprobe \- suggest drivers and firmware for this machine
+.SH SYNOPSIS
+.B surfd-hwprobe
+.RB [ --json ]
+.SH DESCRIPTION
+Reads
+.IR /sys ,
+.I /proc
+and the kernel log and prints suggestions with the exact commands to run:
+NVIDIA and Broadcom drivers from RPM Fusion, SOF audio firmware, missing
+firmware files reported at boot, codec packages for hardware video
+decoding, guest tools for virtual machines, and Secure Boot module
+signing. It never installs anything.
+.SH OPTIONS
+.TP
+.B --json
+Print a machine-readable report.
+.SH SEE ALSO
+.BR surfctl (1)

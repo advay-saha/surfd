@@ -1,0 +1,23 @@
+# Test-only: lets the surfd specs build with rpmbuild on a non-Fedora host
+# (used by `make rpm-test` and CI lint jobs). Real builds use Fedora's own
+# macros from redhat-rpm-config / systemd-rpm-macros / python-rpm-macros.
+%fedora 44
+%dist .fc44
+%_unitdir /usr/lib/systemd/system
+%_userunitdir /usr/lib/systemd/user
+%_presetdir /usr/lib/systemd/system-preset
+%_userpresetdir /usr/lib/systemd/user-preset
+%_sysusersdir /usr/lib/sysusers.d
+%_tmpfilesdir /usr/lib/tmpfiles.d
+%_metainfodir %{_datadir}/metainfo
+%__python3 /usr/bin/python3
+%python3 %{__python3}
+%python3_sitelib /usr/lib/python3/site-packages
+%systemd_post() :
+%systemd_preun() :
+%systemd_postun() :
+%systemd_postun_with_restart() :
+%systemd_user_post() :
+%systemd_user_preun() :
+%tmpfiles_create() :
+%py3_shebang_fix() sed -i '1s|^#!.*python.*|#!%{__python3} -sP|' %*

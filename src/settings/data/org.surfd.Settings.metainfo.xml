@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright 2026 surfd contributors -->
+<component type="desktop-application">
+  <id>org.surfd.Settings</id>
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>MIT</project_license>
+  <name>Surf Settings</name>
+  <summary>Configure the surfd desktop</summary>
+  <description>
+    <p>
+      Surf Settings changes the theme, accent colour, wallpaper, fonts, window layout,
+      bar, key bindings and default apps of the surfd desktop. It edits the same
+      plain-text surfd.toml file as the surfctl command, keeping your comments, and
+      applies every change immediately.
+    </p>
+    <p>
+      surfd is based on Fedora Linux but is not an official Fedora project.
+    </p>
+  </description>
+  <launchable type="desktop-id">org.surfd.Settings.desktop</launchable>
+  <developer id="org.surfd">
+    <name>surfd contributors</name>
+  </developer>
+  <url type="homepage">https://github.com/surfd/surfd</url>
+  <url type="bugtracker">https://github.com/surfd/surfd/issues</url>
+  <content_rating type="oars-1.1"/>
+  <releases>
+    <release version="0.1.0" date="2026-10-19">
+      <description>
+        <p>First release.</p>
+      </description>
+    </release>
+  </releases>
+</component>

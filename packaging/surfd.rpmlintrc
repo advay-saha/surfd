@@ -1,0 +1,40 @@
+# rpmlint filters for surfd. Only false positives belong here; each has a reason.
+
+# /usr/lib/os-release is the FHS/systemd location, as in fedora-release.
+addFilter("hardcoded-library-path in %{_prefix}/lib/os-release")
+# The source tarball is produced by packaging/build-rpms.sh, not downloaded.
+addFilter("invalid-url Source0: surfd-")
+# One monorepo tarball carries every spec.
+addFilter("multiple-specfiles")
+# Not used by Fedora (rpmlint's generic defaults; Fedora's config drops these).
+addFilter("no-buildroot-tag")
+addFilter("no-packager-tag")
+addFilter("no-group-tag")
+addFilter("no-signature")
+# Generic rpmlint lacks Fedora's SPDX license list; both IDs are valid SPDX.
+addFilter("invalid-license (MIT|CC-BY-SA-4.0)")
+# Fedora's rpmlint config ignores the dist tag in changelog versions.
+addFilter("incoherent-version-in-changelog")
+# Words from file names in descriptions.
+addFilter("spelling-error .*(md|usr|toml|plymouth|swaylock|fuzzel|greetd|surfd|surfctl|hwprobe|Waybar|mako|Anaconda|Flathub|Sway|seafoam|sudo|config|sys|wordmark|dnf|libadwaita|GTK)")
+# "surfd" is a lowercase brand name.
+addFilter("summary-not-capitalized surfd")
+# Components are released in lockstep from one tarball.
+addFilter("requires-on-release")
+# Fedora's python dependency generator adds python(abi) automatically.
+addFilter("no-dependency-on python-base")
+# /etc/issue and /etc/issue.net are identical, as in fedora-release.
+addFilter("files-duplicate /etc/issue.net /etc/issue")
+# Release, logo, splash and live packages carry no docs beyond %license.
+addFilter("(surfd-release|surfd-logos|plymouth-theme-surfd|surfd-live).noarch: W: no-documentation")
+# Only seen with packaging/test/fedora-compat.macros, where %systemd_* are no-ops.
+addFilter("one-line-command-in-%(pre|post)(un)? :")
+# The greeter's state directory belongs to its system user and is private.
+addFilter("non-standard-(uid|gid) /var/lib/surfd-greeter surfd-greeter")
+addFilter("non-standard-dir-perm /var/lib/surfd-greeter 750")
+# Release identity files must follow the package version (as in fedora-release).
+addFilter("non-conffile-in-etc /etc/(surfd-release|system-release-cpe)")
+# Fedora compresses man pages with gzip; generic rpmlint expects bzip2.
+addFilter("manpage-not-compressed bz2")
+# Graphical apps launched from the menu; `--help` documents the CLI arguments.
+addFilter("no-manual-page-for-binary surf-(settings|welcome)")

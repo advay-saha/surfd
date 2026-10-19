@@ -1,0 +1,13 @@
+# Sway config for the surfd login screen. gtkgreet draws the whole screen
+# (layer-shell), styled by /etc/surfd/greetd/style.css.
+output * bg #0d1b24 solid_color
+seat seat0 xcursor_theme breeze_cursors 24
+default_border none
+xwayland disable
+
+exec "gtkgreet -l -s /etc/surfd/greetd/style.css -c surfd-session; swaymsg exit"
+
+# Ctrl+Alt+Delete on the login screen: restart or shut down
+bindsym Control+Mod1+Delete exec swaynag -t warning -m 'Power' -B 'Restart' 'systemctl reboot' -B 'Shut down' 'systemctl poweroff'
+
+include /etc/surfd/greetd/sway.d/*.conf

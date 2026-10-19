@@ -1,0 +1,10 @@
+#!/usr/bin/bash
+# surfd-bar CONFIG STYLE — (re)start Waybar with surfd's generated files.
+# Called by Sway on every start and reload (exec_always).
+set -u
+pkill -x -u "${UID}" waybar
+for _ in $(seq 40); do
+    pgrep -x -u "${UID}" waybar >/dev/null || break
+    sleep 0.05
+done
+exec waybar --config "${1:?config}" --style "${2:?style}"

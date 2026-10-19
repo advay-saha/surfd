@@ -1,0 +1,7 @@
+[Unit]
+Description=surfd graphical session
+Documentation=file:///usr/share/doc/surfd-default-config/README.md
+BindsTo=graphical-session.target
+Wants=graphical-session-pre.target xdg-desktop-autostart.target
+After=graphical-session-pre.target
+Before=xdg-desktop-autostart.target

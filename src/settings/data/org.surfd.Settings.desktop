@@ -1,0 +1,11 @@
+[Desktop Entry]
+Name=Surf Settings
+GenericName=Desktop Settings
+Comment=Theme, wallpaper, bar, keys and default apps for surfd
+Exec=surf-settings
+Icon=org.surfd.Settings
+Terminal=false
+Type=Application
+Categories=Settings;DesktopSettings;GTK;
+Keywords=theme;wallpaper;accent;font;bar;keyboard;shortcut;gaps;appearance;
+StartupNotify=true

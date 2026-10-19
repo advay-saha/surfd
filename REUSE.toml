@@ -1,0 +1,20 @@
+# Licensing of every file in this repository, in REUSE format
+# (https://reuse.software). Check with: reuse lint
+version = 1
+
+[[annotations]]
+path = ["src/**", "build.sh", "tools/**", "kickstarts/**", "packaging/**", "config/**", "release/**",
+        "containers/**", ".github/**", "Makefile", "ruff.toml", "VERSION", "theme/tools/**", "theme/plymouth/**",
+        "theme/anaconda/surfd.conf"]
+SPDX-FileCopyrightText = "2026 surfd contributors"
+SPDX-License-Identifier = "MIT"
+
+[[annotations]]
+path = ["theme/themes/**", "theme/logos/**", "theme/anaconda/surfd.css", "docs/screenshots/**"]
+SPDX-FileCopyrightText = "2026 surfd contributors"
+SPDX-License-Identifier = "CC-BY-SA-4.0"
+
+[[annotations]]
+path = ["**.md", "docs/**"]
+SPDX-FileCopyrightText = "2026 surfd contributors"
+SPDX-License-Identifier = "CC-BY-SA-4.0"

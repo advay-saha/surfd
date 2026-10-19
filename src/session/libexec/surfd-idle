@@ -1,0 +1,12 @@
+#!/usr/bin/bash
+# surfd-idle LOCK OFF SUSPEND — (re)start swayidle. Seconds; 0 disables.
+# The screen is always locked before suspend.
+set -u
+lock="${1:-300}" off="${2:-600}" suspend="${3:-0}"
+pkill -x -u "${UID}" swayidle
+args=(-w)
+(( lock > 0 )) && args+=(timeout "${lock}" 'swaylock -f')
+(( off > 0 )) && args+=(timeout "${off}" 'swaymsg "output * power off"' resume 'swaymsg "output * power on"')
+(( suspend > 0 )) && args+=(timeout "${suspend}" 'systemctl suspend')
+args+=(before-sleep 'swaylock -f')
+exec swayidle "${args[@]}"

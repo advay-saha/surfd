@@ -1,0 +1,76 @@
+# Driftwood — a surfd theme pack. Format: docs/theme-making.md
+
+[meta]
+name = "Driftwood"
+description = "Warm sand and coral, like late afternoon on the beach."
+author = "surfd contributors"
+license = "CC-BY-SA-4.0"
+version = "1.0"
+
+[cursor]
+theme = "breeze_cursors"
+size = 24
+
+[dark]
+background  = "#1b1714"
+surface     = "#24201c"
+surface_alt = "#342c25"
+text        = "#ece3d8"
+text_muted  = "#a8998a"
+accent      = "#e8956b"
+urgent      = "#e06c6c"
+warning     = "#e3b45f"
+success     = "#a3c47c"
+icon_theme  = "Papirus-Dark"
+wallpaper   = "wallpapers/driftwood-dark.jpg"   # rendered from the .svg source at build time
+# ANSI colours 0-7, then bright 8-15
+terminal = [
+  "#2b2520",
+  "#e06c6c",
+  "#a3c47c",
+  "#e3b45f",
+  "#7fa7c9",
+  "#c99bc2",
+  "#86c1b0",
+  "#d8cdbf",
+  "#54483e",
+  "#f08a8a",
+  "#bcd998",
+  "#f2cb7e",
+  "#9dc0de",
+  "#ddb5d6",
+  "#a3d6c7",
+  "#f6efe6",
+]
+
+[light]
+background  = "#f6f0e8"
+surface     = "#fffaf3"
+surface_alt = "#ebe1d4"
+text        = "#2d241d"
+text_muted  = "#6e5e50"
+accent      = "#b4552c"
+urgent      = "#ad3f3f"
+warning     = "#94680f"
+success     = "#4e7c28"
+icon_theme  = "Papirus-Light"
+wallpaper   = "wallpapers/driftwood-light.jpg"   # rendered from the .svg source at build time
+# ANSI colours 0-7, then bright 8-15
+terminal = [
+  "#2d241d",
+  "#ad3f3f",
+  "#4e7c28",
+  "#94680f",
+  "#3f6f99",
+  "#8f5a87",
+  "#357a6a",
+  "#d8cdbf",
+  "#6e5e50",
+  "#c95a5a",
+  "#689c3e",
+  "#b8892a",
+  "#5a8dbb",
+  "#ab73a2",
+  "#4f9a85",
+  "#fffaf3",
+]

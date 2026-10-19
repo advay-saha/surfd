@@ -1,0 +1,2 @@
+# Installed as /usr/lib/tmpfiles.d/surfd-greeter.conf
+d /var/lib/surfd-greeter 0750 surfd-greeter surfd-greeter -

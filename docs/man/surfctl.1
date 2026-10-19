@@ -1,0 +1,70 @@
+.TH SURFCTL 1 "October 2026" "surfd 0.1.0" "User Commands"
+.SH NAME
+surfctl \- change the surfd desktop from one TOML file
+.SH SYNOPSIS
+.B surfctl
+.I command
+.RI [ arguments ]
+.SH DESCRIPTION
+.B surfctl
+edits
+.I ~/.config/surfd/surfd.toml
+(keeping comments), regenerates the Sway, Waybar, mako, fuzzel, foot,
+swaylock, GTK and Qt configuration, and applies it to the running session.
+A generated Sway configuration that fails validation is never written.
+.SH COMMON COMMANDS
+.TP
+.B theme list | set NAME [--variant dark|light] | variant toggle
+List or switch theme packs.
+.TP
+.B theme install PATH | export NAME [DIR] | new NAME [--from BASE]
+Install a theme folder or archive, share one, or start a new one.
+.TP
+.B accent #RRGGBB | reset
+Set the accent colour.
+.TP
+.B wallpaper set FILE [--mode fill|fit|center|tile|stretch] | reset
+Set or reset the wallpaper.
+.TP
+.B bar layout left=A,B center=C right=D,E | preset NAME | position top|bottom
+Arrange the bar. Run
+.B surfctl bar modules
+for module names.
+.TP
+.B keys list | actions | bind COMBO ACTION... | unbind COMBO
+Manage key bindings, e.g.
+.B surfctl keys bind Mod+F1 exec foot -e htop
+.TP
+.B set KEY VALUE / get KEY / explain [PREFIX]
+Change, read or describe any setting.
+.TP
+.B reload
+Regenerate everything and apply it live.
+.TP
+.B reset [SECTION] [--yes]
+Reset everything, or one section, to the defaults. A backup is kept;
+.B surfctl backups restore latest
+undoes it.
+.TP
+.B doctor
+Check the configuration, themes and required programs.
+.SH FILES
+.TP
+.I ~/.config/surfd/surfd.toml
+Your configuration.
+.TP
+.I /usr/share/surfd/defaults/surfd.toml
+The defaults every missing key falls back to.
+.TP
+.I ~/.local/share/surfd/themes/
+Your theme packs (override system ones with the same name).
+.TP
+.I ~/.config/surfd/sway.d/*.conf
+Raw Sway configuration appended to the generated one.
+.TP
+.I ~/.local/state/surfd/
+Generated files, backups and the session log.
+.SH SEE ALSO
+.BR surfd-session (1),
+.BR surfd-hwprobe (1),
+.BR sway (5)

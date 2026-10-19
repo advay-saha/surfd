@@ -1,0 +1,7 @@
+#!/usr/bin/python3 -sP
+# surfctl — see `surfctl --help` and docs/customization.md
+import sys
+
+from surfd.cli import main
+
+sys.exit(main())

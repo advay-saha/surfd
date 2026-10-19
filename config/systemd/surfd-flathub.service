@@ -1,0 +1,15 @@
+[Unit]
+Description=Add Flathub as a Flatpak repository (surfd)
+Documentation=https://flathub.org/setup
+ConditionPathExists=!/var/lib/flatpak/repo/flathub.trustedkeys.gpg
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/flatpak remote-add --system --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
+Restart=on-failure
+RestartSec=2min
+
+[Install]
+WantedBy=multi-user.target

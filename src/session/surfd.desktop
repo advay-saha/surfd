@@ -1,0 +1,5 @@
+[Desktop Entry]
+Name=surfd
+Comment=The surfd desktop (Sway configured by surfd.toml)
+Exec=surfd-session
+Type=Application

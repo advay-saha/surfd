@@ -1,0 +1,10 @@
+/out/
+/build/
+__pycache__/
+*.pyc
+.pytest_cache/
+.ruff_cache/
+# rendered at build time from the SVG sources
+/theme/themes/*/wallpapers/*.png
+/theme/themes/*/wallpapers/*.jpg
+/kickstarts/.surfd-install-*.ks

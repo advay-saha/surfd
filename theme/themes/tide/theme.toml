@@ -1,0 +1,76 @@
+# Tide — a surfd theme pack. Format: docs/theme-making.md
+
+[meta]
+name = "Tide"
+description = "Deep ocean blues with a seafoam accent. The surfd default."
+author = "surfd contributors"
+license = "CC-BY-SA-4.0"
+version = "1.0"
+
+[cursor]
+theme = "breeze_cursors"
+size = 24
+
+[dark]
+background  = "#0d1b24"
+surface     = "#13242f"
+surface_alt = "#1c3341"
+text        = "#dfeaef"
+text_muted  = "#8ca3b0"
+accent      = "#5fd3c4"
+urgent      = "#f2777a"
+warning     = "#f4c76c"
+success     = "#8cd987"
+icon_theme  = "Papirus-Dark"
+wallpaper   = "wallpapers/tide-dark.jpg"   # rendered from the .svg source at build time
+# ANSI colours 0-7, then bright 8-15
+terminal = [
+  "#1a2b36",
+  "#f2777a",
+  "#8cd987",
+  "#f4c76c",
+  "#6fb3e8",
+  "#c59de8",
+  "#5fd3c4",
+  "#c5d4dc",
+  "#3a5363",
+  "#ff9a9c",
+  "#a9eaa4",
+  "#ffdb8f",
+  "#93cbf5",
+  "#dbbdf5",
+  "#8ce8dc",
+  "#f2f7f9",
+]
+
+[light]
+background  = "#eef4f6"
+surface     = "#fbfdfe"
+surface_alt = "#dfe9ed"
+text        = "#15262f"
+text_muted  = "#526873"
+accent      = "#0f8f85"
+urgent      = "#c43f45"
+warning     = "#9a6a10"
+success     = "#367f31"
+icon_theme  = "Papirus-Light"
+wallpaper   = "wallpapers/tide-light.jpg"   # rendered from the .svg source at build time
+# ANSI colours 0-7, then bright 8-15
+terminal = [
+  "#15262f",
+  "#c43f45",
+  "#367f31",
+  "#9a6a10",
+  "#2d6fa8",
+  "#8a55b5",
+  "#0f7f76",
+  "#c7d3d9",
+  "#526873",
+  "#d65a5f",
+  "#4e9a48",
+  "#b58424",
+  "#4a8cc4",
+  "#a573cc",
+  "#2aa89c",
+  "#fbfdfe",
+]

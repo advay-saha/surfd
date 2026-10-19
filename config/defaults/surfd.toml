@@ -1,0 +1,166 @@
+# ─────────────────────────────────────────────────────────────────────────
+#  surfd.toml — the one file that describes your surfd desktop.
+#
+#  Edit it by hand, with `surfctl`, or with Surf Settings: all three keep
+#  your comments. After editing by hand, apply with:   surfctl reload
+#  See every setting with its help text:                surfctl explain
+#  Back to these defaults (a backup is kept):           surfctl reset
+#
+#  You only need the keys you change; anything missing falls back to the
+#  defaults in /usr/share/surfd/defaults/surfd.toml.
+# ─────────────────────────────────────────────────────────────────────────
+
+[theme]
+name = "tide"            # surfctl theme list
+variant = "dark"         # "dark" or "light"   (surfctl theme variant toggle)
+accent = ""              # "" = the theme's accent, or e.g. "#88c0d0"
+
+[fonts]
+ui = "Inter"
+mono = "JetBrains Mono"
+size = 11
+mono_size = 11
+
+[wallpaper]
+path = ""                # "" = the theme's wallpaper; or "~/Pictures/beach.jpg"
+mode = "fill"            # fill | fit | center | tile | stretch
+
+[layout]
+mode = "tiling"          # "tiling", or "floating" = mouse-friendly, windows float with title bars
+gaps_inner = 8
+gaps_outer = 6
+border_width = 2
+radius = 12              # rounding for bar, notifications, launcher, login screen
+titlebars = false        # title bars in tiling mode (always shown in floating mode)
+focus_follows_mouse = true
+
+[bar]
+position = "top"         # "top" or "bottom"
+style = "floating"       # "floating" (detached, rounded) or "docked" (edge to edge)
+height = 34
+# Modules: workspaces mode window taskbar clock tray network audio battery
+#          backlight bluetooth cpu memory temperature keyboard media idle power
+# Presets: surfctl bar preset default | minimal | classic | full
+left = ["workspaces", "mode", "window"]
+center = ["clock"]
+right = ["tray", "network", "audio", "battery", "power"]
+
+[input]
+keyboard_layout = "us"   # set from the installer on first login; e.g. "us,de"
+keyboard_variant = ""
+keyboard_options = ""    # e.g. "caps:escape,grp:alt_shift_toggle"
+touchpad_tap = true
+natural_scroll = true
+gestures = true          # 3-finger swipe: switch workspace; swipe up: launcher
+pointer_accel = 0.0      # -1 (slow) … 1 (fast)
+
+[display]
+scale = 0.0              # 0 = let Sway decide; e.g. 1.5 for HiDPI laptops
+
+[apps]
+terminal = "foot"
+launcher = "fuzzel"
+browser = "firefox"
+files = "thunar"
+editor = "mousepad"
+
+[idle]
+lock_after = 300         # seconds; 0 = never
+screen_off_after = 600
+suspend_after = 0
+
+[notifications]
+position = "top-right"   # top-right | top-center | top-left | bottom-right | bottom-center | bottom-left
+timeout = 6000           # milliseconds; 0 = stay until dismissed
+
+[autostart]
+# Extra commands to run at login. Apps that install an XDG autostart entry
+# (/etc/xdg/autostart, ~/.config/autostart) start on their own.
+commands = []
+
+[keys]
+modifier = "Super"       # what "Mod" means below: "Super" (Windows key) or "Alt"
+
+# "key combination" = "action". Actions: surfctl keys actions
+# Also: "exec <command>", "sway <raw sway command>", "none" to disable.
+# Super + / shows all of these in a searchable cheat sheet.
+[keys.bindings]
+# apps
+"Mod+Return" = "terminal"
+"Mod+space" = "launcher"
+"Mod+d" = "launcher"
+"Mod+b" = "browser"
+"Mod+e" = "files"
+"Mod+comma" = "settings"
+"Mod+slash" = "cheatsheet"
+# windows
+"Mod+q" = "close"
+"Mod+f" = "fullscreen"
+"Mod+Shift+space" = "toggle-floating"
+"Mod+Tab" = "focus-mode-toggle"
+"Mod+w" = "layout-toggle"
+"Mod+backslash" = "split-horizontal"
+"Mod+minus" = "split-vertical"
+"Mod+a" = "focus-parent"
+"Mod+r" = "resize-mode"
+"Mod+grave" = "scratchpad"
+"Mod+Shift+grave" = "move-to-scratchpad"
+"Mod+Left" = "focus left"
+"Mod+Right" = "focus right"
+"Mod+Up" = "focus up"
+"Mod+Down" = "focus down"
+"Mod+h" = "focus left"
+"Mod+l" = "focus right"
+"Mod+k" = "focus up"
+"Mod+j" = "focus down"
+"Mod+Shift+Left" = "move left"
+"Mod+Shift+Right" = "move right"
+"Mod+Shift+Up" = "move up"
+"Mod+Shift+Down" = "move down"
+"Mod+Shift+h" = "move left"
+"Mod+Shift+l" = "move right"
+"Mod+Shift+k" = "move up"
+"Mod+Shift+j" = "move down"
+# workspaces
+"Mod+1" = "workspace 1"
+"Mod+2" = "workspace 2"
+"Mod+3" = "workspace 3"
+"Mod+4" = "workspace 4"
+"Mod+5" = "workspace 5"
+"Mod+6" = "workspace 6"
+"Mod+7" = "workspace 7"
+"Mod+8" = "workspace 8"
+"Mod+9" = "workspace 9"
+"Mod+0" = "workspace 10"
+"Mod+Shift+1" = "move-to-workspace 1"
+"Mod+Shift+2" = "move-to-workspace 2"
+"Mod+Shift+3" = "move-to-workspace 3"
+"Mod+Shift+4" = "move-to-workspace 4"
+"Mod+Shift+5" = "move-to-workspace 5"
+"Mod+Shift+6" = "move-to-workspace 6"
+"Mod+Shift+7" = "move-to-workspace 7"
+"Mod+Shift+8" = "move-to-workspace 8"
+"Mod+Shift+9" = "move-to-workspace 9"
+"Mod+Shift+0" = "move-to-workspace 10"
+"Mod+Ctrl+Right" = "workspace-next"
+"Mod+Ctrl+Left" = "workspace-prev"
+"Mod+z" = "workspace-last"
+# system
+"Mod+Escape" = "lock"
+"Mod+Shift+e" = "power-menu"
+"Mod+Shift+c" = "reload"
+"Print" = "screenshot"
+"Shift+Print" = "screenshot-area"
+"Mod+Shift+s" = "screenshot-area"
+"Mod+n" = "notifications-dismiss"
+"Mod+Shift+n" = "notifications-restore"
+# hardware keys (also work on the lock screen)
+"XF86AudioRaiseVolume" = "volume-up"
+"XF86AudioLowerVolume" = "volume-down"
+"XF86AudioMute" = "volume-mute"
+"XF86AudioMicMute" = "mic-mute"
+"XF86MonBrightnessUp" = "brightness-up"
+"XF86MonBrightnessDown" = "brightness-down"
+"XF86AudioPlay" = "media-play"
+"XF86AudioNext" = "media-next"
+"XF86AudioPrev" = "media-prev"

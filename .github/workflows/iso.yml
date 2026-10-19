@@ -1,0 +1,99 @@
+# Build the live ISOs when a version tag is pushed (git tag v0.1.0 && git push --tags)
+# and publish them, with SHA256 checksums, as a GitHub release.
+name: iso
+
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+    inputs:
+      releasever:
+        description: Fedora release to build on
+        default: "44"
+
+permissions:
+  contents: write
+
+env:
+  RELEASEVER: ${{ inputs.releasever || '44' }}
+
+jobs:
+  iso:
+    name: live ISO (${{ matrix.arch }})
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 150
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - arch: x86_64
+            runner: ubuntu-24.04
+          - arch: aarch64
+            runner: ubuntu-24.04-arm
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Free disk space (an ISO build needs ~15 GB)
+        run: |
+          sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc /opt/hostedtoolcache/CodeQL
+          sudo docker image prune --all --force
+          df -h /
+
+      # livemedia-creator --no-virt needs root, loop devices and a Fedora
+      # userspace: run it in a privileged Fedora container with /dev shared.
+      - name: Build ISO in a privileged Fedora container
+        run: |
+          sudo docker run --rm --privileged -v /dev:/dev -v "$PWD":/src -w /src \
+            "registry.fedoraproject.org/fedora:${RELEASEVER}" bash -euxc '
+              dnf -y install --setopt=install_weak_deps=False lorax lorax-lmc-novirt anaconda-tui \
+                pykickstart rpm-build createrepo_c git python3 python3-pytest python3-tomlkit \
+                python3-pillow librsvg2-tools desktop-file-utils appstream systemd-rpm-macros \
+                dnf5-plugins findutils tar gzip
+              git config --global --add safe.directory /src
+              ./build.sh --releasever '"${RELEASEVER}"' rpms
+              ./build.sh --releasever '"${RELEASEVER}"' check
+              ./build.sh --releasever '"${RELEASEVER}"' --skip-rpms --selinux-permissive iso
+            '
+
+      - name: Collect artifacts
+        run: |
+          mkdir -p dist
+          sudo mv out/iso/*.iso out/iso/*.iso.sha256 dist/
+          sudo chown -R "$USER" dist
+          ls -lh dist
+          cat dist/*.sha256
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: surfd-iso-${{ matrix.arch }}
+          path: |
+            dist/
+            out/iso/livemedia-creator.log
+          retention-days: 7
+
+  release:
+    name: publish release
+    needs: iso
+    if: startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: surfd-iso-*
+          merge-multiple: true
+          path: artifacts
+      - name: Create GitHub release with ISOs and checksums
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          cd artifacts/dist
+          cat ./*.sha256 > SHA256SUMS
+          sha256sum --check SHA256SUMS
+          gh release create "${GITHUB_REF_NAME}" --repo "${GITHUB_REPOSITORY}" \
+            --title "surfd ${GITHUB_REF_NAME#v}" \
+            --notes "surfd ${GITHUB_REF_NAME#v} live images (Fedora ${RELEASEVER} based).
+          Verify downloads with: sha256sum --check SHA256SUMS
+          surfd is based on Fedora Linux but is not an official Fedora project." \
+            ./*.iso SHA256SUMS

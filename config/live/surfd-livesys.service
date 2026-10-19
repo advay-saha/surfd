@@ -1,0 +1,13 @@
+[Unit]
+Description=surfd live session setup (live media only)
+ConditionKernelCommandLine=rd.live.image
+After=systemd-sysusers.service
+Before=greetd.service display-manager.service systemd-user-sessions.service
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/usr/libexec/surfd/surfd-livesys
+
+[Install]
+WantedBy=multi-user.target

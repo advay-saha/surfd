@@ -1,0 +1,27 @@
+.TH SURFD-SESSION 1 "October 2026" "surfd 0.1.0" "User Commands"
+.SH NAME
+surfd-session \- start the surfd desktop
+.SH SYNOPSIS
+.B surfd-session
+.SH DESCRIPTION
+Started by the login screen. Creates
+.I ~/.config/surfd/surfd.toml
+on first login, generates the configuration with
+.BR surfctl (1)
+and starts Sway. If the configuration has errors it uses the last good
+generated configuration, or a minimal built-in one, and shows how to fix it.
+On the proprietary NVIDIA driver it adds Sway's
+.B --unsupported-gpu
+option automatically.
+.SH FILES
+.TP
+.I ~/.local/state/surfd/session.log
+Output of the current session
+.RI ( session.log.old
+for the previous one).
+.TP
+.I /usr/share/surfd/fallback/sway.conf
+The emergency configuration.
+.SH SEE ALSO
+.BR surfctl (1),
+.BR sway (1)

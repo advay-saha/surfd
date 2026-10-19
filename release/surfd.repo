@@ -1,0 +1,12 @@
+# surfd's own packages (surfctl, themes, settings). Enable once the Copr
+# project is published: sudo dnf config-manager setopt surfd.enabled=1
+[surfd]
+name=surfd packages for Fedora $releasever
+baseurl=https://download.copr.fedorainfracloud.org/results/@COPR@/fedora-$releasever-$basearch/
+type=rpm-md
+skip_if_unavailable=True
+gpgcheck=1
+gpgkey=https://download.copr.fedorainfracloud.org/results/@COPR@/pubkey.gpg
+repo_gpgcheck=0
+enabled=0
+enabled_metadata=1

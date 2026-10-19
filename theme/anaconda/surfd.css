@@ -1,0 +1,31 @@
+/* surfd branding for the Anaconda GTK installer.
+ * Images are rendered from SVG sources by theme/tools/render.py. */
+@define-color surfd_bg #0d1b24;
+@define-color surfd_accent #5fd3c4;
+
+.logo-sidebar {
+    background-image: url('/usr/share/anaconda/pixmaps/surfd/sidebar-bg.png');
+    background-color: @surfd_bg;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+.logo {
+    background-image: url('/usr/share/anaconda/pixmaps/surfd/sidebar-logo.png');
+    background-position: 50% 20px;
+    background-repeat: no-repeat;
+    background-color: transparent;
+}
+
+AnacondaSpokeWindow #nav-box {
+    background-color: @surfd_bg;
+    background-image: url('/usr/share/anaconda/pixmaps/surfd/topbar-bg.png');
+    background-repeat: repeat-x;
+    color: #dfeaef;
+}
+
+AnacondaSpokeWindow #nav-box button {
+    color: #0d1b24;
+    background: @surfd_accent;
+    border-radius: 8px;
+}

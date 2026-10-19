@@ -1,0 +1,17 @@
+NAME="surfd"
+VERSION="@FEDORA@ (surfd @SURFD_VERSION@)"
+ID=surfd
+ID_LIKE=fedora
+VERSION_ID=@FEDORA@
+PLATFORM_ID="platform:f@FEDORA@"
+PRETTY_NAME="surfd @SURFD_VERSION@ (based on Fedora Linux @FEDORA@)"
+ANSI_COLOR="0;36"
+LOGO=surfd-logo
+CPE_NAME="cpe:/o:surfd:surfd:@FEDORA@"
+DEFAULT_HOSTNAME="surfd"
+HOME_URL="@URL@"
+DOCUMENTATION_URL="@URL@/tree/main/docs"
+SUPPORT_URL="@URL@/discussions"
+BUG_REPORT_URL="@URL@/issues"
+VARIANT="Sway"
+VARIANT_ID=sway

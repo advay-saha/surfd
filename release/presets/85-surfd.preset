@@ -1,0 +1,18 @@
+# surfd desktop services. Lower numbers win; see systemd.preset(5).
+enable greetd.service
+enable NetworkManager.service
+enable NetworkManager-dispatcher.service
+enable NetworkManager-wait-online.service
+enable bluetooth.service
+enable cups.socket
+enable cups.path
+enable firewalld.service
+enable chronyd.service
+enable systemd-resolved.service
+enable power-profiles-daemon.service
+enable thermald.service
+enable fwupd-refresh.timer
+enable surfd-flathub.service
+enable switcheroo-control.service
+# surfd is a desktop: no SSH server unless you ask for it
+disable sshd.service

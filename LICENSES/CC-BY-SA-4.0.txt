@@ -1,0 +1,15 @@
+Creative Commons Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)
+
+All surfd artwork (wallpapers, logos, Plymouth and installer images, theme
+palettes) is © 2026 surfd contributors and licensed under CC BY-SA 4.0.
+
+You are free to share and adapt it for any purpose, including commercially,
+as long as you give appropriate credit ("surfd contributors"), link to the
+license, indicate if changes were made, and distribute your contributions
+under the same license.
+
+Full legal code: https://creativecommons.org/licenses/by-sa/4.0/legalcode
+
+Packagers: before publishing, replace this summary with the verbatim legal
+code (https://creativecommons.org/licenses/by-sa/4.0/legalcode.txt) so the
+%license file is the complete license text.

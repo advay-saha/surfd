@@ -1,0 +1,57 @@
+[Plymouth Theme]
+Name=surfd
+Description=surfd boot splash: the wave mark on deep ocean blue with a seafoam spinner
+ModuleName=two-step
+
+[two-step]
+Font=Inter 12
+TitleFont=Inter Light 26
+ImageDir=/usr/share/plymouth/themes/surfd
+DialogHorizontalAlignment=.5
+DialogVerticalAlignment=.62
+TitleHorizontalAlignment=.5
+TitleVerticalAlignment=.382
+HorizontalAlignment=.5
+VerticalAlignment=.72
+WatermarkHorizontalAlignment=.5
+WatermarkVerticalAlignment=.45
+Transition=none
+TransitionDuration=0.0
+BackgroundStartColor=0x0d1b24
+BackgroundEndColor=0x0d1b24
+ProgressBarBackgroundColor=0x1c3341
+ProgressBarForegroundColor=0x5fd3c4
+MessageBelowAnimation=true
+
+[boot-up]
+UseEndAnimation=false
+UseFirmwareBackground=false
+
+[shutdown]
+UseEndAnimation=false
+UseFirmwareBackground=false
+
+[reboot]
+UseEndAnimation=false
+UseFirmwareBackground=false
+
+[updates]
+SuppressMessages=true
+ProgressBarShowPercentComplete=true
+UseProgressBar=true
+Title=Installing updates…
+SubTitle=Please keep your computer on
+
+[system-upgrade]
+SuppressMessages=true
+ProgressBarShowPercentComplete=true
+UseProgressBar=true
+Title=Upgrading surfd…
+SubTitle=Please keep your computer on
+
+[firmware-upgrade]
+SuppressMessages=true
+ProgressBarShowPercentComplete=true
+UseProgressBar=true
+Title=Upgrading firmware…
+SubTitle=Please keep your computer on

@@ -1,0 +1,7 @@
+# dist macros (normally from fedora-release-common), kept identical so RPM
+# builds on surfd behave exactly like on Fedora.
+%__bootstrap         ~bootstrap
+%fedora              @FEDORA@
+%fc@FEDORA@          1
+%dist                %{!?distprefix0:%{?distprefix}}%{expand:%{lua:for i=0,9999 do print("%{?distprefix" .. i .."}") end}}.fc@FEDORA@%{?with_bootstrap:%{__bootstrap}}
+%surfd               @SURFD_MAJOR_MINOR@

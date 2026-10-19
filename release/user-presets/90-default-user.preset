@@ -1,0 +1,8 @@
+# surfd per-user services
+enable pipewire.socket
+enable pipewire-pulse.socket
+enable wireplumber.service
+enable xdg-user-dirs.service
+enable obex.service
+enable grub-boot-success.timer
+enable at-spi-dbus-bus.service

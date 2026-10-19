@@ -1,0 +1,14 @@
+line-length = 120
+target-version = "py311"
+
+[lint]
+select = ["E", "F", "W", "B", "I", "UP", "PL", "RUF"]
+ignore = [
+  "PLR0911", "PLR0912", "PLR0913", "PLR0915", "PLR2004",  # CLI dispatch is naturally branchy
+  "PLC0415",  # deliberate local imports (startup time, import cycles)
+  "RUF001",   # unicode glyphs in UI strings are intentional
+  "E501",
+]
+
+[lint.isort]
+known-first-party = ["surfd", "surf_settings", "surfd_hwprobe"]

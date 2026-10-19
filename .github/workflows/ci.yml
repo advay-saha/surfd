@@ -1,0 +1,58 @@
+# Lint and test on every push and pull request.
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  lint-and-test:
+    name: lint + unit tests (Ubuntu, real sway/foot/GTK)
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install tools
+        run: |
+          sudo apt-get update -q
+          sudo apt-get install -y -q shellcheck sway foot python3-pytest python3-tomlkit \
+            python3-gi gir1.2-gtk-3.0 gir1.2-gtk-4.0 gir1.2-adw-1 desktop-file-utils appstream \
+            librsvg2-bin python3-pil
+          pipx install ruff
+          pipx install pykickstart
+      - name: Lint
+        run: make lint
+      - name: Unit tests
+        run: make test
+
+  fedora:
+    name: Fedora ${{ matrix.fedora }} — RPMs, rpmlint, package availability
+    runs-on: ubuntu-24.04
+    container: registry.fedoraproject.org/fedora:${{ matrix.fedora }}
+    strategy:
+      fail-fast: false
+      matrix:
+        fedora: ["44"]
+    steps:
+      - name: Install build tools
+        run: |
+          dnf -y install --setopt=install_weak_deps=False git make rpm-build rpmlint createrepo_c \
+            pykickstart python3 python3-pytest python3-tomlkit python3-pillow librsvg2-tools \
+            desktop-file-utils appstream systemd-rpm-macros dnf5-plugins findutils tar gzip
+      - uses: actions/checkout@v4
+      - name: Build RPMs (real Fedora macros, %check runs the test suite)
+        run: |
+          git config --global --add safe.directory "$GITHUB_WORKSPACE"
+          ./build.sh --releasever ${{ matrix.fedora }} rpms
+      - name: rpmlint
+        run: rpmlint -r packaging/surfd.rpmlintrc --ignore-unused-rpmlintrc out/repo/*.rpm
+      - name: Every kickstart package exists in Fedora ${{ matrix.fedora }}
+        run: ./build.sh --releasever ${{ matrix.fedora }} check
+      - uses: actions/upload-artifact@v4
+        with:
+          name: surfd-rpms-f${{ matrix.fedora }}
+          path: out/repo/*.rpm
+          retention-days: 14

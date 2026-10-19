@@ -1,0 +1,51 @@
+#!/usr/bin/bash
+# surfd-session — start the surfd desktop (Sway configured from surfd.toml).
+#
+# Started by the login screen (greetd) or the surfd entry in
+# /usr/share/wayland-sessions. It never leaves you at a black screen:
+# if surfd.toml is broken it falls back to the last good generated
+# config, then to a minimal built-in one, and tells you how to fix it.
+set -u
+
+state="${XDG_STATE_HOME:-$HOME/.local/state}/surfd"
+gen="${state}/generated"
+fallback=/usr/share/surfd/fallback/sway.conf
+mkdir -p "${state}"
+
+# Keep the previous session's log for bug reports.
+[[ -f "${state}/session.log" ]] && mv -f "${state}/session.log" "${state}/session.log.old"
+exec >"${state}/session.log" 2>&1
+echo "surfd-session: starting $(date -Is)"
+
+surfctl init --quiet || echo "surfd-session: surfctl init failed"
+
+config="${gen}/sway/config"
+if surfctl generate --quiet; then
+    echo "surfd-session: configuration generated"
+elif [[ -s "${config}" ]]; then
+    echo "surfd-session: surfd.toml has errors; using the last good configuration"
+    export SURFD_CONFIG_PROBLEM=1
+else
+    echo "surfd-session: no usable configuration; using the built-in fallback"
+    config="${fallback}"
+    export SURFD_CONFIG_PROBLEM=1
+fi
+
+if [[ -r "${gen}/session.env" ]]; then
+    set -a
+    # shellcheck disable=SC1091
+    . "${gen}/session.env"
+    set +a
+else
+    export XDG_CURRENT_DESKTOP=sway XDG_SESSION_DESKTOP=sway XDG_SESSION_TYPE=wayland
+fi
+
+sway_args=()
+# The proprietary NVIDIA driver works with Sway but is not supported
+# upstream; Sway refuses to start on it without this flag.
+if [[ -d /sys/module/nvidia ]]; then
+    echo "surfd-session: NVIDIA proprietary driver detected; starting Sway with --unsupported-gpu"
+    sway_args+=(--unsupported-gpu)
+fi
+
+exec sway "${sway_args[@]}" --config "${config}"

@@ -1,0 +1,19 @@
+#!/usr/bin/bash
+# surfd-greeter — the login screen: gtkgreet inside a minimal Sway.
+# Run by greetd as the surfd-greeter user.
+set -u
+
+# Use the keyboard layout chosen in the installer (localectl).
+kb=/etc/X11/xorg.conf.d/00-keyboard.conf
+if [[ -r "${kb}" ]]; then
+    get() { sed -n "s/.*Option[[:space:]]*\"$1\"[[:space:]]*\"\([^\"]*\)\".*/\1/p" "${kb}" | head -n1; }
+    layout="$(get XkbLayout)"; variant="$(get XkbVariant)"; options="$(get XkbOptions)"
+    [[ -n "${layout}" ]] && export XKB_DEFAULT_LAYOUT="${layout}"
+    [[ -n "${variant}" ]] && export XKB_DEFAULT_VARIANT="${variant}"
+    [[ -n "${options}" ]] && export XKB_DEFAULT_OPTIONS="${options}"
+fi
+
+export XDG_SESSION_TYPE=wayland
+args=()
+[[ -d /sys/module/nvidia ]] && args+=(--unsupported-gpu)
+exec sway "${args[@]}" --config /etc/surfd/greetd/sway-config

@@ -1,0 +1,76 @@
+# Kelp — a surfd theme pack. Format: docs/theme-making.md
+
+[meta]
+name = "Kelp"
+description = "Calm forest greens drifting in cool water."
+author = "surfd contributors"
+license = "CC-BY-SA-4.0"
+version = "1.0"
+
+[cursor]
+theme = "breeze_cursors"
+size = 24
+
+[dark]
+background  = "#10160f"
+surface     = "#161f15"
+surface_alt = "#223121"
+text        = "#e1ead9"
+text_muted  = "#93a58a"
+accent      = "#9ccf6e"
+urgent      = "#e5786d"
+warning     = "#e6c35c"
+success     = "#7fd1a8"
+icon_theme  = "Papirus-Dark"
+wallpaper   = "wallpapers/kelp-dark.jpg"   # rendered from the .svg source at build time
+# ANSI colours 0-7, then bright 8-15
+terminal = [
+  "#1d281c",
+  "#e5786d",
+  "#9ccf6e",
+  "#e6c35c",
+  "#7aaed6",
+  "#c39bd3",
+  "#7fd1a8",
+  "#cfdac8",
+  "#3f523c",
+  "#f29b91",
+  "#b6e48d",
+  "#f2d886",
+  "#9cc6e8",
+  "#d8b9e4",
+  "#a4e4c3",
+  "#f3f7ef",
+]
+
+[light]
+background  = "#f1f5ec"
+surface     = "#fbfdf8"
+surface_alt = "#e1e9d8"
+text        = "#1c2619"
+text_muted  = "#56664f"
+accent      = "#467d24"
+urgent      = "#ad4037"
+warning     = "#8a680f"
+success     = "#277a55"
+icon_theme  = "Papirus-Light"
+wallpaper   = "wallpapers/kelp-light.jpg"   # rendered from the .svg source at build time
+# ANSI colours 0-7, then bright 8-15
+terminal = [
+  "#1c2619",
+  "#ad4037",
+  "#467d24",
+  "#8a680f",
+  "#2f6a9c",
+  "#85549c",
+  "#277a55",
+  "#cfdac8",
+  "#56664f",
+  "#c95a50",
+  "#5e9a35",
+  "#ab8526",
+  "#4b88bd",
+  "#a070b8",
+  "#3d9a72",
+  "#fbfdf8",
+]
