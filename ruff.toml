@@ -11,4 +11,4 @@ ignore = [
 ]
 
 [lint.isort]
-known-first-party = ["surfd", "surf_settings", "surfd_hwprobe"]
+known-first-party = ["surfd", "surf_settings", "surfd_hwprobe", "surf_installer"]

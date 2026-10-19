@@ -1,0 +1,5 @@
+{"blockdevices": [
+ {"name":"nvme0n1","path":"/dev/nvme0n1","size":512110190592,"type":"disk","model":"Samsung SSD 980 PRO","tran":"nvme","rm":false,"ro":false},
+ {"name":"sda","path":"/dev/sda","size":1000204886016,"type":"disk","model":"WDC WD10EZEX","tran":"sata","rm":false,"ro":false},
+ {"name":"sdb","path":"/dev/sdb","size":15728640000,"type":"disk","model":"Old USB stick","tran":"usb","rm":true,"ro":false}
+]}

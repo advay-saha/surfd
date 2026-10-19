@@ -37,4 +37,4 @@ addFilter("non-conffile-in-etc /etc/(surfd-release|system-release-cpe)")
 # Fedora compresses man pages with gzip; generic rpmlint expects bzip2.
 addFilter("manpage-not-compressed bz2")
 # Graphical apps launched from the menu; `--help` documents the CLI arguments.
-addFilter("no-manual-page-for-binary surf-(settings|welcome)")
+addFilter("no-manual-page-for-binary surf-(settings|welcome|installer)")

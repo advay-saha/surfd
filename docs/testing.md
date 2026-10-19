@@ -3,9 +3,10 @@
 ## Automated (any Linux machine)
 
 ```sh
-make check            # shellcheck, ruff, ksvalidator, desktop/AppStream validation, 108 tests
+make check            # shellcheck, ruff, ksvalidator, desktop/AppStream validation, ~150 tests
 make rpm-test         # build all RPMs with rpmbuild (non-Fedora hosts)
-make screenshots      # run the real session + GUI headless and save screenshots
+make screenshots      # run the real session + GUI + installer headless and save screenshots
+sudo python3 -m pytest src/installer/tests   # adds the real loop-device install test
 ```
 
 What the tests cover:
@@ -78,8 +79,24 @@ Copy into the release PR and tick each line.
 - [ ] `cat /etc/os-release` → `ID=surfd`, `ID_LIKE=fedora`, `VERSION_ID=44`
 - [ ] `rpm -qa | grep -Ei '^fedora-(logos|release)'` → nothing
 
-**Install**
-- [ ] Anaconda shows surfd branding (sidebar art), uses the Fedora profile behaviour
+### Install with Surf Installer
+
+Do each of these at least once, in a fresh VM disk each time:
+
+- [ ] **UEFI, no encryption**: Welcome → *Install surfd* → defaults → pick the VM disk → account → install → *Restart now*
+- [ ] **UEFI, encrypted**: same, with *Encrypt the disk*; the passphrase prompt appears at boot (Plymouth) and unlocks
+- [ ] **UEFI + Secure Boot** (OVMF `secboot` / Hyper-V Gen 2 / VirtualBox "Secure Boot"): boots to the login screen
+- [ ] **Legacy BIOS** (VM firmware set to BIOS): boots via GRUB
+- [ ] Keyboard layout chosen in the installer is used at the login screen and on the desktop
+- [ ] Wrong inputs are refused: short passphrase, mismatched passwords, username "root"
+- [ ] The live USB/ISO disk is not offered in the disk list (real hardware)
+- [ ] After install: `getenforce` → Enforcing; `sudo ausearch -m avc -ts boot` → no denials; `rpm -q surfd-live surfd-installer` → not installed; `efibootmgr` lists "surfd" (UEFI)
+- [ ] Wi-Fi joined in the live session is remembered on the installed system
+- [ ] If something fails, the error page offers the log (`~/surf-installer.log`) and Fedora's installer
+
+### Install with Fedora's installer (advanced path)
+
+- [ ] *Dual boot or custom partitions…* opens Anaconda with surfd branding (sidebar art)
 - [ ] Install with automatic partitioning, user with administrator rights
 - [ ] Installed system: no `liveuser`, `/etc/sudoers.d/surfd-live` absent, `rpm -q surfd-live` not installed
 - [ ] Login screen (greetd + gtkgreet) is themed; login works; wrong password is refused

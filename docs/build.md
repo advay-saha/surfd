@@ -89,7 +89,7 @@ installs a real bootloader.
 | `surfd-theme` | surfd-theme, plymouth-theme-surfd, surfd-logos | theme packs + rendered wallpapers, boot splash, logos, Anaconda profile & art |
 | `surfd-default-config` | surfd-default-config, surfd-live | defaults, surfd-session, greetd login screen, systemd units; live-user setup |
 | `surfctl` | surfctl, surfd-hwprobe | the Python package/CLI; hardware probe |
-| `surfd-settings` | surfd-settings | Surf Settings and Welcome |
+| `surfd-settings` | surfd-settings, surfd-installer | Surf Settings and Welcome; Surf Installer (live media only) |
 
 All sources come from one tarball of this repository, created by
 `packaging/build-rpms.sh`. On a non-Fedora host, `make rpm-test` builds with

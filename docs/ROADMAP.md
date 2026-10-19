@@ -51,6 +51,14 @@ Honest next steps, roughly in order. Nothing here exists yet.
 - Make surfctl fully home-directory based (already true) and test it on the
   read-only `/usr` of bootc.
 
+## Installer
+
+- Boot-test Surf Installer on UEFI, UEFI + Secure Boot, BIOS and encrypted
+  installs (VM checklist), then on real NVMe/SATA laptops.
+- "Install alongside" (shrink an existing partition) for simple dual boot,
+  so fewer people need Fedora's full installer.
+- btrfs snapshots before upgrades (snapper or `dnf` plugin) and a rollback entry in GRUB.
+
 ## Desktop
 
 - **SwayFX as an optional session** (rounded corners, blur, shadows) selected

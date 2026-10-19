@@ -1,0 +1,7 @@
+#!/usr/bin/python3 -sP
+# Runs as root (via sudo on the live system, or pkexec). See `--help`.
+import sys
+
+from surf_installer.engine import main
+
+sys.exit(main())

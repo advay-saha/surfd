@@ -91,9 +91,13 @@ jobs:
           cd artifacts/dist
           cat ./*.sha256 > SHA256SUMS
           sha256sum --check SHA256SUMS
-          gh release create "${GITHUB_REF_NAME}" --repo "${GITHUB_REPOSITORY}" \
-            --title "surfd ${GITHUB_REF_NAME#v}" \
-            --notes "surfd ${GITHUB_REF_NAME#v} live images (Fedora ${RELEASEVER} based).
+          # The release may already exist when the tag was made from GitHub's
+          # "Draft a new release" page; then just attach the files.
+          if ! gh release view "${GITHUB_REF_NAME}" --repo "${GITHUB_REPOSITORY}" >/dev/null 2>&1; then
+            gh release create "${GITHUB_REF_NAME}" --repo "${GITHUB_REPOSITORY}" \
+              --title "surfd ${GITHUB_REF_NAME#v}" \
+              --notes "surfd ${GITHUB_REF_NAME#v} live images (Fedora ${RELEASEVER} based).
           Verify downloads with: sha256sum --check SHA256SUMS
-          surfd is based on Fedora Linux but is not an official Fedora project." \
-            ./*.iso SHA256SUMS
+          surfd is based on Fedora Linux but is not an official Fedora project."
+          fi
+          gh release upload "${GITHUB_REF_NAME}" --repo "${GITHUB_REPOSITORY}" --clobber ./*.iso SHA256SUMS

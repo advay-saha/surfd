@@ -1,0 +1,11 @@
+[Desktop Entry]
+Name=Install surfd
+GenericName=Installer
+Comment=Install surfd on this computer
+Exec=surf-installer
+Icon=org.surfd.Installer
+Terminal=false
+Type=Application
+Categories=System;
+Keywords=install;installer;setup;disk;
+StartupNotify=true

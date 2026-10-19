@@ -131,7 +131,8 @@ class Welcome(Adw.ApplicationWindow):
         btn.connect("clicked", lambda _b: self.launch_installer())
         page = self.status("You are running the live system",
                            "Try everything first — nothing is saved. When you are ready, install surfd to your "
-                           "disk. The installer is also in the app launcher (Super + Space, type “install”).",
+                           "disk: it takes about ten minutes. The installer is also in the app launcher "
+                           "(Super + Space, type “install”).",
                            btn)
         page.set_icon_name("drive-harddisk-symbolic")
         return page
@@ -210,7 +211,7 @@ class Welcome(Adw.ApplicationWindow):
             self.toasts.add_toast(Adw.Toast(title=f"Could not start {term}: {e}"))
 
     def launch_installer(self) -> None:
-        for cmd in (["liveinst"], ["anaconda", "--liveinst"]):
+        for cmd in (["surf-installer"], ["liveinst"], ["anaconda", "--liveinst"]):
             if shutil.which(cmd[0]):
                 subprocess.Popen(cmd, start_new_session=True)
                 return

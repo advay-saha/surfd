@@ -25,7 +25,7 @@ lint:
 	ruff check src theme/tools tools
 	cd kickstarts && for a in x86_64 aarch64; do ksvalidator -v F$(FEDORA) surfd-$$a.ks || exit 1; done
 	ksvalidator -v F$(FEDORA) config/live/90-surfd-live-cleanup.ks
-	desktop-file-validate src/settings/data/*.desktop src/session/surfd.desktop
+	desktop-file-validate src/settings/data/*.desktop src/installer/data/*.desktop src/session/surfd.desktop
 	appstreamcli validate --no-net src/settings/data/*.metainfo.xml
 	$(PY) -c 'import tomllib,glob; [tomllib.load(open(f,"rb")) for f in ["config/defaults/surfd.toml", *glob.glob("theme/themes/*/theme.toml")]]'
 	@for a in x86_64 aarch64; do \
@@ -36,7 +36,7 @@ lint:
 	@echo "lint: OK"
 
 test:
-	$(PY) -m pytest -q src/surfctl/tests src/hwprobe/tests
+	$(PY) -m pytest -q src/surfctl/tests src/hwprobe/tests src/installer/tests
 	$(GUI_PY) -m pytest -q src/settings/tests
 
 rpms:
@@ -68,6 +68,7 @@ screenshots: art
 	tools/headless-screenshot.sh $(ART) docs/screenshots tide dark tiling
 	tools/headless-screenshot.sh $(ART) docs/screenshots driftwood light floating
 	tools/gui-screenshot.sh $(ART) docs/screenshots $(GUI_PY) tide dark
+	tools/installer-screenshot.sh $(ART) docs/screenshots $(GUI_PY)
 
 clean:
 	rm -rf out build .pytest_cache .ruff_cache

@@ -35,6 +35,9 @@ identity, theme, configuration layer and tools.
   folder in `~/.local/share/surfd/themes/` or `surfctl theme install pack.tar.gz`.
 - **One look everywhere.** Waybar, mako, fuzzel, foot, swaylock, GTK 3/4,
   Qt (qt6ct), the greetd login screen and the Plymouth boot splash all follow the theme.
+- **A simple installer.** Five screens — language & keyboard, disk (optional
+  encryption), account, review — and about ten minutes. Fedora's full installer
+  is one click away for dual boot and custom partitions. See [docs/installer.md](docs/installer.md).
 - **`surfd-hwprobe`.** Detects hardware and suggests NVIDIA, Broadcom, SOF
   audio, codec or guest-tool packages, with the exact commands. Installs nothing.
 
@@ -57,6 +60,9 @@ Full reference: [docs/customization.md](docs/customization.md) and
 [docs/settings-reference.md](docs/settings-reference.md).
 
 ## Get it
+
+**On Windows or macOS?** Let GitHub build the ISO for you and test it in a
+VM: [docs/first-iso.md](docs/first-iso.md).
 
 There are no published images yet. Build one on Fedora 44:
 
@@ -128,7 +134,9 @@ surfd is at 0.1.0. What has been verified, and how:
 | foot, fuzzel, Waybar, mako, GTK 3/4 config | ✅ | `foot --check-config`, live run, GTK CSS parser |
 | Whole session look | ✅ | real Sway + Waybar + mako + fuzzel + foot on a headless output |
 | Surf Settings / Welcome | ✅ | headless run of every page + 8-step click-through test |
-| RPM specs | ✅ | `rpmbuild` of all 5 specs (9 binary RPMs) + `rpmlint` clean |
+| Surf Installer wizard | ✅ | every screen driven headless in demo mode, incl. wrong input (11 checks) |
+| Surf Installer engine | ✅ / ⚠️ | 37 tests + a real install onto a loop-device disk (partition, format, copy, fstab); bootloader, initramfs and SELinux steps need a VM |
+| RPM specs | ✅ | `rpmbuild` of all 5 specs (10 binary RPMs) + `rpmlint` clean |
 | Package names exist in Fedora 44 | ⚠️ | not verified here (no Fedora mirror access): run `./build.sh check` (CI does) |
 | Building and booting the ISO | ⚠️ | not done yet: see [docs/testing.md](docs/testing.md) |
 | Greeter under SELinux enforcing, Anaconda branding, < 400 MB idle RAM, ISO < 1.5 GB | ⚠️ | needs a real boot: see the checklist |
@@ -144,6 +152,7 @@ packaging/specs/         surfd-release, surfd-theme (+logos, plymouth), surfd-de
                          (+live), surfctl (+hwprobe), surfd-settings
 src/surfctl/             the surfd Python package and surfctl CLI (+ tests)
 src/settings/            Surf Settings and Welcome (GTK 4 + libadwaita)
+src/installer/           Surf Installer: wizard + install engine
 src/hwprobe/             surfd-hwprobe
 src/session/             surfd-session and helper scripts
 config/                  defaults (surfd.toml), greetd, systemd units, live-session bits

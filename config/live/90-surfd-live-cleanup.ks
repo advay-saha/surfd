@@ -8,5 +8,5 @@ if id liveuser >/dev/null 2>&1; then
     userdel --remove liveuser || :
 fi
 systemctl disable surfd-livesys.service 2>/dev/null || :
-rpm -e --nodeps surfd-live 2>/dev/null || :
+rpm -e --nodeps surfd-live surfd-installer 2>/dev/null || :
 %end

@@ -15,9 +15,12 @@ shutdown
 
 %packages --exclude-weakdeps
 surfd-live
+# The simple installer (erase a disk, five screens). Anaconda below stays
+# available from it for dual boot and custom partitioning.
+surfd-installer
 
-# Installer: Anaconda's live installer (GTK), surfd-branded through the
-# profile and stylesheet shipped in surfd-logos.
+# Advanced installer: Anaconda's live installer (GTK), surfd-branded through
+# the profile and stylesheet shipped in surfd-logos.
 anaconda
 anaconda-install-env-deps
 anaconda-live

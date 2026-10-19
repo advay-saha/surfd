@@ -1,0 +1,6 @@
+#!/usr/bin/python3 -sP
+import sys
+
+from surf_installer.app import main
+
+sys.exit(main())
