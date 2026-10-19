@@ -1,0 +1,229 @@
+#!/usr/bin/env python3
+"""surfd-dynwall: macOS-style dynamic wallpapers for Sway.
+
+A dynamic wallpaper is a folder with wallpaper.toml + frames (made by heic2surfd.py).
+
+  surfd-dynwall daemon             apply the current wallpaper now and keep it updated (run from the Sway config)
+  surfd-dynwall list               installed dynamic wallpapers
+  surfd-dynwall use <name>         pick a wallpaper (keeps the current mode)
+  surfd-dynwall auto               follow the time of day (clock for most, sun position for "solar" ones)
+  surfd-dynwall light | dark       pin the lightest / darkest frame (hook this to the theme light/dark switch)
+  surfd-dynwall toggle             flip between light and dark
+  surfd-dynwall frame <n|name>     pin one single frame (number from `status`, or part of its file name)
+  surfd-dynwall location <lat> <lon>   set where you are (used by solar wallpapers); "location auto" clears it
+  surfd-dynwall status             wallpaper, mode and frame in use, and all frames
+Options for testing: --at HH:MM (pretend it is that local time), --date YYYY-MM-DD, --dry (print, don't call swaymsg).
+
+State: ~/.local/state/surfd/dynwall.json.   Python 3.11+, swaymsg. No swaybg process needed.
+"""
+import json
+import math
+import os
+import subprocess
+import sys
+import time
+import tomllib
+from datetime import datetime, timedelta
+from pathlib import Path
+
+STATE = Path(os.environ.get("XDG_STATE_HOME", Path.home() / ".local/state")) / "surfd" / "dynwall.json"
+SEARCH = [Path(p).expanduser() for p in (
+    os.environ.get("SURFD_WALLPAPERS", ""),
+    "~/.local/share/surfd/wallpapers/dynamic",
+    "/usr/share/surfd/wallpapers/dynamic",
+    Path(__file__).resolve().parents[2] / "wallpapers/third-party/dynamic",
+) if p]
+MODES = ("auto", "light", "dark", "frame")
+
+
+# ----------------------------------------------------------------- storage --
+def load_state():
+    try:
+        return json.loads(STATE.read_text())
+    except (OSError, ValueError):
+        return {}
+
+
+def save_state(st):
+    STATE.parent.mkdir(parents=True, exist_ok=True)
+    STATE.write_text(json.dumps(st, indent=1))
+
+
+def find_all():
+    seen = {}
+    for base in SEARCH:
+        if base.is_dir():
+            for d in sorted(base.iterdir()):
+                if (d / "wallpaper.toml").is_file():
+                    seen.setdefault(d.name, d)
+    return seen
+
+
+def load_wp(d):
+    cfg = tomllib.loads((d / "wallpaper.toml").read_text())
+    return cfg["wallpaper"], cfg["frame"]
+
+
+# --------------------------------------------------------------- sun / time --
+def sun_position(when, lat, lon):
+    """Approximate solar altitude and azimuth in degrees (NOAA formulas); `when` is an aware datetime."""
+    utc = when.astimezone(__import__("datetime").timezone.utc)
+    jd = utc.timestamp() / 86400.0 + 2440587.5
+    n = jd - 2451545.0
+    L = (280.460 + 0.9856474 * n) % 360
+    g = math.radians((357.528 + 0.9856003 * n) % 360)
+    lam = math.radians(L + 1.915 * math.sin(g) + 0.020 * math.sin(2 * g))
+    eps = math.radians(23.439 - 0.0000004 * n)
+    dec = math.asin(math.sin(eps) * math.sin(lam))
+    ra = math.atan2(math.cos(eps) * math.sin(lam), math.cos(lam))
+    gmst = (280.46061837 + 360.98564736629 * n) % 360
+    ha = math.radians((gmst + lon) % 360) - ra
+    la = math.radians(lat)
+    alt = math.asin(math.sin(la) * math.sin(dec) + math.cos(la) * math.cos(dec) * math.cos(ha))
+    az = math.atan2(-math.sin(ha) * math.cos(dec),
+                    math.cos(la) * math.sin(dec) - math.sin(la) * math.cos(dec) * math.cos(ha))
+    return math.degrees(alt), math.degrees(az) % 360
+
+
+def guess_location(st, when):
+    """lat/lon from `surfd-dynwall location`, else longitude from the UTC offset and a mid latitude."""
+    if "lat" in st and "lon" in st:
+        return st["lat"], st["lon"]
+    off = when.utcoffset() or timedelta(0)
+    return 30.0, off.total_seconds() / 3600 * 15.0
+
+
+def pick_frame(meta, frames, mode, st, when):
+    """Return (index into frames, reason)."""
+    files = [f["file"] for f in frames]
+    if mode == "light":
+        return files.index(meta["light"]), "lightest frame"
+    if mode == "dark":
+        return files.index(meta["dark"]), "darkest frame"
+    if mode == "frame":
+        want = st.get("frame")
+        if want in files:
+            return files.index(want), "pinned frame"
+        return files.index(meta["light"]), "pinned frame missing -> lightest"
+    if meta["kind"] == "solar":
+        lat, lon = guess_location(st, when)
+        alt, az = sun_position(when, lat, lon)
+        if az > 180:               # the frames only cover one side of the sky; mirror the afternoon onto it
+            az = 360 - az
+        best = min(range(len(frames)),
+                   key=lambda i: (frames[i]["altitude"] - alt) ** 2 + (0.25 * (frames[i]["azimuth"] - az)) ** 2)
+        return best, f"sun alt {alt:.0f} az {az:.0f}"
+    minute = when.hour * 60 + when.minute
+    stamps = [int(f["at"][:2]) * 60 + int(f["at"][3:]) for f in frames]
+    order = sorted(range(len(frames)), key=lambda i: stamps[i])
+    cur = order[-1]                # before the first frame: still the last frame of the previous day
+    for i in order:
+        if stamps[i] <= minute:
+            cur = i
+    return cur, f"clock {when:%H:%M}"
+
+
+# ------------------------------------------------------------------- apply --
+def resolve(st):
+    all_wp = find_all()
+    name = st.get("wallpaper") or ("low-poly-mountain" if "low-poly-mountain" in all_wp else next(iter(all_wp), None))
+    if name not in all_wp:
+        raise SystemExit(f"no dynamic wallpaper named {name!r}; found: {', '.join(all_wp) or 'none'}")
+    return name, all_wp[name]
+
+
+def now_from(args):
+    when = datetime.now().astimezone()
+    if "--date" in args:
+        y, m, d = map(int, args[args.index("--date") + 1].split("-"))
+        when = when.replace(year=y, month=m, day=d)
+    if "--at" in args:
+        hh, mm = args[args.index("--at") + 1].split(":")
+        when = when.replace(hour=int(hh), minute=int(mm), second=0)
+    return when
+
+
+def apply(st, args, last=None, quiet=False):
+    name, d = resolve(st)
+    meta, frames = load_wp(d)
+    i, why = pick_frame(meta, frames, st.get("mode", "auto"), st, now_from(args))
+    path = d / frames[i]["file"]
+    if path != last and not quiet:
+        if "--dry" in args:
+            print(f"[dry] {name}: {path.name}  ({st.get('mode', 'auto')}; {why})")
+        else:
+            try:
+                subprocess.run(["swaymsg", "output", "*", "bg", str(path), meta.get("mode", "fill")],
+                               check=False, stdout=subprocess.DEVNULL)
+            except FileNotFoundError:
+                print("swaymsg not found: not running under Sway? (state was still saved)", file=sys.stderr)
+    return path
+
+
+# --------------------------------------------------------------------- cli --
+def main(argv):
+    # keep option values (after --at / --date) out of the positional list
+    pos, skip = [], False
+    for a in argv:
+        if skip:
+            skip = False
+        elif a in ("--at", "--date"):
+            skip = True
+        elif not a.startswith("--"):
+            pos.append(a)
+    cmd = pos[0] if pos else "daemon"
+    st = load_state()
+    if cmd == "list":
+        for n, d in find_all().items():
+            meta, frames = load_wp(d)
+            print(f"{n:20s} {meta['kind']:6s} {len(frames)} frames   {meta['name']}")
+        return
+    if cmd == "use":
+        if pos[1] not in find_all():
+            raise SystemExit(f"unknown wallpaper {pos[1]!r}; try `surfd-dynwall list`")
+        st["wallpaper"] = pos[1]
+    elif cmd in ("auto", "light", "dark"):
+        st["mode"] = cmd
+    elif cmd == "toggle":
+        _, d = resolve(st)
+        meta, frames = load_wp(d)
+        i, _ = pick_frame(meta, frames, st.get("mode", "auto"), st, now_from(argv))
+        st["mode"] = "dark" if frames[i]["file"] == meta["light"] else "light"
+    elif cmd == "frame":
+        _, d = resolve(st)
+        _, frames = load_wp(d)
+        files = [f["file"] for f in frames]
+        key = pos[1]
+        hits = [files[int(key)]] if key.isdigit() and int(key) < len(files) else [f for f in files if key in f]
+        if len(hits) != 1:
+            raise SystemExit(f"{key!r} does not match exactly one frame: {files}")
+        st["mode"], st["frame"] = "frame", hits[0]
+    elif cmd == "location":
+        if pos[1] == "auto":
+            st.pop("lat", None), st.pop("lon", None)
+        else:
+            st["lat"], st["lon"] = float(pos[1]), float(pos[2])
+    elif cmd == "status":
+        name, d = resolve(st)
+        meta, frames = load_wp(d)
+        cur = apply(st, argv, quiet=True)
+        print(f"wallpaper: {name} ({meta['kind']})   mode: {st.get('mode', 'auto')}   now: {cur.name}")
+        for n, f in enumerate(frames):
+            when = f.get("at") or f"alt {f['altitude']:+.0f} az {f['azimuth']:.0f}"
+            tags = " light" * (f["file"] == meta["light"]) + " dark" * (f["file"] == meta["dark"])
+            print(f"  {n}  {f['file']:24s} {when}{tags}{'   <-- now' if d / f['file'] == cur else ''}")
+        return
+    elif cmd != "daemon":
+        raise SystemExit(__doc__)
+    if cmd != "daemon":
+        save_state(st)
+    last = apply(st, argv)
+    if cmd == "daemon" and "--dry" not in argv:
+        while True:                # re-read the state each tick so `light`, `dark`, `use`... take effect within 30 s
+            time.sleep(30)
+            st = load_state()
+            last = apply(st, argv, last)
+
+
+if __name__ == "__main__":
+    main(sys.argv[1:])
