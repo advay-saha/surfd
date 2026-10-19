@@ -1,6 +1,6 @@
 [Plymouth Theme]
 Name=surfd
-Description=surfd boot splash: the wave mark on deep ocean blue with a seafoam spinner
+Description=surfd boot splash: the S logo on deep ocean navy with a teal spinner
 ModuleName=two-step
 
 [two-step]
@@ -17,10 +17,10 @@ WatermarkHorizontalAlignment=.5
 WatermarkVerticalAlignment=.45
 Transition=none
 TransitionDuration=0.0
-BackgroundStartColor=0x0d1b24
-BackgroundEndColor=0x0d1b24
-ProgressBarBackgroundColor=0x1c3341
-ProgressBarForegroundColor=0x5fd3c4
+BackgroundStartColor=0x0c1b23
+BackgroundEndColor=0x0c1b23
+ProgressBarBackgroundColor=0x1b3341
+ProgressBarForegroundColor=0x5ecfc2
 MessageBelowAnimation=true
 
 [boot-up]

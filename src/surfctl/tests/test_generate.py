@@ -81,6 +81,13 @@ def test_waybar_css_uses_palette(env: Path) -> None:
     assert css.count("{") == css.count("}")
 
 
+def test_accent_gradient_only_with_second_accent(env: Path) -> None:
+    css = generate.waybar_css(_ctx())                                  # tide: teal to blue
+    assert "linear-gradient(to right, #5ecfc2, #4a90c8)" in css
+    assert "linear-gradient" not in generate.waybar_css(_ctx(**{"theme.accent": "#ff8800"}))
+    assert "linear-gradient" not in generate.waybar_css(_ctx(**{"theme.name": "kelp"}))
+
+
 def test_ini_outputs_parse(env: Path) -> None:
     ctx = _ctx()
     for text in (generate.fuzzel(ctx), generate.foot(ctx), generate.gtk_settings(ctx, 3), generate.qt6ct_conf(ctx)):

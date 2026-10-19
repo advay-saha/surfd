@@ -2,7 +2,7 @@
 
 [meta]
 name = "Tide"
-description = "Deep ocean blues with a seafoam accent. The surfd default."
+description = "Deep ocean navy with a teal-to-blue accent. The surfd default and the colours of the logo."
 author = "surfd contributors"
 license = "CC-BY-SA-4.0"
 version = "1.0"
@@ -12,12 +12,13 @@ theme = "breeze_cursors"
 size = 24
 
 [dark]
-background  = "#0d1b24"
-surface     = "#13242f"
-surface_alt = "#1c3341"
-text        = "#dfeaef"
-text_muted  = "#8ca3b0"
-accent      = "#5fd3c4"
+background  = "#0c1b23"
+surface     = "#12252f"
+surface_alt = "#1b3341"
+text        = "#dee9ef"
+text_muted  = "#8aa2af"
+accent      = "#5ecfc2"
+accent2     = "#4a90c8"   # optional: far end of accent gradients (bar's active workspace, login button, wallpaper)
 urgent      = "#f2777a"
 warning     = "#f4c76c"
 success     = "#8cd987"
@@ -29,9 +30,9 @@ terminal = [
   "#f2777a",
   "#8cd987",
   "#f4c76c",
-  "#6fb3e8",
+  "#5b9fd6",
   "#c59de8",
-  "#5fd3c4",
+  "#5ecfc2",
   "#c5d4dc",
   "#3a5363",
   "#ff9a9c",
@@ -50,6 +51,7 @@ surface_alt = "#dfe9ed"
 text        = "#15262f"
 text_muted  = "#526873"
 accent      = "#0f8f85"
+accent2     = "#2f6fb0"
 urgent      = "#c43f45"
 warning     = "#9a6a10"
 success     = "#367f31"

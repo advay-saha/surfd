@@ -31,7 +31,7 @@ Requires:       plymouth-plugin-two-step
 Requires:       plymouth-scripts
 
 %description -n plymouth-theme-surfd
-The surfd Plymouth boot splash: the wave mark on deep ocean blue with a
+The surfd Plymouth boot splash: the S logo on deep ocean navy with a
 seafoam spinner. Activate with: sudo plymouth-set-default-theme -R surfd
 
 %package -n surfd-logos
@@ -41,7 +41,7 @@ Requires:       generic-logos
 Conflicts:      fedora-logos
 
 %description -n surfd-logos
-surfd logos (wave mark and wordmark) and the Anaconda installer profile and
+surfd logos (the S mark and wordmark) and the Anaconda installer profile and
 artwork. Fedora logos are not included, as required for Fedora Remixes;
 generic-logos covers the system logo paths.
 

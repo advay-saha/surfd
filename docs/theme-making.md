@@ -49,13 +49,14 @@ surface_alt = "#1f3540"      # hover / selected surfaces
 text        = "#e4eff2"
 text_muted  = "#8fa7b0"      # secondary text
 accent      = "#ff8a80"      # focus, selection, active workspace
+# accent2   = "#ffb27a"      # optional: far end of accent gradients (see below)
 urgent      = "#ff6b6b"
 warning     = "#f6c56b"
 success     = "#7fd6a0"
 icon_theme  = "Papirus-Dark"
 wallpaper   = "wallpapers/reef-dark.jpg"
 terminal = [                 # ANSI 0-7 then bright 8-15
-  "#1b2d36", "#ff6b6b", "#7fd6a0", "#f6c56b", "#6fb3e8", "#c59de8", "#5fd3c4", "#c5d4dc",
+  "#1b2d36", "#ff6b6b", "#7fd6a0", "#f6c56b", "#6fb3e8", "#c59de8", "#5ecfc2", "#c5d4dc",
   "#3a5363", "#ff8f8f", "#a1e8bd", "#ffd98f", "#93cbf5", "#dbbdf5", "#8ce8dc", "#f2f7f9",
 ]
 
@@ -80,6 +81,15 @@ variant you provide. A theme may provide only `[dark]` or only `[light]`.
 
 surfd works out the text colour that sits on top of the accent, the inactive
 border colour and the Qt palette for you.
+
+**`accent2` (optional)** is a second accent. Where a surface is filled with the
+accent (the active workspace pill in the bar, the login button) surfd draws a
+left-to-right gradient from `accent` to `accent2`; Tide uses its teal and blue
+this way, like the logo banner. Without `accent2` those surfaces are the plain
+accent, and setting your own accent with `surfctl accent` also turns the
+gradient off. Everything else (window borders, selection, GTK accent) keeps
+using `accent`, so choose an `accent2` that sits well next to it and also meets
+3:1 contrast on `background`.
 
 ### Readability
 

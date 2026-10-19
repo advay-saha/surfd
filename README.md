@@ -1,3 +1,5 @@
+<p align="center"><img src="docs/images/banner.png" alt="surfd: a tiling window manager for non-nerds" width="720"></p>
+
 # surfd
 
 **A lightweight, good-looking Sway desktop on Fedora Linux, configured from one file.**
@@ -30,7 +32,7 @@ identity, theme, configuration layer and tools.
   Invalid changes are refused and nothing is touched; `surfctl reset` keeps a backup.
 - **Surf Settings.** A small GTK 4/libadwaita app over the same file, plus a
   first-login Welcome tour.
-- **Theme packs are folders.** Three original themes (Tide, Driftwood, Kelp),
+- **Theme packs are folders.** Three original themes (Tide, Driftwood, Kelp; Tide uses the logo's teal and blue),
   each dark and light, all artwork generated from code (CC BY-SA 4.0). Drop a
   folder in `~/.local/share/surfd/themes/` or `surfctl theme install pack.tar.gz`.
 - **One look everywhere.** Waybar, mako, fuzzel, foot, swaylock, GTK 3/4,
@@ -57,7 +59,8 @@ surfctl backups restore latest           # undo that
 ```
 
 Full reference: [docs/customization.md](docs/customization.md) and
-[docs/settings-reference.md](docs/settings-reference.md).
+[docs/settings-reference.md](docs/settings-reference.md). Logo, colours and
+icons: [docs/brand.md](docs/brand.md).
 
 ## Get it
 

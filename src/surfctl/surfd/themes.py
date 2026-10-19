@@ -62,6 +62,7 @@ class Palette:
     accent_text: str = ""  # text drawn on top of accent
     border: str = ""  # inactive window border
     icon_theme: str = "Papirus"
+    accent2: str = ""  # optional second accent: the far end of accent gradients (same as accent when unset)
 
     @property
     def is_dark(self) -> bool:
@@ -113,8 +114,10 @@ class Theme:
             variant = next(iter(self.variants))
         v = self.variants[variant]
         cols = {k: color.normalize(v[k]) for k in COLOR_KEYS}
+        accent2 = color.normalize(v["accent2"]) if "accent2" in v else cols["accent"]
         if accent_override:
             cols["accent"] = color.normalize(accent_override)
+            accent2 = cols["accent"]  # a custom accent replaces the whole gradient
         term = tuple(color.normalize(c) for c in v["terminal"])
         return Palette(
             variant=variant,
@@ -122,6 +125,7 @@ class Theme:
             accent_text=color.readable_on(cols["accent"], dark="#111111", light="#ffffff"),
             border=color.mix(cols["surface"], cols["text"], 0.18),
             icon_theme=str(v.get("icon_theme", "Papirus-Dark" if variant == "dark" else "Papirus")),
+            accent2=accent2,
             **cols,
         )
 
@@ -135,6 +139,8 @@ def _validate_variant(name: str, data: Any) -> list[str]:
             errs.append(f"[{name}] missing colour '{k}'")
         elif not color.is_color(data[k]):
             errs.append(f"[{name}] {k} = {data[k]!r} is not a colour")
+    if "accent2" in data and not color.is_color(data["accent2"]):
+        errs.append(f"[{name}] accent2 = {data['accent2']!r} is not a colour")
     term = data.get("terminal")
     if not isinstance(term, list) or len(term) != 16 or not all(color.is_color(c) for c in term):
         errs.append(f"[{name}] terminal must be a list of 16 colours (ANSI 0-15)")

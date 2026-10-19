@@ -72,7 +72,7 @@ New VM → Local install media → the ISO → OS: "Fedora Linux 44" → 4 GB RA
 Copy into the release PR and tick each line.
 
 **Live session**
-- [ ] Boot menu shows "surfd", Plymouth splash shows the wave mark and spinner
+- [ ] Boot menu shows "surfd", Plymouth splash shows the S logo and spinner
 - [ ] Logs straight into the desktop as *liveuser* (no password)
 - [ ] Welcome opens on the "You are running the live system" page; *Install surfd* starts Anaconda
 - [ ] `getenforce` → `Enforcing`; `sudo ausearch -m avc -ts boot` → no denials

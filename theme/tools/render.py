@@ -26,11 +26,9 @@ from PIL import Image
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from make_art import logo_svg, mark_body, mix, svg, wordmark_body  # noqa: E402
+from make_art import MIST, NAVY, TEAL, logo_svg, mark_svg, mix, svg, wordmark_svg  # noqa: E402
 
-BG = "#0d1b24"
-ACCENT = "#5fd3c4"
-TEXT = "#dfeaef"
+BG, ACCENT, TEXT = NAVY, TEAL, MIST
 
 
 def rsvg(src: str | Path, out: Path, *, width: int | None = None, height: int | None = None) -> None:
@@ -63,7 +61,7 @@ def plymouth(out: Path) -> None:
     d = out / "plymouth" / "surfd"
     d.mkdir(parents=True, exist_ok=True)
     # Watermark: the logo, white-ish wordmark on the dark splash.
-    rsvg(logo_svg(TEXT), d / "watermark.png", height=96)
+    rsvg(logo_svg(TEXT), d / "watermark.png", height=72)
     # Spinner: a 270° arc, 36 frames for one full turn.
     frames = 36
     for i in range(frames):
@@ -96,10 +94,8 @@ def anaconda(out: Path) -> None:
     rsvg(svg(300, 1200, side), d / "sidebar-bg.png")
     rsvg(svg(1200, 72, f'<rect width="1200" height="72" fill="{BG}"/>'
                       f'<rect y="70" width="1200" height="2" fill="{ACCENT}" fill-opacity="0.6"/>'), d / "topbar-bg.png")
-    mark = svg(128, 128, mark_body(), "0 0 128 128")
-    rsvg(mark, d / "sidebar-logo.png", width=96, height=96)
-    g, width = wordmark_body(TEXT, 4, 26)
-    rsvg(svg(round(width + 8), 72, g, f"0 0 {round(width + 8)} 72"), d / "anaconda_header.png", height=36)
+    rsvg(mark_svg(), d / "sidebar-logo.png", width=96, height=96)
+    rsvg(wordmark_svg(TEXT), d / "anaconda_header.png", height=36)
 
 
 def logos(out: Path) -> None:

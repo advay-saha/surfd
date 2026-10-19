@@ -1,6 +1,6 @@
 # Sway config for the surfd login screen. gtkgreet draws the whole screen
 # (layer-shell), styled by /etc/surfd/greetd/style.css.
-output * bg #0d1b24 solid_color
+output * bg #0c1b23 solid_color
 seat seat0 xcursor_theme breeze_cursors 24
 default_border none
 xwayland disable

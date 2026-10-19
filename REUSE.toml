@@ -18,3 +18,11 @@ SPDX-License-Identifier = "CC-BY-SA-4.0"
 path = ["**.md", "docs/**"]
 SPDX-FileCopyrightText = "2026 surfd contributors"
 SPDX-License-Identifier = "CC-BY-SA-4.0"
+
+# The wordmark outlines in brand_paths.py are glyphs of Outfit ExtraBold (SIL OFL 1.1); the logos made
+# with them are artwork and stay CC-BY-SA-4.0 (the OFL does not extend to documents made with a font).
+[[annotations]]
+path = ["theme/tools/brand_paths.py"]
+precedence = "override"
+SPDX-FileCopyrightText = ["2026 surfd contributors", "2021 The Outfit Project Authors (https://github.com/Outfitio/Outfit-Fonts)"]
+SPDX-License-Identifier = "MIT AND OFL-1.1"

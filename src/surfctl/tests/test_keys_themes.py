@@ -77,6 +77,7 @@ def test_theme_contrast_meets_wcag(env: Path, name: str, variant: str) -> None:
     assert color.contrast(pal.text_muted, pal.surface) >= 4.5  # AA
     assert color.contrast(pal.accent, pal.background) >= 3.0  # UI component
     assert color.contrast(pal.accent_text, pal.accent) >= 4.5
+    assert color.contrast(pal.accent2, pal.background) >= 3.0  # second accent (== accent when unset)
     for c in (pal.urgent, pal.warning, pal.success):
         assert color.contrast(c, pal.background) >= 3.0, c
     # terminal: normal colours 1-6 readable on the terminal background
@@ -148,6 +149,17 @@ def test_accent_override(env: Path) -> None:
     pal = themes.find("tide").palette("dark", "#ff8800")
     assert pal.accent == "#ff8800"
     assert pal.accent_text in ("#111111", "#ffffff")
+
+
+def test_second_accent(env: Path) -> None:
+    tide, kelp = themes.find("tide").palette("dark"), themes.find("kelp").palette("dark")
+    assert tide.accent == "#5ecfc2" and tide.accent2 == "#4a90c8"   # the logo's teal and blue
+    assert kelp.accent2 == kelp.accent                                # themes without accent2 stay solid
+    assert themes.find("tide").palette("dark", "#ff8800").accent2 == "#ff8800"  # a custom accent wins outright
+
+
+def test_bad_second_accent_rejected() -> None:
+    assert any("accent2" in e for e in themes._validate_variant("dark", {"accent2": "blue"}))
 
 
 @pytest.mark.parametrize("value,expected", [("#ABC", "#aabbcc"), ("88c0d0", "#88c0d0"), (" #88C0D0 ", "#88c0d0")])

@@ -42,7 +42,7 @@ touch "${HOME}/.config/surfd/.welcome-done"   # we launch the Welcome app explic
 # shellcheck disable=SC2016  # expanded by the inner shell on purpose
 dbus-run-session -- bash -c '
   set -u
-  work=$1 out=$2 py=$3 tag=$4
+  work=$1 out=$2 py=$3 tag=$4 tag_theme=$5 tag_variant=$6
   sway --config "$HOME/.local/state/surfd/generated/sway/config" >"$work/sway.log" 2>&1 &
   for _ in $(seq 100); do ls "$XDG_RUNTIME_DIR"/sway-ipc.* >/dev/null 2>&1 && break; sleep 0.1; done
   export SWAYSOCK=$(ls "$XDG_RUNTIME_DIR"/sway-ipc.* | head -n1)
@@ -58,6 +58,10 @@ dbus-run-session -- bash -c '
   done
   echo "--- functional GUI test ---"
   "$py" "$0" "$out" 2>>"$work/app.log" | tee "$work/smoke.log"
+  # the functional test above leaves another theme and accent behind: start the tour from the default look
+  surfctl reset --yes --no-reload >/dev/null 2>&1 || true
+  surfctl theme set "$tag_theme" --variant "$tag_variant" >/dev/null 2>&1 || true
+  sleep 3
   "$py" -m surf_settings.welcome >>"$work/app.log" 2>&1 &
   pid=$!
   sleep 3
@@ -66,7 +70,7 @@ dbus-run-session -- bash -c '
   # advance one page with the keyboard (Tab to Next, Enter)
   kill $pid; wait $pid 2>/dev/null
   swaymsg -q exit
-' "${REPO}/src/settings/tests/gui_smoke.py" "${work}" "${OUT}" "${PY}" "${THEME}-${VARIANT}" || true
+' "${REPO}/src/settings/tests/gui_smoke.py" "${work}" "${OUT}" "${PY}" "${THEME}-${VARIANT}" "${THEME}" "${VARIANT}" || true
 
 echo "--- application log (warnings/errors) ---"
 grep -iE "error|critical|warning|traceback" -A3 "${work}/app.log" | grep -v "Theme parser error" | head -40 || true

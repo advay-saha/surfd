@@ -59,7 +59,7 @@ dbus-run-session -- bash -c '
   export WAYLAND_DISPLAY=$(ls "$XDG_RUNTIME_DIR" | grep -E "^wayland-[0-9]+$" | head -n1)
   swaymsg -q output HEADLESS-1 resolution 1920x1080
   sleep 2
-  swaymsg -q exec "foot -e sh -c \"printf %s\\\\n \\\"\$ surfctl theme list\\\"; surfctl theme list; echo; printf %s\\\\n \\\"\$ surfctl keys list | head\\\"; surfctl keys list | head -12; sleep 60\""
+  swaymsg -q exec "foot -e sh -c \"echo \\\"\$ surfctl theme list\\\"; surfctl theme list; echo; echo \\\"\$ surfctl keys list | head\\\"; surfctl keys list | head -12; sleep 60\""
   swaymsg -q exec "foot -e sh -c \"surfctl explain layout; sleep 60\""
   sleep 2
   gdbus call --session --dest org.freedesktop.Notifications --object-path /org/freedesktop/Notifications \

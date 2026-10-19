@@ -9,7 +9,7 @@ from gi.repository import Gdk, GdkPixbuf, GLib, Gtk
 
 from surfd import color, themes
 
-ACCENT_PRESETS = ["#5fd3c4", "#6fb3e8", "#9a8cf0", "#e88bc4", "#f2777a", "#e8956b", "#f4c76c", "#9ccf6e"]
+ACCENT_PRESETS = ["#5ecfc2", "#4a90c8", "#9a8cf0", "#e88bc4", "#f2777a", "#e8956b", "#f4c76c", "#9ccf6e"]
 
 
 def css(text: str) -> None:

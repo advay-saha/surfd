@@ -63,6 +63,15 @@ def build_context(cfg: dict[str, Any] | None = None) -> Context:
 
 # ===================================================================== sway ==
 
+def accent_fill(p: Palette, lighten: float = 0.0) -> str:
+    """CSS background-image for surfaces filled with the accent: a teal-to-blue gradient when the
+    theme defines accent2, otherwise `none` (the solid accent colour underneath shows)."""
+    if p.accent2 == p.accent:
+        return "none"
+    a, b = (color.mix(c, "#ffffff", lighten) if lighten else c for c in (p.accent, p.accent2))
+    return f"linear-gradient(to right, {a}, {b})"
+
+
 def sway(ctx: Context) -> str:
     p, c = ctx.pal, ctx.c
     border = int(c("layout.border_width"))
@@ -330,7 +339,7 @@ tooltip label {{ color: {p.text}; }}
   transition: background-color 150ms ease, color 150ms ease, padding 150ms ease;
 }}
 #workspaces button:hover {{ background: {p.surface_alt}; color: {p.text}; box-shadow: none; }}
-#workspaces button.focused {{ background: {p.accent}; color: {p.accent_text}; padding: 0 14px; }}
+#workspaces button.focused {{ background-color: {p.accent}; background-image: {accent_fill(p)}; color: {p.accent_text}; padding: 0 14px; }}
 #workspaces button.urgent {{ background: {p.urgent}; color: {color.readable_on(p.urgent)}; }}
 
 #mode {{
@@ -665,7 +674,8 @@ entry {{
 }}
 entry:focus {{ border-color: {p.accent}; box-shadow: 0 0 0 2px {color.rgba(p.accent, 0.35)}; }}
 button {{
-  background: {p.accent};
+  background-color: {p.accent};
+  background-image: {accent_fill(p)};
   color: {p.accent_text};
   border: none;
   border-radius: {max(r - 2, 4)}px;
@@ -673,7 +683,7 @@ button {{
   font-weight: 600;
   transition: background-color 150ms ease;
 }}
-button:hover {{ background: {color.mix(p.accent, '#ffffff', 0.12)}; }}
+button:hover {{ background-color: {color.mix(p.accent, '#ffffff', 0.12)}; background-image: {accent_fill(p, 0.12)}; }}
 combobox button {{ background: {p.surface_alt}; color: {p.text}; }}
 """
 
