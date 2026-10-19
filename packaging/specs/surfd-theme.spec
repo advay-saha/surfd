@@ -5,7 +5,7 @@ Release:        1%{?dist}
 Summary:        Theme packs and wallpapers for the surfd desktop
 # Artwork CC-BY-SA-4.0; the small render tooling is MIT.
 License:        CC-BY-SA-4.0 AND MIT
-URL:            https://github.com/surfd/surfd
+URL:            https://github.com/advay-saha/surfd
 Source0:        surfd-%{version}.tar.gz
 BuildArch:      noarch
 

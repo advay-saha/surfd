@@ -21,8 +21,8 @@
   <developer id="org.surfd">
     <name>surfd contributors</name>
   </developer>
-  <url type="homepage">https://github.com/surfd/surfd</url>
-  <url type="bugtracker">https://github.com/surfd/surfd/issues</url>
+  <url type="homepage">https://github.com/advay-saha/surfd</url>
+  <url type="bugtracker">https://github.com/advay-saha/surfd/issues</url>
   <content_rating type="oars-1.1"/>
   <releases>
     <release version="0.1.0" date="2026-10-19">

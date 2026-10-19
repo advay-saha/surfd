@@ -19,7 +19,6 @@ Honest next steps, roughly in order. Nothing here exists yet.
   a stock Fedora install and adjust `release/presets/` (they replace
   `fedora-release-common`'s presets).
 - **Full CC BY-SA 4.0 legal text** in `LICENSES/CC-BY-SA-4.0.txt` (currently a summary + link).
-- **Real project URL** in the specs and os-release (currently `github.com/surfd/surfd`).
 
 ## Distribution
 

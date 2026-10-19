@@ -4,7 +4,7 @@ Version:        0.1.0
 Release:        1%{?dist}
 Summary:        Settings and welcome apps for the surfd desktop
 License:        MIT AND CC-BY-SA-4.0
-URL:            https://github.com/surfd/surfd
+URL:            https://github.com/advay-saha/surfd
 Source0:        surfd-%{version}.tar.gz
 BuildArch:      noarch
 

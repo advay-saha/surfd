@@ -4,7 +4,7 @@ Version:        0.1.0
 Release:        1%{?dist}
 Summary:        Configure the surfd desktop from one TOML file
 License:        MIT
-URL:            https://github.com/surfd/surfd
+URL:            https://github.com/advay-saha/surfd
 Source0:        surfd-%{version}.tar.gz
 BuildArch:      noarch
 

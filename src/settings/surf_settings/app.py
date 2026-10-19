@@ -475,7 +475,7 @@ class Window(Adw.ApplicationWindow):
                                 developer_name="surfd contributors", license_type=Gtk.License.MIT_X11,
                                 comments="Settings for the surfd desktop. surfd is based on Fedora Linux but is "
                                          "not an official Fedora project.",
-                                website="https://github.com/surfd/surfd")
+                                website="https://github.com/advay-saha/surfd")
         about.present(self)
 
 

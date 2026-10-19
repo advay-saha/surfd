@@ -1,7 +1,7 @@
 # surfd-release — identity of the surfd Fedora Remix (replaces fedora-release)
 %global surfd_version 0.1.0
-%global surfd_url https://github.com/surfd/surfd
-%global copr_project surfd/surfd
+%global surfd_url https://github.com/advay-saha/surfd
+%global copr_project advay-saha/surfd
 %global fedora_ver %{?fedora}%{!?fedora:44}
 
 Name:           surfd-release

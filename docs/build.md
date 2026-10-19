@@ -26,7 +26,7 @@ hosted surfd repo such as Copr instead of local RPMs), `--skip-rpms`,
 sudo dnf install lorax lorax-lmc-novirt anaconda-tui pykickstart rpm-build createrepo_c \
   python3-pytest python3-tomlkit python3-pillow librsvg2-tools desktop-file-utils appstream \
   systemd-rpm-macros
-git clone https://github.com/surfd/surfd && cd surfd
+git clone https://github.com/advay-saha/surfd && cd surfd
 ./build.sh rpms                              # ~1 min
 ./build.sh check                             # ~1 min, catches renamed packages
 sudo ./build.sh --skip-rpms --selinux-permissive iso    # 20-60 min
