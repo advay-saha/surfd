@@ -1,0 +1,51 @@
+[wallpaper]
+name = "Cyprus"
+kind = "solar"
+light = "07-sunp15.jpg"
+dark = "01-sunm51.jpg"
+mode = "fill"
+
+[[frame]]
+altitude = -70.0
+azimuth = 54.0
+file = "00-sunm70.jpg"
+
+[[frame]]
+altitude = -51.0
+azimuth = 81.0
+file = "01-sunm51.jpg"
+
+[[frame]]
+altitude = -17.0
+azimuth = 105.0
+file = "02-sunm17.jpg"
+
+[[frame]]
+altitude = -14.0
+azimuth = 106.0
+file = "03-sunm14.jpg"
+
+[[frame]]
+altitude = -10.0
+azimuth = 109.0
+file = "04-sunm10.jpg"
+
+[[frame]]
+altitude = -4.0
+azimuth = 113.0
+file = "05-sunm4.jpg"
+
+[[frame]]
+altitude = 6.0
+azimuth = 122.0
+file = "06-sunp6.jpg"
+
+[[frame]]
+altitude = 15.0
+azimuth = 130.0
+file = "07-sunp15.jpg"
+
+[[frame]]
+altitude = 26.0
+azimuth = 147.0
+file = "08-sunp26.jpg"

@@ -1,0 +1,11 @@
+Third-party artwork - licence NOT verified
+
+Files marked with this identifier are artwork made by other people. They are
+included in this repository at the maintainer's request, but their licence has
+NOT been checked and they are NOT covered by this repository's MIT or
+CC-BY-SA-4.0 licences. All rights remain with the original artists; see
+wallpapers/third-party/CREDITS.md for the names we know.
+
+Do not redistribute these files, or builds that contain them, unless you have
+confirmed you are allowed to. If you are the rights holder and want a file
+removed or credited differently, open an issue and it will be taken out.

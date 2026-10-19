@@ -1,0 +1,30 @@
+[wallpaper]
+name = "Desert sands"
+kind = "time"
+light = "03-afternoon.jpg"
+dark = "00-night.jpg"
+mode = "fill"
+
+[[frame]]
+at = "00:00"
+file = "00-night.jpg"
+
+[[frame]]
+at = "07:00"
+file = "01-morning.jpg"
+
+[[frame]]
+at = "09:40"
+file = "02-morning.jpg"
+
+[[frame]]
+at = "15:00"
+file = "03-afternoon.jpg"
+
+[[frame]]
+at = "20:00"
+file = "04-dusk.jpg"
+
+[[frame]]
+at = "22:00"
+file = "05-night.jpg"

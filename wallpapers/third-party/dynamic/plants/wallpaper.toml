@@ -1,0 +1,18 @@
+[wallpaper]
+name = "Plants"
+kind = "time"
+light = "01-morning.jpg"
+dark = "00-night.jpg"
+mode = "fill"
+
+[[frame]]
+at = "00:00"
+file = "00-night.jpg"
+
+[[frame]]
+at = "07:30"
+file = "01-morning.jpg"
+
+[[frame]]
+at = "19:30"
+file = "02-dusk.jpg"

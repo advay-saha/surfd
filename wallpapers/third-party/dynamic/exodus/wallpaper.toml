@@ -1,0 +1,22 @@
+[wallpaper]
+name = "Exodus"
+kind = "time"
+light = "01-morning.jpg"
+dark = "02-evening.jpg"
+mode = "fill"
+
+[[frame]]
+at = "00:00"
+file = "00-night.jpg"
+
+[[frame]]
+at = "07:00"
+file = "01-morning.jpg"
+
+[[frame]]
+at = "17:00"
+file = "02-evening.jpg"
+
+[[frame]]
+at = "19:00"
+file = "03-dusk.jpg"

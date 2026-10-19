@@ -1,0 +1,26 @@
+[wallpaper]
+name = "Low-poly mountain"
+kind = "time"
+light = "02-noon.jpg"
+dark = "00-night.jpg"
+mode = "fill"
+
+[[frame]]
+at = "00:00"
+file = "00-night.jpg"
+
+[[frame]]
+at = "06:00"
+file = "01-dawn.jpg"
+
+[[frame]]
+at = "12:00"
+file = "02-noon.jpg"
+
+[[frame]]
+at = "18:00"
+file = "03-evening.jpg"
+
+[[frame]]
+at = "20:00"
+file = "04-dusk.jpg"
