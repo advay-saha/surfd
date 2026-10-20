@@ -1,4 +1,4 @@
-<p align="center"><img src="docs/images/banner.png" alt="surfd: a tiling window manager for non-nerds" width="720"></p>
+<p align="center"><img src="docs/images/banner.png" alt="surfd: a SwayWM distro for people, not robots" width="720"></p>
 
 # surfd
 
