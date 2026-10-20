@@ -189,7 +189,6 @@ cmd_iso() {
         --project surfd \
         --releasever "${RELEASEVER}" \
         --volid "${volid}" \
-        --title "surfd ${SURFD_VERSION}" \
         --resultdir "${build}/result" \
         --logfile "${OUT_DIR}/iso/livemedia-creator.log" \
         --tmp /var/tmp
