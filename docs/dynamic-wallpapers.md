@@ -44,8 +44,8 @@ mode = "fill"                   # scaling, as for any wallpaper
 ## The sets
 
 Sets live in `/usr/share/surfd/wallpapers/dynamic/` (system) and `~/.local/share/surfd/wallpapers/dynamic/`
-(yours; same name = yours wins). The repository holds eight in `wallpapers/third-party/dynamic/`; only the
-default is installed by the `surfd-wallpapers` package.
+(yours; same name = yours wins). All eight in `wallpapers/third-party/dynamic/` are installed by the
+`surfd-wallpapers` package (other artists' work; see `wallpapers/third-party/CREDITS.md`).
 
 | set | follows | frames | source size |
 |---|---|---|---|

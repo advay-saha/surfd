@@ -17,7 +17,7 @@ from collections.abc import Callable
 from pathlib import Path
 from typing import Any
 
-from . import __version__, config, dynwall, generate, keys, paths, schema, session, system, themes
+from . import __version__, config, dynwall, gallery, generate, keys, paths, schema, session, system, themes
 
 BAR_PRESETS: dict[str, dict[str, list[str]]] = {
     "default": {"left": ["workspaces", "mode", "window"], "center": ["clock"],
@@ -295,7 +295,10 @@ def cmd_wallpaper(args: argparse.Namespace) -> int:
     if sub == "set":
         p = Path(args.path).expanduser().resolve()
         if not p.is_file():
-            return fail(f"no such file: {args.path}")
+            pic = gallery.find(args.path)  # a wallpaper from `surfctl wallpaper list`, by name
+            if pic is None:
+                return fail(f"no such file or wallpaper: {args.path} (see `surfctl wallpaper list`)")
+            p = pic.path
         changes: dict[str, Any] = {"wallpaper.path": str(p)}
         if args.mode:
             changes["wallpaper.mode"] = args.mode
@@ -349,11 +352,12 @@ def cmd_wallpaper(args: argparse.Namespace) -> int:
                     print(f"{t.name}/{v}: {wp}")
         for dset in dynwall.discover().values():
             print(f"dynamic {dset.name}: {dset.title}, {len(dset.frames)} frames, {dset.kind} based")
-        extra = paths.system_dir() / "wallpapers"
-        if extra.is_dir():
-            for f in sorted(extra.iterdir()):
-                if f.is_file():
-                    print(f"extra: {f}")
+        group = ""
+        for pic in gallery.discover():
+            if pic.group != group:
+                group = pic.group
+                print(f"\n{gallery.GROUPS[group]} (surfctl wallpaper set NAME):")
+            print(f"  {pic.name:<34} {pic.title}")
         return 0
     return fail(f"unknown wallpaper command {sub}")
 
@@ -738,7 +742,7 @@ def build_parser() -> argparse.ArgumentParser:
 
     wp = add("wallpaper", cmd_wallpaper, "set or reset the wallpaper")
     wsub = wp.add_subparsers(dest="wp_cmd", metavar="<action>")
-    s = wsub.add_parser("set", help="use an image file")
+    s = wsub.add_parser("set", help="use an image file, or a wallpaper by name from `list`")
     s.add_argument("path")
     s.add_argument("--mode", choices=("fill", "fit", "center", "tile", "stretch"))
     s.add_argument("--no-reload", action="store_true")
@@ -756,7 +760,7 @@ def build_parser() -> argparse.ArgumentParser:
     s.add_argument("longitude", nargs="?")
     s.add_argument("--no-reload", action="store_true")
     wsub.add_parser("status", help="which wallpaper and frame are showing, and all frames of the dynamic one")
-    wsub.add_parser("list", help="wallpapers shipped with themes and the dynamic ones")
+    wsub.add_parser("list", help="every wallpaper: themes', dynamic ones and the gallery")
     wsub.add_parser("apply", help=argparse.SUPPRESS)
     wsub.add_parser("daemon", help=argparse.SUPPRESS)
 

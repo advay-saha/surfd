@@ -21,18 +21,22 @@ Requires:       jetbrains-mono-fonts
 
 %description
 The theme packs that ship with surfd (Tide, Driftwood and Kelp, each with
-dark and light variants) and their original wallpapers. Theme packs are
-plain folders; the included theme-making guide explains the format.
+dark and light variants) and their original wallpapers, plus surfd's own
+gradient wallpapers (Tide, Driftwood, Kelp and Dusk; dark and light; 16:9,
+16:10 and ultrawide sizes). Theme packs are plain folders; the included
+theme-making guide explains the format.
 
 %package -n surfd-wallpapers
-Summary:        Dynamic (time-of-day) wallpapers for surfd
-# Artwork by other people whose licence has NOT been verified: replace or confirm before a release.
+Summary:        Dynamic (time-of-day) and still wallpapers by other artists for surfd
+# Artwork by other people, shipped at the maintainer's decision; licences NOT verified (see CREDITS.md).
 License:        LicenseRef-third-party-unverified
 Requires:       surfd-default-config
 
 %description -n surfd-wallpapers
-Wallpapers that change through the day, used by `[wallpaper] dynamic` in surfd.toml. Includes the
-default, "Low-poly mountain". Credits and licence status: /usr/share/doc/surfd-wallpapers/CREDITS.md.
+Eight wallpapers that change through the day (`[wallpaper] dynamic` in surfd.toml), including the
+default, "Low-poly mountain", and 18 still wallpapers for the Picture gallery in Surf Settings.
+They are other people's artwork; credits, sources and licence status:
+/usr/share/doc/surfd-wallpapers/CREDITS.md.
 
 %package -n plymouth-theme-surfd
 Summary:        surfd boot splash
@@ -70,9 +74,16 @@ find %{buildroot}%{_datadir}/surfd/themes -type f -exec chmod 0644 {} +
 install -d %{buildroot}%{_datadir}/surfd/greeter
 ln -s ../themes/tide/wallpapers/tide-dark.jpg %{buildroot}%{_datadir}/surfd/greeter/background
 
-# dynamic wallpapers (only the default set is packaged)
-install -d %{buildroot}%{_datadir}/surfd/wallpapers/dynamic
-cp -a wallpapers/third-party/dynamic/low-poly-mountain %{buildroot}%{_datadir}/surfd/wallpapers/dynamic/
+# surfd's own gradient wallpapers (surfd-theme), one folder per colourway, every size
+for c in tide driftwood kelp dusk; do
+  install -d %{buildroot}%{_datadir}/surfd/wallpapers/surfd/$c
+  install -pm 0644 wallpapers/generated/$c/*.jpg %{buildroot}%{_datadir}/surfd/wallpapers/surfd/$c/
+done
+# other artists' wallpapers (surfd-wallpapers): every dynamic set and the still images
+install -d %{buildroot}%{_datadir}/surfd/wallpapers/dynamic %{buildroot}%{_datadir}/surfd/wallpapers/static
+cp -a wallpapers/third-party/dynamic/. %{buildroot}%{_datadir}/surfd/wallpapers/dynamic/
+install -pm 0644 wallpapers/third-party/static/* %{buildroot}%{_datadir}/surfd/wallpapers/static/
+find %{buildroot}%{_datadir}/surfd/wallpapers -type d -exec chmod 0755 {} +
 find %{buildroot}%{_datadir}/surfd/wallpapers -type f -exec chmod 0644 {} +
 
 # plymouth
@@ -104,10 +115,15 @@ for t in %{buildroot}%{_datadir}/surfd/themes/*/; do
   done
 done
 test $(ls %{buildroot}%{_datadir}/plymouth/themes/surfd/throbber-*.png | wc -l) -eq 36
-# the default dynamic wallpaper is complete: every frame named in wallpaper.toml exists
-set=%{buildroot}%{_datadir}/surfd/wallpapers/dynamic/low-poly-mountain
-test -f $set/wallpaper.toml
-for f in $(sed -n 's/^\(file\|light\|dark\) *= *"\(.*\)"/\2/p' $set/wallpaper.toml); do test -f $set/$f; done
+# every dynamic set is complete (every frame named in wallpaper.toml exists), the default among them
+test -f %{buildroot}%{_datadir}/surfd/wallpapers/dynamic/low-poly-mountain/wallpaper.toml
+for set in %{buildroot}%{_datadir}/surfd/wallpapers/dynamic/*/; do
+  test -f $set/wallpaper.toml
+  for f in $(sed -n 's/^\(file\|light\|dark\) *= *"\(.*\)"/\2/p' $set/wallpaper.toml); do test -f $set/$f; done
+done
+# four gradient colourways x dark/light x four sizes, and the still images
+test $(ls %{buildroot}%{_datadir}/surfd/wallpapers/surfd/*/*.jpg | wc -l) -eq 32
+test $(ls %{buildroot}%{_datadir}/surfd/wallpapers/static | wc -l) -ge 18
 
 %files
 %license LICENSES/CC-BY-SA-4.0.txt LICENSES/MIT.txt
@@ -115,6 +131,8 @@ for f in $(sed -n 's/^\(file\|light\|dark\) *= *"\(.*\)"/\2/p' $set/wallpaper.to
 %dir %{_datadir}/surfd
 %{_datadir}/surfd/themes
 %{_datadir}/surfd/greeter
+%dir %{_datadir}/surfd/wallpapers
+%{_datadir}/surfd/wallpapers/surfd
 
 %files -n surfd-wallpapers
 %license LICENSES/LicenseRef-third-party-unverified.txt
@@ -122,6 +140,7 @@ for f in $(sed -n 's/^\(file\|light\|dark\) *= *"\(.*\)"/\2/p' $set/wallpaper.to
 %dir %{_datadir}/surfd
 %dir %{_datadir}/surfd/wallpapers
 %{_datadir}/surfd/wallpapers/dynamic
+%{_datadir}/surfd/wallpapers/static
 
 %files -n plymouth-theme-surfd
 %license LICENSES/CC-BY-SA-4.0.txt

@@ -73,6 +73,14 @@ def run_steps(app: App) -> bool:
               "choosing a frame saves its file name")
         sway_conf = (paths.generated_dir() / "sway" / "config").read_text()
         check(f'/{config.load()["wallpaper"]["frame"]}" ' in sway_conf, "the Sway config shows that frame")
+        # 3c. a still picture from the gallery wins over the dynamic wallpaper
+        pics = _row(picker, "Picture")
+        labels = [pics.get_model().get_string(i) for i in range(pics.get_model().get_n_items())]
+        check(pics.get_visible() and "Tide, dark (3840×2160)" in labels and any("more wallpapers" in x for x in labels),
+              f"the Picture row offers surfd's own and the other wallpapers ({len(labels) - 1} pictures)")
+        pics.set_selected(labels.index("Tide, dark (3840×2160)"))
+        check(config.load()["wallpaper"]["path"].endswith("/tide-dark-3840x2160.jpg"),
+              "choosing a picture sets wallpaper.path")
         _button(picker, "Default").emit("clicked")
         w = config.load()["wallpaper"]
         check((w["dynamic"], w["sync"], w["frame"], w["path"]) == ("low-poly-mountain", "auto", "", ""),

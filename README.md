@@ -177,4 +177,10 @@ Code: MIT ([LICENSE](LICENSE)). Artwork, themes and documentation: CC BY-SA 4.0
 [Fedora Remix guidelines](https://fedoraproject.org/wiki/Remix). "Fedora" is a
 trademark of Red Hat, Inc.
 
+**Other artists' wallpapers.** The dynamic wallpapers (including the default,
+Low-poly mountain) and 18 still pictures in `wallpapers/third-party/` are
+other people's artwork, not covered by the licences above and with licences
+not confirmed. Sources and credits: [CREDITS.md](wallpapers/third-party/CREDITS.md).
+Artists who want a picture removed or credited differently: please open an issue.
+
 Contributions are welcome. Start with [CONTRIBUTING.md](CONTRIBUTING.md).

@@ -156,11 +156,17 @@ Themes you made live in `~/.local/share/surfd/themes/`; add them too.
 ## Wallpapers
 
 By default surfd shows **Low-poly mountain**, a dynamic wallpaper: a set of pictures that changes through
-the day. Your own image, when you set one, always wins. See [dynamic-wallpapers.md](dynamic-wallpapers.md).
+the day. A still picture (Surf Settings → Appearance → Wallpaper → *Picture*, or `surfctl wallpaper set NAME`)
+or your own image, when you set one, always wins. See [dynamic-wallpapers.md](dynamic-wallpapers.md).
+
+The still pictures are surfd's own gradient wallpapers (Tide, Driftwood, Kelp and Dusk, dark and light,
+in 16:9, 16:10 and ultrawide sizes; pick the size that matches your screen) and 18 images by other artists.
+Pictures you put in `~/.local/share/surfd/wallpapers/static/` are listed first.
 
 ```sh
 surfctl wallpaper status                    # what is showing, and every frame of the set
-surfctl wallpaper list                      # theme wallpapers and dynamic sets
+surfctl wallpaper list                      # theme wallpapers, dynamic sets and the still pictures
+surfctl wallpaper set tide-dark-3840x2160   # a still picture by name (wins over the dynamic one)
 surfctl wallpaper dynamic cyprus            # pick a set (or "off" for the theme's wallpaper)
 surfctl wallpaper sync auto                 # follow the time of day (the sun, for "cyprus")
 surfctl wallpaper sync theme                # lightest frame in light style, darkest in dark style

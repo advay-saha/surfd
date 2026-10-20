@@ -14,7 +14,7 @@ gi.require_version("Gtk", "4.0")
 gi.require_version("Adw", "1")
 from gi.repository import Adw, Gio, GLib, Gtk  # noqa: E402
 
-from surfd import __version__, config, dynwall, keys, paths, schema, themes  # noqa: E402
+from surfd import __version__, config, dynwall, gallery, keys, paths, schema, themes  # noqa: E402
 
 from .controller import Controller  # noqa: E402
 from .widgets import APP_CSS, AccentRow, ThemePicker, css, keycap_row  # noqa: E402
@@ -351,9 +351,9 @@ class Window(Adw.ApplicationWindow):
         return self.page(g, g2, g3)
 
     def group_wallpaper(self) -> Adw.PreferencesGroup:
-        """Wallpaper: a dynamic (time-of-day) set, what it follows, your own image, scaling."""
+        """Wallpaper: a dynamic (time-of-day) set, what it follows, a still picture or your own image, scaling."""
         g = Adw.PreferencesGroup(title="Wallpaper", description="A dynamic wallpaper changes through the day. "
-                                 "Your own image, when set, is shown instead.")
+                                 "A picture or your own image, when set, is shown instead.")
         default = Gtk.Button(label="Default", valign=Gtk.Align.CENTER)
         default.add_css_class("flat")
         default.set_tooltip_text("Back to the default wallpaper, following the time of day")
@@ -420,6 +420,33 @@ class Window(Adw.ApplicationWindow):
 
         self.refreshers.append(refresh_dynamic)
 
+        # still wallpapers that come with surfd (and ~/.local/share/surfd/wallpapers/static): pick one by name
+        pic_list: list[gallery.Picture] = []
+        pics = Adw.ComboRow(title="Picture", subtitle="A still wallpaper that comes with surfd",
+                            model=Gtk.StringList(), enable_search=True)
+        pics.set_expression(Gtk.PropertyExpression.new(Gtk.StringObject, None, "string"))
+
+        def on_picture(r: Adw.ComboRow, _p: object) -> None:
+            i = r.get_selected()
+            if self.updating or i == 0 or i > len(pic_list):
+                return
+            path = str(pic_list[i - 1].path)
+            if path != (self.ctl.get("wallpaper.path") or ""):
+                self._set("wallpaper.path", path, now=True)
+
+        pics.connect("notify::selected", on_picture)
+
+        def refresh_pictures() -> None:
+            pic_list[:] = gallery.discover()
+            current = self.ctl.get("wallpaper.path") or ""
+            index = next((i + 1 for i, p in enumerate(pic_list) if str(p.path) == current), 0)
+            labels = [f"{p.title}" if p.group == "surfd" else f"{p.title} ({gallery.GROUPS[p.group].lower()})"
+                      for p in pic_list]
+            fill(pics, ["None", *labels], index)
+            pics.set_visible(bool(pic_list))
+
+        self.refreshers.append(refresh_pictures)
+
         own = Adw.ActionRow(title="Your own image")
         choose = Gtk.Button(label="Choose…", valign=Gtk.Align.CENTER)
         choose.connect("clicked", lambda _b: self.choose_wallpaper())
@@ -436,7 +463,7 @@ class Window(Adw.ApplicationWindow):
 
         self.refreshers.append(refresh_own)
 
-        for row in (dyn, sync, frame, location, own, self.combo("wallpaper.mode")):
+        for row in (dyn, sync, frame, location, pics, own, self.combo("wallpaper.mode")):
             g.add(row)
         return g
 
