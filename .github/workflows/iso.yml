@@ -43,6 +43,7 @@ jobs:
       # userspace: run it in a privileged Fedora container with /dev shared.
       - name: Build ISO in a privileged Fedora container
         run: |
+          set -o pipefail
           sudo docker run --rm --privileged -v /dev:/dev -v "$PWD":/src -w /src \
             "registry.fedoraproject.org/fedora:${RELEASEVER}" bash -euxc '
               dnf -y install --setopt=install_weak_deps=False lorax lorax-lmc-novirt anaconda-tui \
@@ -53,7 +54,13 @@ jobs:
               ./build.sh --releasever '"${RELEASEVER}"' rpms
               ./build.sh --releasever '"${RELEASEVER}"' check
               ./build.sh --releasever '"${RELEASEVER}"' --skip-rpms --selinux-permissive iso
-            '
+            ' 2>&1 | tee build.log
+
+      - name: Show why the build failed
+        if: failure()
+        run: |
+          tools/ci-log-tail.sh build.log
+          if [ -f out/iso/livemedia-creator.log ]; then sudo tools/ci-log-tail.sh out/iso/livemedia-creator.log 60; fi
 
       - name: Collect artifacts
         run: |

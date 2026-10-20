@@ -46,7 +46,11 @@ jobs:
       - name: Build RPMs (real Fedora macros, %check runs the test suite)
         run: |
           git config --global --add safe.directory "$GITHUB_WORKSPACE"
-          ./build.sh --releasever ${{ matrix.fedora }} rpms
+          set -o pipefail
+          ./build.sh --releasever ${{ matrix.fedora }} rpms 2>&1 | tee build.log
+      - name: Show why the RPM build failed
+        if: failure()
+        run: tools/ci-log-tail.sh build.log
       - name: rpmlint
         run: rpmlint -r packaging/surfd.rpmlintrc --ignore-unused-rpmlintrc out/repo/*.rpm
       - name: Every kickstart package exists in Fedora ${{ matrix.fedora }}
