@@ -64,6 +64,21 @@ for g in "${groups[@]}"; do
         missing=$((missing + 1))
     fi
 done
+# Every dependency of surfd's own packages must be provided by Fedora or by surfd itself
+# (otherwise the ISO build fails minutes later, inside Anaconda).
+if [[ -n "${SURFD_REPO}" ]]; then
+    own_args=(--releasever="${RELEASEVER}" --forcearch="${ARCH}"
+              --repofrompath="surfd,${SURFD_REPO}" --repo=surfd --setopt=surfd.gpgcheck=0)
+    mapfile -t reqs < <(dnf repoquery "${own_args[@]}" --quiet --arch=noarch,"${ARCH}" --requires 2>/dev/null \
+        | grep -v '^rpmlib(' | sed '/^$/d' | sort -u)
+    echo "Checking ${#reqs[@]} dependencies of surfd's packages..."
+    for r in "${reqs[@]}"; do
+        if ! dnf repoquery "${dnf_args[@]}" --quiet --whatprovides "${r}" 2>/dev/null | grep -q .; then
+            echo "  MISSING dependency: ${r}"
+            missing=$((missing + 1))
+        fi
+    done
+fi
 for x in "${excluded[@]}"; do
     dnf repoquery "${dnf_args[@]}" --quiet "${x}" 2>/dev/null | grep -q . \
         || echo "  note: excluded package '${x}' does not exist (exclusion is a no-op)"

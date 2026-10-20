@@ -17,8 +17,8 @@ BuildRequires:  python3-pytest
 
 Requires:       surfctl = %{version}-%{release}
 Requires:       python3-gobject
-Requires:       typelib(Gtk) = 4.0
-Requires:       typelib(Adw) = 1
+Requires:       gtk4
+Requires:       libadwaita
 Recommends:     surfd-hwprobe
 Recommends:     polkit
 
@@ -31,8 +31,8 @@ essential keys, and (on live media) start the installer.
 %package -n surfd-installer
 Summary:        Simple installer for surfd live media
 Requires:       python3-gobject
-Requires:       typelib(Gtk) = 4.0
-Requires:       typelib(Adw) = 1
+Requires:       gtk4
+Requires:       libadwaita
 # the install engine
 Requires:       gdisk
 Requires:       util-linux

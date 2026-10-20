@@ -185,6 +185,7 @@ cmd_iso() {
         --no-virt \
         --make-iso \
         --iso-only \
+        --nomacboot \
         --iso-name "${iso_name}" \
         --project surfd \
         --releasever "${RELEASEVER}" \
