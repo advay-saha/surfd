@@ -3,7 +3,6 @@ name = "Cyprus"
 kind = "solar"
 light = "07-sunp15.jpg"
 dark = "01-sunm51.jpg"
-mode = "fill"
 
 [[frame]]
 altitude = -70.0

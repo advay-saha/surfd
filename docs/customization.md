@@ -34,7 +34,9 @@ surfctl theme variant toggle                # dark <-> light
 surfctl accent '#e88bc4'                    # accent colour
 surfctl accent reset                        # back to the theme's accent
 surfctl wallpaper set ~/Pictures/pier.jpg --mode fill
-surfctl wallpaper reset                     # theme wallpaper again
+surfctl wallpaper dynamic desert-sands      # a wallpaper that changes through the day
+surfctl wallpaper sync theme                # ...or follows light/dark; "auto" = time of day
+surfctl wallpaper reset                     # back to the default wallpaper
 surfctl font ui "Inter" 11
 surfctl font mono "JetBrains Mono" 12
 surfctl radius 14                           # bar, notifications, launcher, login screen
@@ -150,6 +152,21 @@ git init && git add surfd.toml sway.d && git commit -m "my desktop"
 ```
 
 Themes you made live in `~/.local/share/surfd/themes/`; add them too.
+
+## Wallpapers
+
+By default surfd shows **Low-poly mountain**, a dynamic wallpaper: a set of pictures that changes through
+the day. Your own image, when you set one, always wins. See [dynamic-wallpapers.md](dynamic-wallpapers.md).
+
+```sh
+surfctl wallpaper status                    # what is showing, and every frame of the set
+surfctl wallpaper list                      # theme wallpapers and dynamic sets
+surfctl wallpaper dynamic cyprus            # pick a set (or "off" for the theme's wallpaper)
+surfctl wallpaper sync auto                 # follow the time of day (the sun, for "cyprus")
+surfctl wallpaper sync theme                # lightest frame in light style, darkest in dark style
+surfctl wallpaper sync frame noon           # keep one frame, by number or part of its name
+surfctl wallpaper location 35.2 33.4        # where you are, for sets that follow the sun
+```
 
 ## Login screen
 

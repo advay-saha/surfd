@@ -3,7 +3,6 @@ name = "Tokyo street"
 kind = "time"
 light = "02-evening.jpg"
 dark = "00-night.jpg"
-mode = "fill"
 
 [[frame]]
 at = "00:00"

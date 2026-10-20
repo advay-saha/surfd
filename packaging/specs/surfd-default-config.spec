@@ -84,7 +84,7 @@ install -Dpm 0755 src/session/surfd-session %{buildroot}%{_bindir}/surfd-session
 install -Dpm 0644 docs/man/surfd-session.1 %{buildroot}%{_mandir}/man1/surfd-session.1
 install -d %{buildroot}%{_libexecdir}/surfd
 install -pm 0755 src/session/libexec/surfd-bar src/session/libexec/surfd-idle \
-    src/session/libexec/surfd-greeter %{buildroot}%{_libexecdir}/surfd/
+    src/session/libexec/surfd-dynwall src/session/libexec/surfd-greeter %{buildroot}%{_libexecdir}/surfd/
 install -Dpm 0644 src/session/surfd.desktop %{buildroot}%{_datadir}/wayland-sessions/surfd.desktop
 install -Dpm 0644 config/systemd/surfd-session.target %{buildroot}%{_userunitdir}/surfd-session.target
 install -d %{buildroot}%{_sysconfdir}/surfd/sway.d
@@ -142,6 +142,7 @@ for f in %{buildroot}%{_libexecdir}/surfd/*; do bash -n "$f"; done
 %dir %{_libexecdir}/surfd
 %{_libexecdir}/surfd/surfd-bar
 %{_libexecdir}/surfd/surfd-idle
+%{_libexecdir}/surfd/surfd-dynwall
 %{_libexecdir}/surfd/surfd-greeter
 %{_datadir}/wayland-sessions/surfd.desktop
 %{_userunitdir}/surfd-session.target

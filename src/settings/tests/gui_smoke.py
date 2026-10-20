@@ -51,6 +51,32 @@ def run_steps(app: App) -> bool:
         # 3. a validated numeric change through the controller path
         win.ctl.change_now({"layout.gaps_inner": 14})
         check(config.load()["layout"]["gaps_inner"] == 14, "gaps change saved")
+        # 3b. dynamic wallpaper: pick a set, choose what it follows, fix one frame, go back to the default
+        dyn = _row(picker, "Dynamic wallpaper")
+        follows, frame, location = _row(picker, "Follows"), _row(picker, "Frame"), _row(picker, "Location (latitude, longitude)")
+        titles = [dyn.get_model().get_string(i) for i in range(dyn.get_model().get_n_items())]
+        check("Low-poly mountain" in titles, f"the default dynamic wallpaper is offered ({titles})")
+        check(titles[dyn.get_selected()] == "Low-poly mountain", "the default dynamic wallpaper is selected")
+        check(follows.get_visible() and not frame.get_visible() and not location.get_visible(),
+              "following the time of day shows no frame or location rows for a clock-based set")
+        follows.set_selected(1)  # "Light / dark style"
+        check(config.load()["wallpaper"]["sync"] == "theme", "'Light / dark style' sets wallpaper.sync = theme")
+        follows.set_selected(2)  # "One frame"
+        check(frame.get_visible(), "the frame row appears when one frame is chosen")
+        applied: list[int] = []
+        original = win.ctl._flush
+        win.ctl._flush = lambda: (applied.append(1), original())[1]  # type: ignore[method-assign]
+        frame.set_selected(2)
+        win.ctl._flush = original  # type: ignore[method-assign]
+        check(len(applied) == 1, f"choosing a frame applies exactly one change, not a feedback loop ({len(applied)})")
+        check(config.load()["wallpaper"]["sync"] == "frame" and config.load()["wallpaper"]["frame"].startswith("02-"),
+              "choosing a frame saves its file name")
+        sway_conf = (paths.generated_dir() / "sway" / "config").read_text()
+        check(f'/{config.load()["wallpaper"]["frame"]}" ' in sway_conf, "the Sway config shows that frame")
+        _button(picker, "Default").emit("clicked")
+        w = config.load()["wallpaper"]
+        check((w["dynamic"], w["sync"], w["frame"], w["path"]) == ("low-poly-mountain", "auto", "", ""),
+              "the Default button restores the default wallpaper")
         # 4. an invalid change is refused and the file is untouched
         before = paths.user_config().read_text()
         win.ctl.change_now({"bar.left": ["teleporter"]})
@@ -81,6 +107,32 @@ def _find(widget, cls_name: str):  # type: ignore[no-untyped-def]
             stack.append(child)
             child = child.get_next_sibling()
     raise LookupError(cls_name)
+
+
+def _row(widget, title: str):  # type: ignore[no-untyped-def]
+    stack = [widget]
+    while stack:
+        w = stack.pop()
+        if hasattr(w, "get_title") and w.get_title() == title and type(w).__name__.endswith("Row"):
+            return w
+        child = w.get_first_child()
+        while child is not None:
+            stack.append(child)
+            child = child.get_next_sibling()
+    raise LookupError(title)
+
+
+def _button(widget, label: str):  # type: ignore[no-untyped-def]
+    stack = [widget]
+    while stack:
+        w = stack.pop()
+        if type(w).__name__ == "Button" and w.get_label() == label:
+            return w
+        child = w.get_first_child()
+        while child is not None:
+            stack.append(child)
+            child = child.get_next_sibling()
+    raise LookupError(label)
 
 
 def main() -> int:

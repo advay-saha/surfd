@@ -3,7 +3,6 @@ name = "Desert sands"
 kind = "time"
 light = "03-afternoon.jpg"
 dark = "00-night.jpg"
-mode = "fill"
 
 [[frame]]
 at = "00:00"

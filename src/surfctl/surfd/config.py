@@ -21,7 +21,7 @@ from typing import Any
 
 import tomlkit
 
-from . import keys, paths, schema
+from . import dynwall, keys, paths, schema
 
 
 class ConfigError(Exception):
@@ -118,7 +118,26 @@ def validate(cfg: dict[str, Any], *, check_theme: bool = True) -> list[Problem]:
 
     wp = get(cfg, "wallpaper.path", "")
     if isinstance(wp, str) and wp and not Path(os.path.expanduser(wp)).is_file():
-        problems.append(Problem("warning", "wallpaper.path", f"file not found: {wp} (theme wallpaper will be used)"))
+        problems.append(Problem("warning", "wallpaper.path", f"file not found: {wp} (the dynamic or theme wallpaper will be used)"))
+
+    loc = get(cfg, "wallpaper.location", "")
+    if isinstance(loc, str):
+        try:
+            dynwall.parse_location(loc)
+        except dynwall.DynError as e:
+            problems.append(Problem("error", "wallpaper.location", str(e)))
+    dyn = get(cfg, "wallpaper.dynamic", "")
+    if isinstance(dyn, str) and dyn:
+        sets = dynwall.discover()
+        if dyn not in sets:
+            have = ", ".join(sets) or "none installed"
+            problems.append(Problem("warning", "wallpaper.dynamic",
+                                    f"dynamic wallpaper '{dyn}' not found (installed: {have}); the theme wallpaper will be used"))
+        elif get(cfg, "wallpaper.sync", "auto") == "frame":
+            frame = get(cfg, "wallpaper.frame", "")
+            if not isinstance(frame, str) or dynwall.named_frame(sets[dyn], frame) is None:
+                problems.append(Problem("warning", "wallpaper.frame",
+                                        f"'{frame}' is not exactly one frame of '{dyn}' (see `surfctl wallpaper status`); using the style's frame"))
 
     if check_theme:
         from . import themes  # local import: themes imports config helpers

@@ -22,7 +22,12 @@ size = 11
 mono_size = 11
 
 [wallpaper]
-path = ""                # "" = the theme's wallpaper; or "~/Pictures/beach.jpg"
+path = ""                # your own image, e.g. "~/Pictures/beach.jpg"; it wins over the dynamic wallpaper
+dynamic = "low-poly-mountain"  # a wallpaper that changes with the time of day; "" = the theme's wallpaper
+sync = "auto"            # "auto" = follow the time of day, "theme" = lightest/darkest frame for the
+                         # light/dark style, "frame" = one fixed frame (see frame)
+frame = ""               # with sync = "frame": which frame (surfctl wallpaper status)
+location = ""            # for sun-following sets: "35.2, 33.4" (latitude, longitude); "" = guess
 mode = "fill"            # fill | fit | center | tile | stretch
 
 [layout]

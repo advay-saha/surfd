@@ -14,13 +14,14 @@ gi.require_version("Gtk", "4.0")
 gi.require_version("Adw", "1")
 from gi.repository import Adw, Gio, GLib, Gtk  # noqa: E402
 
-from surfd import __version__, config, keys, paths, schema, themes  # noqa: E402
+from surfd import __version__, config, dynwall, keys, paths, schema, themes  # noqa: E402
 
 from .controller import Controller  # noqa: E402
 from .widgets import APP_CSS, AccentRow, ThemePicker, css, keycap_row  # noqa: E402
 
 APP_ID = "org.surfd.Settings"
 PAGES = ("appearance", "layout", "bar", "input", "apps", "system")
+SYNC_LABELS = {"auto": "Time of day", "theme": "Light / dark style", "frame": "One frame"}
 
 
 def _choices(dotted: str) -> list[str]:
@@ -168,18 +169,7 @@ class Window(Adw.ApplicationWindow):
                                                          themes.resolve(self.ctl.cfg)[1].accent))
         g_accent.add(accent)
 
-        g_wp = Adw.PreferencesGroup(title="Wallpaper")
-        wp_row = Adw.ActionRow(title="Image")
-        choose = Gtk.Button(label="Choose…", valign=Gtk.Align.CENTER)
-        choose.connect("clicked", lambda _b: self.choose_wallpaper())
-        wp_reset = Gtk.Button(label="Theme default", valign=Gtk.Align.CENTER)
-        wp_reset.add_css_class("flat")
-        wp_reset.connect("clicked", lambda _b: self._set("wallpaper.path", "", now=True))
-        wp_row.add_suffix(wp_reset)
-        wp_row.add_suffix(choose)
-        self.refreshers.append(lambda: wp_row.set_subtitle(self.ctl.get("wallpaper.path") or "From the theme"))
-        g_wp.add(wp_row)
-        g_wp.add(self.combo("wallpaper.mode"))
+        g_wp = self.group_wallpaper()
 
         g_fonts = Adw.PreferencesGroup(title="Fonts")
         for which in ("ui", "mono"):
@@ -359,6 +349,102 @@ class Window(Adw.ApplicationWindow):
         hw.add_suffix(hb)
         g3.add(hw)
         return self.page(g, g2, g3)
+
+    def group_wallpaper(self) -> Adw.PreferencesGroup:
+        """Wallpaper: a dynamic (time-of-day) set, what it follows, your own image, scaling."""
+        g = Adw.PreferencesGroup(title="Wallpaper", description="A dynamic wallpaper changes through the day. "
+                                 "Your own image, when set, is shown instead.")
+        default = Gtk.Button(label="Default", valign=Gtk.Align.CENTER)
+        default.add_css_class("flat")
+        default.set_tooltip_text("Back to the default wallpaper, following the time of day")
+        default.connect("clicked", lambda _b: None if self.updating else self.ctl.change_now(
+            {"wallpaper.path": "", "wallpaper.dynamic": dynwall.DEFAULT_SET, "wallpaper.sync": "auto",
+             "wallpaper.frame": ""}))
+        g.set_header_suffix(default)
+
+        set_names: list[str] = [""]
+        dyn = Adw.ComboRow(title=schema.SCHEMA["wallpaper.dynamic"].label, subtitle="Changes with the time of day",
+                           model=Gtk.StringList())
+
+        def fill(row: Adw.ComboRow, labels: list[str], index: int) -> None:
+            """Update a combo only where it differs: rebuilding the list or re-selecting inside a change
+            handler makes Adwaita send another "selected" notification after our guard is released."""
+            model = row.get_model()
+            if [model.get_string(i) for i in range(model.get_n_items())] != labels:
+                row.set_model(Gtk.StringList.new(labels))
+            if row.get_selected() != index:
+                row.set_selected(index)
+
+        def on_dynamic(r: Adw.ComboRow, _p: object) -> None:
+            i = r.get_selected()
+            if self.updating or i >= len(set_names) or set_names[i] == (self.ctl.get("wallpaper.dynamic") or ""):
+                return
+            changes: dict[str, Any] = {"wallpaper.dynamic": set_names[i]}
+            if set_names[i]:
+                changes["wallpaper.path"] = ""  # picking a dynamic wallpaper means you want to see it
+            self.ctl.change_now(changes)
+
+        dyn.connect("notify::selected", on_dynamic)
+
+        sync = self.combo("wallpaper.sync", SYNC_LABELS)
+        sync.set_subtitle("What decides which picture is shown")
+        frame_names: list[str] = []
+        frame = Adw.ComboRow(title=schema.SCHEMA["wallpaper.frame"].label, subtitle="The picture to keep showing",
+                             model=Gtk.StringList())
+
+        def on_frame(r: Adw.ComboRow, _p: object) -> None:
+            i = r.get_selected()
+            if self.updating or i >= len(frame_names) or frame_names[i] == self.ctl.get("wallpaper.frame"):
+                return
+            self._set("wallpaper.frame", frame_names[i], now=True)
+
+        frame.connect("notify::selected", on_frame)
+        location = self.entry("wallpaper.location")
+        location.set_title("Location (latitude, longitude)")
+
+        def refresh_dynamic() -> None:
+            sets = dynwall.discover()
+            set_names[:] = ["", *sets]
+            name = self.ctl.get("wallpaper.dynamic") or ""
+            fill(dyn, ["None (use the theme's wallpaper)", *(d.title for d in sets.values())],
+                 set_names.index(name) if name in set_names else 0)
+            dset = sets.get(name)
+            mode = self.ctl.get("wallpaper.sync") or "auto"
+            sync.set_visible(dset is not None)
+            frame_names[:] = [f.file.name for f in dset.frames] if dset else []
+            wanted = dynwall.named_frame(dset, self.ctl.get("wallpaper.frame") or "") if dset else None
+            fill(frame, [self._frame_label(dset, f) for f in dset.frames] if dset else [],
+                 frame_names.index(wanted.name) if wanted and wanted.name in frame_names else 0)
+            frame.set_visible(dset is not None and mode == "frame")
+            location.set_visible(dset is not None and dset.kind == "solar" and mode == "auto")
+
+        self.refreshers.append(refresh_dynamic)
+
+        own = Adw.ActionRow(title="Your own image")
+        choose = Gtk.Button(label="Choose…", valign=Gtk.Align.CENTER)
+        choose.connect("clicked", lambda _b: self.choose_wallpaper())
+        clear = Gtk.Button(label="Remove", valign=Gtk.Align.CENTER)
+        clear.add_css_class("flat")
+        clear.connect("clicked", lambda _b: self._set("wallpaper.path", "", now=True))
+        own.add_suffix(clear)
+        own.add_suffix(choose)
+
+        def refresh_own() -> None:
+            path = self.ctl.get("wallpaper.path") or ""
+            own.set_subtitle(path or "None; the wallpaper above (or the theme's) is shown")
+            clear.set_visible(bool(path))
+
+        self.refreshers.append(refresh_own)
+
+        for row in (dyn, sync, frame, location, own, self.combo("wallpaper.mode")):
+            g.add(row)
+        return g
+
+    @staticmethod
+    def _frame_label(dset: dynwall.DynSet, f: dynwall.Frame) -> str:
+        if f.at is not None:
+            return f"{f.file.stem.split('-', 1)[-1].capitalize()}  ({f.at // 60:02d}:{f.at % 60:02d})"
+        return f"{f.file.stem.split('-', 1)[-1]}  (sun {f.altitude:+.0f}°)"
 
     # ------------------------------------------------------------ actions ----
     def choose_wallpaper(self) -> None:

@@ -17,7 +17,7 @@ from collections.abc import Callable
 from pathlib import Path
 from typing import Any
 
-from . import __version__, config, generate, keys, paths, schema, session, system, themes
+from . import __version__, config, dynwall, generate, keys, paths, schema, session, system, themes
 
 BAR_PRESETS: dict[str, dict[str, list[str]]] = {
     "default": {"left": ["workspaces", "mode", "window"], "center": ["clock"],
@@ -265,6 +265,31 @@ def cmd_accent(args: argparse.Namespace) -> int:
                          "accent reset to theme default" if not value else f"accent set to {value}")
 
 
+def _wallpaper_status() -> int:
+    ctx = generate.build_context()
+    sets = dynwall.discover()
+    name = ctx.c("wallpaper.dynamic") or ""
+    if ctx.custom_wallpaper is not None:
+        print(f"showing your own image: {ctx.custom_wallpaper}")
+        if name:
+            info(f"(dynamic wallpaper '{name}' is set but your image wins; `surfctl wallpaper dynamic {name}` switches to it)")
+        return 0
+    if ctx.dynamic is None:
+        print(f"showing the theme's wallpaper: {ctx.wallpaper}")
+        if name:
+            info(f"dynamic wallpaper '{name}' is not installed (installed: {', '.join(sets) or 'none'})")
+        return 0
+    dset, shown = ctx.dynamic
+    sync = ctx.c("wallpaper.sync") or "auto"
+    print(f"dynamic wallpaper: {dset.title} ({dset.name}, {dset.kind} based)   follows: {sync}   "
+          f"style: {ctx.pal.variant}")
+    for i, f in enumerate(dset.frames):
+        when = f"{f.at // 60:02d}:{f.at % 60:02d}" if f.at is not None else f"sun {f.altitude:+.0f} deg, azimuth {f.azimuth:.0f}"
+        tags = (" lightest" if f.file == dset.light else "") + (" darkest" if f.file == dset.dark else "")
+        print(f"  {i}  {f.file.name:<26} {when}{tags}{'   <-- showing' if f.file == shown else ''}")
+    return 0
+
+
 def cmd_wallpaper(args: argparse.Namespace) -> int:
     sub = args.wp_cmd
     if sub == "set":
@@ -276,7 +301,45 @@ def cmd_wallpaper(args: argparse.Namespace) -> int:
             changes["wallpaper.mode"] = args.mode
         return apply_changes(changes, args, f"wallpaper set to {p.name}")
     if sub == "reset":
-        return apply_changes({"wallpaper.path": ""}, args, "wallpaper reset to the theme's")
+        default = dynwall.find(dynwall.DEFAULT_SET)
+        changes = {"wallpaper.path": "", "wallpaper.dynamic": dynwall.DEFAULT_SET, "wallpaper.sync": "auto",
+                   "wallpaper.frame": ""}
+        what = f"{default.title}, follows the time of day" if default else "the theme's wallpaper"
+        return apply_changes(changes, args, f"wallpaper reset to the default ({what})")
+    if sub == "dynamic":
+        if args.name in ("off", "none", ""):
+            return apply_changes({"wallpaper.dynamic": ""}, args, "dynamic wallpaper turned off")
+        sets = dynwall.discover()
+        if args.name not in sets:
+            return fail(f"no dynamic wallpaper '{args.name}' (installed: {', '.join(sets) or 'none'}; `surfctl wallpaper list`)")
+        return apply_changes({"wallpaper.dynamic": args.name, "wallpaper.path": ""}, args,
+                             f"dynamic wallpaper set to {sets[args.name].title}")
+    if sub == "sync":
+        changes = {"wallpaper.sync": args.mode_name}
+        if args.mode_name == "frame":
+            if not args.frame:
+                return fail("which frame? e.g. `surfctl wallpaper sync frame noon` (see `surfctl wallpaper status`)")
+            ctx = generate.build_context()
+            if ctx.dynamic is None or dynwall.named_frame(ctx.dynamic[0], args.frame) is None:
+                return fail(f"'{args.frame}' is not exactly one frame of the dynamic wallpaper (see `surfctl wallpaper status`)")
+            changes["wallpaper.frame"] = args.frame
+        words = {"auto": "follows the time of day", "theme": "follows the light/dark style",
+                 "frame": f"stays on frame '{args.frame}'"}
+        return apply_changes(changes, args, f"dynamic wallpaper {words[args.mode_name]}")
+    if sub == "location":
+        value = "" if args.place in ("auto", "guess") else f"{args.place}, {args.longitude}" if args.longitude else args.place
+        try:
+            dynwall.parse_location(value)
+        except dynwall.DynError as e:
+            return fail(str(e))
+        return apply_changes({"wallpaper.location": value}, args,
+                             f"location set to {value}" if value else "location will be guessed from the time zone")
+    if sub == "status":
+        return _wallpaper_status()
+    if sub == "apply":  # used by scripts: show the frame for this moment now
+        return session.wallpaper_daemon(once=True)
+    if sub == "daemon":  # started by the session (libexec/surfd-dynwall); not for people
+        return session.wallpaper_daemon()
     if sub in ("list", None):
         found, _ = themes.discover()
         for t in found:
@@ -284,10 +347,13 @@ def cmd_wallpaper(args: argparse.Namespace) -> int:
                 wp = t.wallpaper(v)
                 if wp:
                     print(f"{t.name}/{v}: {wp}")
+        for dset in dynwall.discover().values():
+            print(f"dynamic {dset.name}: {dset.title}, {len(dset.frames)} frames, {dset.kind} based")
         extra = paths.system_dir() / "wallpapers"
         if extra.is_dir():
             for f in sorted(extra.iterdir()):
-                print(f"extra: {f}")
+                if f.is_file():
+                    print(f"extra: {f}")
         return 0
     return fail(f"unknown wallpaper command {sub}")
 
@@ -676,9 +742,23 @@ def build_parser() -> argparse.ArgumentParser:
     s.add_argument("path")
     s.add_argument("--mode", choices=("fill", "fit", "center", "tile", "stretch"))
     s.add_argument("--no-reload", action="store_true")
-    s = wsub.add_parser("reset", help="use the theme's wallpaper")
+    s = wsub.add_parser("reset", help="back to the default wallpaper (the dynamic one that follows the time of day)")
     s.add_argument("--no-reload", action="store_true")
-    wsub.add_parser("list", help="wallpapers shipped with themes")
+    s = wsub.add_parser("dynamic", help="use a time-of-day wallpaper (or 'off'); see `list`")
+    s.add_argument("name")
+    s.add_argument("--no-reload", action="store_true")
+    s = wsub.add_parser("sync", help="what the dynamic wallpaper follows: auto (time of day), theme (light/dark), frame <n>")
+    s.add_argument("mode_name", choices=dynwall.SYNC_MODES, metavar="{auto,theme,frame}")
+    s.add_argument("frame", nargs="?", help="with 'frame': its number or part of its file name (see `status`)")
+    s.add_argument("--no-reload", action="store_true")
+    s = wsub.add_parser("location", help="where you are, for sets that follow the sun: <latitude> <longitude> or 'auto'")
+    s.add_argument("place", help="latitude, or 'auto'")
+    s.add_argument("longitude", nargs="?")
+    s.add_argument("--no-reload", action="store_true")
+    wsub.add_parser("status", help="which wallpaper and frame are showing, and all frames of the dynamic one")
+    wsub.add_parser("list", help="wallpapers shipped with themes and the dynamic ones")
+    wsub.add_parser("apply", help=argparse.SUPPRESS)
+    wsub.add_parser("daemon", help=argparse.SUPPRESS)
 
     sp = add("font", cmd_font, "set the interface or monospace font", live=True)
     sp.add_argument("which", choices=("ui", "mono"))

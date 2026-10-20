@@ -10,6 +10,7 @@
 surfd-release
 surfd-logos
 surfd-theme
+surfd-wallpapers
 plymouth-theme-surfd
 surfd-default-config
 surfctl

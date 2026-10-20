@@ -1,0 +1,7 @@
+#!/usr/bin/bash
+# surfd-dynwall on|off — (re)start the updater that keeps a time-of-day wallpaper on the right frame, or stop it.
+# The Sway config runs this on every (re)load; "off" also stops an updater left over from earlier settings.
+set -u
+pkill -u "${UID}" -f 'surfctl wallpaper daemon'
+[[ "${1:-off}" == on ]] || exit 0
+exec surfctl wallpaper daemon

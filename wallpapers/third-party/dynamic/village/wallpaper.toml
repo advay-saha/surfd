@@ -3,7 +3,6 @@ name = "Village"
 kind = "time"
 light = "03-noon.jpg"
 dark = "01-dawn.jpg"
-mode = "fill"
 
 [[frame]]
 at = "00:00"

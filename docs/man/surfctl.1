@@ -23,8 +23,12 @@ Install a theme folder or archive, share one, or start a new one.
 .B accent #RRGGBB | reset
 Set the accent colour.
 .TP
-.B wallpaper set FILE [--mode fill|fit|center|tile|stretch] | reset
-Set or reset the wallpaper.
+.B wallpaper set FILE [--mode fill|fit|center|tile|stretch] | reset | list | status
+Use your own image, go back to the default wallpaper, list what is installed, or show what is on screen.
+.TP
+.B wallpaper dynamic NAME|off | sync auto|theme|frame [FRAME] | location LAT LON|auto
+Dynamic wallpapers change through the day. Pick a set, choose what it follows (the time of day, the
+light/dark style, or one fixed frame) and, for sets that follow the sun, say where you are.
 .TP
 .B bar layout left=A,B center=C right=D,E | preset NAME | position top|bottom
 Arrange the bar. Run

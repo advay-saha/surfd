@@ -4,9 +4,11 @@ System data (read-only, shipped by RPMs):
     $SURFD_SYSTEM_DIR            default /usr/share/surfd
         defaults/surfd.toml      the default configuration
         themes/<name>/           system theme packs
+        wallpapers/dynamic/<name>/   system dynamic (time-of-day) wallpaper sets
 User data (XDG):
     ~/.config/surfd/surfd.toml   the user's configuration
     ~/.local/share/surfd/themes  user theme packs (drop a folder here)
+    ~/.local/share/surfd/wallpapers/dynamic  user dynamic wallpaper sets
     ~/.local/state/surfd/        generated configs, backups
 """
 
@@ -35,6 +37,10 @@ def system_themes_dir() -> Path:
     return system_dir() / "themes"
 
 
+def system_wallpapers_dir() -> Path:
+    return system_dir() / "wallpapers" / "dynamic"
+
+
 def config_home() -> Path:
     return _xdg("XDG_CONFIG_HOME", ".config")
 
@@ -57,6 +63,10 @@ def user_config_dir() -> Path:
 
 def user_themes_dir() -> Path:
     return data_home() / "surfd" / "themes"
+
+
+def user_wallpapers_dir() -> Path:
+    return data_home() / "surfd" / "wallpapers" / "dynamic"
 
 
 def generated_dir() -> Path:

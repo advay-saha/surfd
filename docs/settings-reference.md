@@ -27,7 +27,11 @@ Every key, its default and what it accepts. Change any of them with
 
 | Key | Default | Accepts | Description |
 |---|---|---|---|
-| `path` | `""` | text | Image file; empty uses the theme's wallpaper for the current style. |
+| `path` | `""` | text | Your own image file; it wins over the dynamic wallpaper. Empty uses the dynamic wallpaper below, or the theme's wallpaper when that is empty too. |
+| `dynamic` | `"low-poly-mountain"` | text | A dynamic wallpaper set that changes with the time of day (a folder in ~/.local/share/surfd/wallpapers/dynamic or /usr/share/surfd/wallpapers/dynamic); empty turns it off. See `surfctl wallpaper list`. |
+| `sync` | `"auto"` | `auto` \| `theme` \| `frame` | How the dynamic wallpaper picks its frame. auto: follow the time of day. theme: the lightest frame in the light style, the darkest in the dark style. frame: one fixed frame (see wallpaper.frame). |
+| `frame` | `""` | text | With sync = "frame": the frame to show, by number or part of its file name (see `surfctl wallpaper status`). |
+| `location` | `""` | text | Where you are, for dynamic wallpapers that follow the sun: "latitude, longitude" such as "35.2, 33.4". Empty guesses from your time zone. |
 | `mode` | `"fill"` | `fill` \| `fit` \| `center` \| `tile` \| `stretch` | How the image is scaled. |
 
 ## [layout]

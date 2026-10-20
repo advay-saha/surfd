@@ -24,6 +24,16 @@ The theme packs that ship with surfd (Tide, Driftwood and Kelp, each with
 dark and light variants) and their original wallpapers. Theme packs are
 plain folders; the included theme-making guide explains the format.
 
+%package -n surfd-wallpapers
+Summary:        Dynamic (time-of-day) wallpapers for surfd
+# Artwork by other people whose licence has NOT been verified: replace or confirm before a release.
+License:        LicenseRef-third-party-unverified
+Requires:       surfd-default-config
+
+%description -n surfd-wallpapers
+Wallpapers that change through the day, used by `[wallpaper] dynamic` in surfd.toml. Includes the
+default, "Low-poly mountain". Credits and licence status: /usr/share/doc/surfd-wallpapers/CREDITS.md.
+
 %package -n plymouth-theme-surfd
 Summary:        surfd boot splash
 License:        CC-BY-SA-4.0
@@ -60,6 +70,11 @@ find %{buildroot}%{_datadir}/surfd/themes -type f -exec chmod 0644 {} +
 install -d %{buildroot}%{_datadir}/surfd/greeter
 ln -s ../themes/tide/wallpapers/tide-dark.jpg %{buildroot}%{_datadir}/surfd/greeter/background
 
+# dynamic wallpapers (only the default set is packaged)
+install -d %{buildroot}%{_datadir}/surfd/wallpapers/dynamic
+cp -a wallpapers/third-party/dynamic/low-poly-mountain %{buildroot}%{_datadir}/surfd/wallpapers/dynamic/
+find %{buildroot}%{_datadir}/surfd/wallpapers -type f -exec chmod 0644 {} +
+
 # plymouth
 install -d %{buildroot}%{_datadir}/plymouth/themes/surfd
 install -pm 0644 build/art/plymouth/surfd/* %{buildroot}%{_datadir}/plymouth/themes/surfd/
@@ -89,6 +104,10 @@ for t in %{buildroot}%{_datadir}/surfd/themes/*/; do
   done
 done
 test $(ls %{buildroot}%{_datadir}/plymouth/themes/surfd/throbber-*.png | wc -l) -eq 36
+# the default dynamic wallpaper is complete: every frame named in wallpaper.toml exists
+set=%{buildroot}%{_datadir}/surfd/wallpapers/dynamic/low-poly-mountain
+test -f $set/wallpaper.toml
+for f in $(sed -n 's/^\(file\|light\|dark\) *= *"\(.*\)"/\2/p' $set/wallpaper.toml); do test -f $set/$f; done
 
 %files
 %license LICENSES/CC-BY-SA-4.0.txt LICENSES/MIT.txt
@@ -96,6 +115,13 @@ test $(ls %{buildroot}%{_datadir}/plymouth/themes/surfd/throbber-*.png | wc -l) 
 %dir %{_datadir}/surfd
 %{_datadir}/surfd/themes
 %{_datadir}/surfd/greeter
+
+%files -n surfd-wallpapers
+%license LICENSES/LicenseRef-third-party-unverified.txt
+%doc wallpapers/third-party/CREDITS.md docs/dynamic-wallpapers.md
+%dir %{_datadir}/surfd
+%dir %{_datadir}/surfd/wallpapers
+%{_datadir}/surfd/wallpapers/dynamic
 
 %files -n plymouth-theme-surfd
 %license LICENSES/CC-BY-SA-4.0.txt

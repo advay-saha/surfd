@@ -123,7 +123,18 @@ SCHEMA: dict[str, Field] = {
     "fonts.mono": _f("str", "Monospace font family (terminal, code).", "Monospace font"),
     "fonts.size": _f("int", "Interface font size in points.", "Interface size", minimum=6, maximum=32),
     "fonts.mono_size": _f("int", "Monospace font size in points.", "Monospace size", minimum=6, maximum=32),
-    "wallpaper.path": _f("str", "Image file; empty uses the theme's wallpaper for the current style.", "Wallpaper"),
+    "wallpaper.path": _f("str", "Your own image file; it wins over the dynamic wallpaper. Empty uses the dynamic "
+                        "wallpaper below, or the theme's wallpaper when that is empty too.", "Wallpaper"),
+    "wallpaper.dynamic": _f("str", "A dynamic wallpaper set that changes with the time of day (a folder in "
+                            "~/.local/share/surfd/wallpapers/dynamic or /usr/share/surfd/wallpapers/dynamic); "
+                            "empty turns it off. See `surfctl wallpaper list`.", "Dynamic wallpaper"),
+    "wallpaper.sync": _f("enum", "How the dynamic wallpaper picks its frame. auto: follow the time of day. "
+                         "theme: the lightest frame in the light style, the darkest in the dark style. "
+                         "frame: one fixed frame (see wallpaper.frame).", "Follows", choices=("auto", "theme", "frame")),
+    "wallpaper.frame": _f("str", "With sync = \"frame\": the frame to show, by number or part of its file name "
+                          "(see `surfctl wallpaper status`).", "Frame"),
+    "wallpaper.location": _f("str", "Where you are, for dynamic wallpapers that follow the sun: \"latitude, longitude\" "
+                             "such as \"35.2, 33.4\". Empty guesses from your time zone.", "Location"),
     "wallpaper.mode": _f("enum", "How the image is scaled.", "Scaling", choices=("fill", "fit", "center", "tile", "stretch")),
     "layout.mode": _f("enum", "tiling: windows tile automatically. floating: windows float with title bars (mouse-friendly).",
                       "Window mode", choices=("tiling", "floating")),

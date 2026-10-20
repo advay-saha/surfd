@@ -50,6 +50,7 @@ surfctl theme list                       # installed theme packs
 surfctl theme set driftwood --variant light
 surfctl accent '#e88bc4'                 # or: surfctl accent reset
 surfctl wallpaper set ~/Pictures/beach.jpg
+surfctl wallpaper sync theme             # the default wallpaper follows light/dark (or: auto = time of day)
 surfctl mode floating                    # windows float with title bars
 surfctl bar preset minimal
 surfctl keys bind Mod+F1 exec foot -e htop

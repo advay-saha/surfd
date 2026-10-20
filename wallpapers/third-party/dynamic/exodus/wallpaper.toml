@@ -3,7 +3,6 @@ name = "Exodus"
 kind = "time"
 light = "01-morning.jpg"
 dark = "02-evening.jpg"
-mode = "fill"
 
 [[frame]]
 at = "00:00"

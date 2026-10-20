@@ -8,10 +8,11 @@ import re
 import shutil
 import subprocess
 import tempfile
+import time
 from collections.abc import Sequence
 from pathlib import Path
 
-from . import generate, keys
+from . import config, dynwall, generate, keys, themes
 from .generate import Context
 
 
@@ -231,3 +232,40 @@ def regenerate_and_reload(ctx: Context, *, reload: bool = True) -> tuple[generat
     report = generate.write_all(ctx)
     actions = reload_session(ctx) if reload else []
     return report, actions
+
+
+# ------------------------------------------------------ dynamic wallpaper --
+
+def apply_wallpaper(ctx: Context) -> Path | None:
+    """Show the dynamic wallpaper frame for this moment on every output; returns it (None: no dynamic wallpaper)."""
+    if ctx.dynamic is None:
+        return None
+    frame = ctx.dynamic[1]
+    dynwall.update_link(frame)
+    if in_sway():
+        _run(["swaymsg", f'output * bg "{frame}" {ctx.c("wallpaper.mode")} {ctx.pal.background}'])
+    return frame
+
+
+def wallpaper_daemon(*, once: bool = False) -> int:
+    """Keep the wallpaper on the right frame while it follows the clock. Stops when the settings no longer ask for that.
+
+    Started by the Sway config through libexec/surfd-dynwall (restarted on every reload).
+    """
+    last: Path | None = None
+    while True:
+        try:
+            ctx = generate.build_context()
+        except (config.ConfigError, themes.ThemeError, OSError):
+            if once:
+                return 1
+            time.sleep(60)  # a half-edited config: try again shortly
+            continue
+        if not ctx.dynamic_follows_clock:
+            return 0
+        assert ctx.dynamic is not None
+        if ctx.dynamic[1] != last:
+            last = apply_wallpaper(ctx)
+        if once:
+            return 0
+        time.sleep(dynwall.seconds_to_next_change(ctx.dynamic[0], dynwall.now()))

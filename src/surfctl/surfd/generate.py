@@ -15,10 +15,11 @@ from __future__ import annotations
 import json
 import os
 from dataclasses import dataclass
+from functools import cached_property
 from pathlib import Path
 from typing import Any
 
-from . import color, config, keys, paths, themes
+from . import color, config, dynwall, keys, paths, themes
 from .themes import Palette, Theme
 
 MARKER = "Managed by surfctl"
@@ -42,12 +43,37 @@ class Context:
         return config.get(self.cfg, dotted)
 
     @property
-    def wallpaper(self) -> Path | None:
+    def custom_wallpaper(self) -> Path | None:
+        """The user's own image (wallpaper.path), when set and present."""
         custom = self.c("wallpaper.path") or ""
         if custom:
             p = Path(os.path.expanduser(custom))
             if p.is_file():
                 return p
+        return None
+
+    @cached_property
+    def dynamic(self) -> tuple[dynwall.DynSet, Path] | None:
+        """The dynamic wallpaper set and frame selected right now; None when the user's own image wins or none is set.
+
+        Evaluated once per Context, so every file generated in one run shows the same frame.
+        """
+        if self.custom_wallpaper is not None:
+            return None
+        return dynwall.current(self.c, self.pal.variant, dynwall.now())
+
+    @property
+    def dynamic_follows_clock(self) -> bool:
+        """True when a helper must keep changing the wallpaper as the day goes by."""
+        return self.dynamic is not None and (self.c("wallpaper.sync") or "auto") == "auto"
+
+    @property
+    def wallpaper(self) -> Path | None:
+        """The image to show: the user's own, else the dynamic frame, else the theme's."""
+        if (custom := self.custom_wallpaper) is not None:
+            return custom
+        if self.dynamic is not None:
+            return self.dynamic[1]
         return self.theme.wallpaper(self.pal.variant)
 
     @property
@@ -204,6 +230,7 @@ def sway(ctx: Context) -> str:
         "exec_always makoctl reload",
         f'exec_always {LIBEXEC}/surfd-bar "{waybar_cfg}" "{waybar_css}"',
         f"exec_always {LIBEXEC}/surfd-idle {lock} {off} {susp}",
+        f"exec_always {LIBEXEC}/surfd-dynwall {'on' if ctx.dynamic_follows_clock else 'off'}",
         "exec surfctl apply --desktop-settings",
         "exec surfctl doctor --notify --quiet",
         "exec surfctl first-run",
@@ -497,7 +524,9 @@ def swaylock(ctx: Context) -> str:
              "separator-color=00000000"]
     wp = ctx.wallpaper
     if wp is not None and wp.suffix.lower() != ".svg":
-        lines += [f"image={wp}", "scaling=fill"]
+        # While the wallpaper follows the clock the updater keeps this link on the current frame,
+        # so the lock screen matches the desktop instead of the moment the config was written.
+        lines += [f"image={dynwall.link_path() if ctx.dynamic_follows_clock else wp}", "scaling=fill"]
     return "\n".join(lines) + "\n"
 
 
@@ -736,6 +765,8 @@ class WriteReport:
 
 def write_all(ctx: Context, *, dry_run: bool = False) -> WriteReport:
     report = WriteReport([], [], [])
+    if ctx.dynamic is not None and not dry_run:
+        dynwall.update_link(ctx.dynamic[1])
     for out in outputs(ctx):
         if out.managed and out.path.exists() and not _is_ours(out.path):
             report.skipped.append(out.path)

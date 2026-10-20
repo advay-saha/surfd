@@ -18,6 +18,8 @@ mkdir -p "${work}"/{home,run,bin,sys/defaults,share/icons/hicolor/scalable/apps}
 chmod 700 "${work}/run"
 cp "${REPO}/config/defaults/surfd.toml" "${work}/sys/defaults/"
 ln -s "${ART}/themes" "${work}/sys/themes"
+mkdir -p "${work}/sys/wallpapers/dynamic"
+ln -s "${REPO}/wallpapers/third-party/dynamic/low-poly-mountain" "${work}/sys/wallpapers/dynamic/low-poly-mountain"
 cp "${REPO}/src/installer/data/org.surfd.Installer.svg" "${work}/share/icons/hicolor/scalable/apps/"
 cat > "${work}/bin/surfctl" <<EOS
 #!/bin/sh

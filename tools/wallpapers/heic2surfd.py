@@ -4,7 +4,7 @@
 Reads the apple_desktop XMP plist (h24 = clock based, solar = sun-position based), writes every
 frame as a JPEG and a wallpaper.toml:
 
-  [wallpaper]  name, kind ("time" | "solar"), light = <frame>, dark = <frame>, mode = "fill"
+  [wallpaper]  name, kind ("time" | "solar"), light = <frame>, dark = <frame>
   [[frame]]    at = "HH:MM"                      (kind = time)
   [[frame]]    altitude = -17.0, azimuth = 105.0 (kind = solar)
                file = "NN-label.jpg"
@@ -12,6 +12,7 @@ frame as a JPEG and a wallpaper.toml:
 The light / dark frames are the brightest and darkest frame of the set (measured on luma).
 
 Usage: python3 -I heic2surfd.py <in.heic> <out_dir> <name> [jpeg_quality]
+(out_dir: ~/.local/share/surfd/wallpapers/dynamic/<set> for a set of your own)
 """
 import base64
 import plistlib
@@ -82,7 +83,7 @@ def main(src, out, name, quality=90):
     why = "brightest / darkest"
 
     lines = ["[wallpaper]", f'name = "{name}"', f'kind = "{kind}"', f'light = "{names[light]}"',
-             f'dark = "{names[dark]}"', 'mode = "fill"', ""]
+             f'dark = "{names[dark]}"', ""]
     for _, idx, fields, _ in entries:
         lines += ["[[frame]]", fields, f'file = "{names[idx]}"', ""]
     (out / "wallpaper.toml").write_text("\n".join(lines))
