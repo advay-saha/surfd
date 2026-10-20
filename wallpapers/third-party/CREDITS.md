@@ -29,8 +29,41 @@ Club are credited; they list redistribution as a prohibited use.
 
 ## `static/`: still images
 
-| files | source | artist as known |
+File names are `<artist or source>-<title>`; Surf Settings shows them as "Title (artist)".
+
+### From DenverCoder1/minimalistic-wallpaper-collection (release 2023.04)
+
+https://github.com/DenverCoder1/minimalistic-wallpaper-collection/releases/tag/2023.04. Its MIT
+licence covers only the code; the README says the collector does "not claim ownership" (most images
+were found on Reddit, DeviantArt or ArtStation) and the licence file notes the wallpapers "are not
+necessarily free to use for non-personal use". The artist names below are the ones that collection
+puts in its file names; each image here was matched to its original there.
+
+| file | title | artist as credited by the collection |
 |---|---|---|
-| `wallpaper-03.jpg`, `wallpaper-07.jpg`, `wallpaper-08.jpg`, `wallpaper-17.jpg` (ocean and wave photographs) | Pixabay (pixabay.com); the Pixabay Content License does not allow distributing images unchanged "on a standalone basis" | unknown |
-| `mklgustafsson-small-memory.png` | "minimalist wallpaper collection" on GitHub | Mikael Gustafsson (signature on the image) |
-| `wallpaper-01.jpg`, `-02`, `-04`, `-05`, `-06`, `-09` ... `-16` | "minimalist wallpaper collection" on GitHub (repository licence not confirmed) | unknown |
+| `lee_zudarts-study.jpg` | Study | lee_zudarts |
+| `mklgustafsson-small-memory.png` | Small memory | Mikael Gustafsson (mklgustafsson; signature on the image) |
+| `muriLLu-anime-scenery-sunset.jpg` | Anime scenery sunset | muriLLu |
+| `ogarart-bitter-coast.jpg` | Bitter coast | ogarart |
+| `ogarart-fortress.jpg` | Fortress | ogarart |
+| `ogarart-red-cave.jpg` | Red cave | ogarart |
+| `totalcoconut-midjourney-landscape.jpg` | Landscape (made with Midjourney) | totalcoconut |
+| `unknown-anime-sunset.jpg` | Anime sunset | unknown |
+| `unreal-midjourney-a-stunning-sunset.jpg` | A stunning sunset (made with Midjourney) | "unreal" |
+| `vorgbardo-ancient-oriental-temple.jpg` | Ancient oriental temple | VorgBardo |
+| `vorgbardo-midjourney-1960s-sci-fi-planet.jpg` | 1960s sci-fi planet (made with Midjourney) | VorgBardo |
+| `voyager-camino-de-kazul.jpg` | Camino de Kazul | voyager |
+| `wallpapersden-landscape-moon-digital-evening.jpg` | Landscape moon, digital evening | unknown (via wallpapersden.com) |
+| `wheazzy-blue-mountains.jpg` | Blue mountains | wheazzy |
+
+### From Pixabay (pixabay.com)
+
+Photographs; the Pixabay Content License does not allow distributing images unchanged "on a
+standalone basis". Photographers not yet identified.
+
+| file | subject |
+|---|---|
+| `pixabay-tropical-beach-aerial.jpg` | tropical beach from above |
+| `pixabay-wave-and-surfer.jpg` | a wave and a surfer |
+| `pixabay-breaking-wave-coast.jpg` | a breaking wave by a headland |
+| `pixabay-curling-wave.jpg` | a curling wave |

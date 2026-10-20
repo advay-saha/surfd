@@ -42,7 +42,8 @@ def gallery_dirs() -> list[tuple[str, Path]]:
 
 
 def title_for(path: Path, group: str) -> str:
-    """'tide-dark-3840x2160' -> 'Tide, dark (3840 by 2160, with a multiplication sign)'; 'small-memory' -> 'Small memory'."""
+    """A readable title: 'tide-dark-3840x2160' -> 'Tide, dark (3840 by 2160)' (with a multiplication sign),
+    'ogarart-red-cave' -> 'Red cave (ogarart)' for shipped art, 'beach_day' -> 'Beach day' for yours."""
     stem = path.stem
     size = ""
     m = _SIZE.search(stem)
@@ -52,6 +53,11 @@ def title_for(path: Path, group: str) -> str:
     words = re.split(r"[-_ ]+", stem.strip("-_ "))
     if group == "surfd" and len(words) == 2 and words[1] in ("dark", "light"):
         return f"{words[0].capitalize()}, {words[1]}{size}"
+    if group == "more" and len(words) >= 2:
+        # shipped art is named "<artist or source>-<title>": show the credit after the title
+        artist = stem.strip("-_ ").split("-", 1)[0]
+        title = " ".join(w for w in re.split(r"[-_ ]+", stem.strip("-_ ").split("-", 1)[1]) if w)
+        return f"{title[:1].upper() + title[1:]} ({artist}){size}"
     text = " ".join(w for w in words if w)
     return (text[:1].upper() + text[1:] if text else path.name) + size
 
