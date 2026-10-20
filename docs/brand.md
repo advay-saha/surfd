@@ -27,7 +27,7 @@ single colour.
 Keep clear space around the S of at least half its height, do not recolour it
 outside the two teals above, and do not stretch it. The app icons
 (`org.surfd.Settings`, `Welcome`, `Installer`) are a teal-to-blue tile with a
-navy glyph. `docs/images/banner.png` is the banner for the README and for the
+navy glyph. `docs/images/surfd-banner.png` is the banner for the README and for the
 GitHub social preview (repository *Settings → Social preview*).
 
 ## Where the shapes come from

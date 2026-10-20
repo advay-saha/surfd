@@ -1,4 +1,4 @@
-<p align="center"><img src="docs/images/banner.png" alt="surfd: a SwayWM distro for people, not robots" width="720"></p>
+<p align="center"><img src="docs/images/surfd-banner.png" alt="surfd: a SwayWM distro for people, not robots" width="720"></p>
 
 # surfd
 
