@@ -28,7 +28,8 @@ SPDX-FileCopyrightText = ["2026 surfd contributors", "2021 The Outfit Project Au
 SPDX-License-Identifier = "MIT AND OFL-1.1"
 
 [[annotations]]
-path = ["brand/**", "wallpapers/generated/**", "wallpapers/third-party/**.toml"]
+path = ["brand/**", "wallpapers/generated/**", "wallpapers/third-party/**.toml",
+        "wallpapers/third-party/themes/**"]
 SPDX-FileCopyrightText = "2026 surfd contributors"
 SPDX-License-Identifier = "CC-BY-SA-4.0"
 

@@ -1,0 +1,45 @@
+# Curling Wave — a surfd theme pack, written by theme/tools/make_wallpaper_themes.py. Format: docs/theme-making.md
+
+[meta]
+name = "Curling Wave"
+description = "Colours from a curling-wave photo from Pixabay."
+author = "surfd contributors"
+license = "CC-BY-SA-4.0"
+version = "1.0"
+
+[cursor]
+theme = "breeze_cursors"
+size = 24
+
+[light]
+background  = "#eef3f3"
+surface     = "#fafcfc"
+surface_alt = "#dee8e8"
+text        = "#162d2c"
+text_muted  = "#4f7271"
+accent      = "#046469"
+accent2     = "#1d7f89"
+urgent      = "#ab2b2b"
+warning     = "#975f0c"
+success     = "#2d7326"
+icon_theme  = "Papirus-Light"
+wallpaper   = "pixabay-curling-wave"   # a picture from the wallpaper gallery
+# ANSI colours 0-7, then bright 8-15
+terminal = [
+  "#1b3231",
+  "#973232",
+  "#2b7731",
+  "#856a1c",
+  "#25669c",
+  "#80499a",
+  "#1e7f7c",
+  "#c6d2d2",
+  "#5e7877",
+  "#802020",
+  "#1a5f20",
+  "#69520f",
+  "#165183",
+  "#6c3388",
+  "#106461",
+  "#fafcfc",
+]

@@ -1,0 +1,45 @@
+# Bitter Coast — a surfd theme pack, written by theme/tools/make_wallpaper_themes.py. Format: docs/theme-making.md
+
+[meta]
+name = "Bitter Coast"
+description = "Colours from 'Bitter coast' by ogarart."
+author = "surfd contributors"
+license = "CC-BY-SA-4.0"
+version = "1.0"
+
+[cursor]
+theme = "breeze_cursors"
+size = 24
+
+[light]
+background  = "#f6f0ec"
+surface     = "#fcfbfa"
+surface_alt = "#ebe1db"
+text        = "#2d1e16"
+text_muted  = "#725d4f"
+accent      = "#ab192f"
+accent2     = "#78345c"
+urgent      = "#ab2b2b"
+warning     = "#975f0c"
+success     = "#2d7326"
+icon_theme  = "Papirus-Light"
+wallpaper   = "ogarart-bitter-coast"   # a picture from the wallpaper gallery
+# ANSI colours 0-7, then bright 8-15
+terminal = [
+  "#32241b",
+  "#ab292b",
+  "#3f6e2a",
+  "#996115",
+  "#395d95",
+  "#944093",
+  "#327675",
+  "#d2cbc6",
+  "#78685e",
+  "#93191a",
+  "#2c5619",
+  "#7c4b09",
+  "#254980",
+  "#802b7f",
+  "#1f605f",
+  "#fcfbfa",
+]

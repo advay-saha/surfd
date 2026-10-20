@@ -1,0 +1,45 @@
+# Morning Surf — a surfd theme pack, written by theme/tools/make_wallpaper_themes.py. Format: docs/theme-making.md
+
+[meta]
+name = "Morning Surf"
+description = "Colours from a wave-and-surfer photo from Pixabay."
+author = "surfd contributors"
+license = "CC-BY-SA-4.0"
+version = "1.0"
+
+[cursor]
+theme = "breeze_cursors"
+size = 24
+
+[light]
+background  = "#f0f1f2"
+surface     = "#fbfbfc"
+surface_alt = "#e0e4e6"
+text        = "#16252d"
+text_muted  = "#4f6772"
+accent      = "#3d6670"
+accent2     = "#8a6f60"
+urgent      = "#ab2b2b"
+warning     = "#975f0c"
+success     = "#2d7326"
+icon_theme  = "Papirus-Light"
+wallpaper   = "pixabay-wave-and-surfer"   # a picture from the wallpaper gallery
+# ANSI colours 0-7, then bright 8-15
+terminal = [
+  "#1b2a32",
+  "#9e3233",
+  "#327832",
+  "#8c6a1c",
+  "#2b669d",
+  "#87499b",
+  "#24807d",
+  "#c6ced2",
+  "#5e6f78",
+  "#872021",
+  "#206220",
+  "#70530f",
+  "#1a5185",
+  "#743389",
+  "#156664",
+  "#fafcfc",
+]

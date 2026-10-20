@@ -1,0 +1,45 @@
+# Tropical Beach — a surfd theme pack, written by theme/tools/make_wallpaper_themes.py. Format: docs/theme-making.md
+
+[meta]
+name = "Tropical Beach"
+description = "Colours from an aerial beach photo from Pixabay."
+author = "surfd contributors"
+license = "CC-BY-SA-4.0"
+version = "1.0"
+
+[cursor]
+theme = "breeze_cursors"
+size = 24
+
+[light]
+background  = "#ecf5f6"
+surface     = "#fafcfc"
+surface_alt = "#dbeaeb"
+text        = "#162a2d"
+text_muted  = "#4f6f72"
+accent      = "#047f88"
+accent2     = "#2f7d3a"
+urgent      = "#ab2b2b"
+warning     = "#975f0c"
+success     = "#2d7326"
+icon_theme  = "Papirus-Light"
+wallpaper   = "pixabay-tropical-beach-aerial"   # a picture from the wallpaper gallery
+# ANSI colours 0-7, then bright 8-15
+terminal = [
+  "#1b2f32",
+  "#973536",
+  "#2b7b34",
+  "#856d1f",
+  "#2569a0",
+  "#804c9e",
+  "#1e8380",
+  "#c6d1d2",
+  "#5e7578",
+  "#812223",
+  "#1a6322",
+  "#6a5511",
+  "#165487",
+  "#6c358c",
+  "#106865",
+  "#fafcfc",
+]

@@ -1,0 +1,45 @@
+# Retro Planet — a surfd theme pack, written by theme/tools/make_wallpaper_themes.py. Format: docs/theme-making.md
+
+[meta]
+name = "Retro Planet"
+description = "Colours from '1960s sci-fi planet' by VorgBardo."
+author = "surfd contributors"
+license = "CC-BY-SA-4.0"
+version = "1.0"
+
+[cursor]
+theme = "breeze_cursors"
+size = 24
+
+[light]
+background  = "#f6f3ec"
+surface     = "#fcfcfa"
+surface_alt = "#ebe6db"
+text        = "#2d2516"
+text_muted  = "#72674f"
+accent      = "#a6600f"
+accent2     = "#566579"
+urgent      = "#ab2b2b"
+warning     = "#975f0c"
+success     = "#2d7326"
+icon_theme  = "Papirus-Light"
+wallpaper   = "vorgbardo-midjourney-1960s-sci-fi-planet"   # a picture from the wallpaper gallery
+# ANSI colours 0-7, then bright 8-15
+terminal = [
+  "#322a1b",
+  "#aa3128",
+  "#3e7726",
+  "#996a11",
+  "#386591",
+  "#94488f",
+  "#317f72",
+  "#d2cec6",
+  "#786f5e",
+  "#912018",
+  "#2c5e16",
+  "#7b5306",
+  "#25517c",
+  "#82327c",
+  "#1f685c",
+  "#fcfcfa",
+]

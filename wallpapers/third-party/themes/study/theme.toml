@@ -1,0 +1,45 @@
+# Study — a surfd theme pack, written by theme/tools/make_wallpaper_themes.py. Format: docs/theme-making.md
+
+[meta]
+name = "Study"
+description = "Colours from 'Study' by lee_zudarts."
+author = "surfd contributors"
+license = "CC-BY-SA-4.0"
+version = "1.0"
+
+[cursor]
+theme = "breeze_cursors"
+size = 24
+
+[dark]
+background  = "#1b1015"
+surface     = "#26171e"
+surface_alt = "#3d242f"
+text        = "#eee2e7"
+text_muted  = "#b59ba7"
+accent      = "#8f9fe0"
+accent2     = "#e8a3b0"
+urgent      = "#ec797d"
+warning     = "#f4c871"
+success     = "#92d685"
+icon_theme  = "Papirus-Dark"
+wallpaper   = "lee_zudarts-study"   # a picture from the wallpaper gallery
+# ANSI colours 0-7, then bright 8-15
+terminal = [
+  "#381e2a",
+  "#db727a",
+  "#83c57f",
+  "#dec076",
+  "#7babe2",
+  "#c795dc",
+  "#72c9ce",
+  "#d4c4cb",
+  "#744e5f",
+  "#ec949b",
+  "#9fdc9b",
+  "#eed599",
+  "#9fc5f1",
+  "#ddb7ed",
+  "#91dee2",
+  "#f7f3f5",
+]

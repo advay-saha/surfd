@@ -1,0 +1,45 @@
+# Small Memory — a surfd theme pack, written by theme/tools/make_wallpaper_themes.py. Format: docs/theme-making.md
+
+[meta]
+name = "Small Memory"
+description = "Colours from 'Small memory' by Mikael Gustafsson."
+author = "surfd contributors"
+license = "CC-BY-SA-4.0"
+version = "1.0"
+
+[cursor]
+theme = "breeze_cursors"
+size = 24
+
+[dark]
+background  = "#0c141f"
+surface     = "#121d2b"
+surface_alt = "#1f2e41"
+text        = "#e2e7ee"
+text_muted  = "#9ba6b5"
+accent      = "#f2be96"
+accent2     = "#5db3bf"
+urgent      = "#ec797d"
+warning     = "#f4c871"
+success     = "#92d685"
+icon_theme  = "Papirus-Dark"
+wallpaper   = "mklgustafsson-small-memory"   # a picture from the wallpaper gallery
+# ANSI colours 0-7, then bright 8-15
+terminal = [
+  "#1e2938",
+  "#e77671",
+  "#8fc976",
+  "#eac36d",
+  "#87afd9",
+  "#d399d3",
+  "#7ecdc5",
+  "#c4cbd4",
+  "#4e5e74",
+  "#f49b97",
+  "#aade94",
+  "#f6d894",
+  "#a8c9eb",
+  "#e7b8e7",
+  "#9ce2db",
+  "#f3f4f7",
+]

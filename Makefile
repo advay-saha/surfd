@@ -27,7 +27,7 @@ lint:
 	ksvalidator -v F$(FEDORA) config/live/90-surfd-live-cleanup.ks
 	desktop-file-validate src/settings/data/*.desktop src/installer/data/*.desktop src/session/surfd.desktop
 	appstreamcli validate --no-net src/settings/data/*.metainfo.xml
-	$(PY) -c 'import tomllib,glob; [tomllib.load(open(f,"rb")) for f in ["config/defaults/surfd.toml", *glob.glob("theme/themes/*/theme.toml")]]'
+	$(PY) -c 'import tomllib,glob; [tomllib.load(open(f,"rb")) for f in ["config/defaults/surfd.toml", *glob.glob("theme/themes/*/theme.toml"), *glob.glob("wallpapers/third-party/themes/*/theme.toml")]]'
 	@for a in x86_64 aarch64; do \
 	  $(PY) tools/ks_packages.py --arch $$a | diff -q - containers/packages-$$a.txt >/dev/null \
 	    || { echo "containers/packages-$$a.txt is stale: run make container-packages"; exit 1; }; done
@@ -66,8 +66,10 @@ art:
 
 screenshots: art
 	tools/headless-screenshot.sh $(ART) docs/screenshots tide dark tiling
-	tools/headless-screenshot.sh $(ART) docs/screenshots driftwood light floating
-	tools/gui-screenshot.sh $(ART) docs/screenshots $(GUI_PY) tide dark
+	for t in low-poly-mountain:dark tokyo-street:light red-cave:dark japanese-garden:dark bitter-coast:light \
+	         plants:dark scenery-sunset:dark tropical-beach:light; do \
+	  tools/headless-screenshot.sh $(ART) docs/screenshots $${t%%:*} $${t##*:} showcase || exit 1; done
+	tools/gui-screenshot.sh $(ART) docs/screenshots $(GUI_PY) low-poly-mountain dark
 	tools/installer-screenshot.sh $(ART) docs/screenshots $(GUI_PY)
 
 clean:

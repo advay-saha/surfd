@@ -33,13 +33,19 @@ APP_CSS = """
 """
 
 
+_THUMBS: dict[tuple[str, int, int], Gdk.Texture] = {}  # decoding big wallpapers is slow: once per picture
+
+
 def _thumb(theme: themes.Theme, variant: str, width: int = 220, height: int = 124) -> Gtk.Widget:
-    wp = theme.wallpaper(variant)
-    pal = theme.palette(variant)
+    pal = theme.palette(variant)  # a theme with one style shows it whatever the style chosen
+    wp = theme.wallpaper(pal.variant)
     if wp is not None and wp.suffix.lower() in (".jpg", ".jpeg", ".png"):
         try:
-            pix = GdkPixbuf.Pixbuf.new_from_file_at_scale(str(wp), width, height, False)
-            tex = Gdk.Texture.new_for_pixbuf(pix)
+            key = (str(wp), width, height)
+            if key not in _THUMBS:
+                pix = GdkPixbuf.Pixbuf.new_from_file_at_scale(str(wp), width, height, False)
+                _THUMBS[key] = Gdk.Texture.new_for_pixbuf(pix)
+            tex = _THUMBS[key]
             pic = Gtk.Picture.new_for_paintable(tex)
             pic.set_size_request(width, height)
             pic.set_content_fit(Gtk.ContentFit.COVER) if hasattr(pic, "set_content_fit") else None

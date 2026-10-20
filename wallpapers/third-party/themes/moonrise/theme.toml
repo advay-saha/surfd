@@ -1,0 +1,45 @@
+# Moonrise — a surfd theme pack, written by theme/tools/make_wallpaper_themes.py. Format: docs/theme-making.md
+
+[meta]
+name = "Moonrise"
+description = "Colours from 'Landscape moon digital evening' (wallpapersden)."
+author = "surfd contributors"
+license = "CC-BY-SA-4.0"
+version = "1.0"
+
+[cursor]
+theme = "breeze_cursors"
+size = 24
+
+[dark]
+background  = "#0c171f"
+surface     = "#12212b"
+surface_alt = "#1f3341"
+text        = "#e2e9ee"
+text_muted  = "#9baab5"
+accent      = "#4cbeab"
+accent2     = "#7fd6e0"
+urgent      = "#ec797d"
+warning     = "#f4c871"
+success     = "#92d685"
+icon_theme  = "Papirus-Dark"
+wallpaper   = "wallpapersden-landscape-moon-digital-evening"   # a picture from the wallpaper gallery
+# ANSI colours 0-7, then bright 8-15
+terminal = [
+  "#1e2e38",
+  "#d37674",
+  "#7bc979",
+  "#d6c36f",
+  "#73afdb",
+  "#bf99d5",
+  "#6acdc7",
+  "#c4cdd4",
+  "#4e6474",
+  "#e69694",
+  "#98de97",
+  "#e8d890",
+  "#95c7ec",
+  "#d7b8e9",
+  "#89e1dc",
+  "#f3f5f7",
+]

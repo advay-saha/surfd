@@ -1,0 +1,45 @@
+# Golden Hour — a surfd theme pack, written by theme/tools/make_wallpaper_themes.py. Format: docs/theme-making.md
+
+[meta]
+name = "Golden Hour"
+description = "Colours from 'Anime sunset' (artist unknown)."
+author = "surfd contributors"
+license = "CC-BY-SA-4.0"
+version = "1.0"
+
+[cursor]
+theme = "breeze_cursors"
+size = 24
+
+[dark]
+background  = "#0c141f"
+surface     = "#121c2b"
+surface_alt = "#1f2d41"
+text        = "#e2e7ee"
+text_muted  = "#9ba6b5"
+accent      = "#e7a07f"
+accent2     = "#c98a6c"
+urgent      = "#ec797d"
+warning     = "#f4c871"
+success     = "#92d685"
+icon_theme  = "Papirus-Dark"
+wallpaper   = "unknown-anime-sunset"   # a picture from the wallpaper gallery
+# ANSI colours 0-7, then bright 8-15
+terminal = [
+  "#1e2938",
+  "#e5726e",
+  "#8dc574",
+  "#e9c06a",
+  "#85abd6",
+  "#d295d0",
+  "#7dc9c2",
+  "#c4cad4",
+  "#4e5d74",
+  "#f39693",
+  "#a8db91",
+  "#f6d590",
+  "#a6c5e8",
+  "#e6b4e5",
+  "#9adfd8",
+  "#f3f4f7",
+]

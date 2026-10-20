@@ -58,17 +58,32 @@ def test_default_bindings_compile_and_cover_cheatsheet(env: Path) -> None:
 
 # ----------------------------------------------------------------- themes --
 
+REPO = Path(__file__).resolve().parents[3]
+OWN_THEMES = sorted(p.name for p in (REPO / "theme" / "themes").iterdir())
+PICTURE_THEMES = sorted(p.name for p in (REPO / "wallpapers" / "third-party" / "themes").iterdir())
+
+
+def _toml(name: str) -> str:
+    own = REPO / "theme" / "themes" / name / "theme.toml"
+    return (own if own.exists() else REPO / "wallpapers" / "third-party" / "themes" / name / "theme.toml").read_text()
+
+
+SHIPPED = [(n, v) for n in OWN_THEMES + PICTURE_THEMES for v in ("dark", "light") if f"[{v}]" in _toml(n)]
+
+
 def test_shipped_themes_load(env: Path) -> None:
     found, broken = themes.discover()
     assert broken == []
-    assert {t.name for t in found} >= {"tide", "driftwood", "kelp"}
+    assert {t.name for t in found} == set(OWN_THEMES + PICTURE_THEMES)
+    assert set(OWN_THEMES) == {"tide", "driftwood", "kelp", "dusk"} and len(PICTURE_THEMES) == 26
     for t in found:
-        assert set(t.variants) == {"dark", "light"}
+        assert t.variants, t.name
         assert t.meta.get("license")
+        if t.name in OWN_THEMES or t.dynamic:  # surfd's own and the dynamic ones come in both styles
+            assert set(t.variants) == {"dark", "light"}, t.name
 
 
-@pytest.mark.parametrize("name", ["tide", "driftwood", "kelp"])
-@pytest.mark.parametrize("variant", ["dark", "light"])
+@pytest.mark.parametrize("name,variant", SHIPPED)
 def test_theme_contrast_meets_wcag(env: Path, name: str, variant: str) -> None:
     """Text must stay readable: WCAG AA for body text, 3:1 for UI accents."""
     pal = themes.find(name).palette(variant)

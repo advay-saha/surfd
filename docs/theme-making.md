@@ -19,7 +19,7 @@ or **System → Install a theme pack** in Surf Settings.
 ```
 reef/
   theme.toml        required: palette for [dark] and/or [light]
-  wallpapers/       images referenced by theme.toml (optional)
+  wallpapers/       images referenced by theme.toml (optional; or use a picture surfd already has, below)
   waybar.css        appended to the generated bar style (optional)
   gtk.css           appended to the generated GTK 3/4 style (optional)
   LICENSE           licence for your artwork (strongly recommended)
@@ -104,10 +104,21 @@ how to check them.
 
 ## Wallpapers
 
-Any image `swaybg` can read (JPEG, PNG). The built-in wallpapers are generated
-from code by `theme/tools/make_art.py` as SVG and rendered to 3840×2160 JPEG
-by `theme/tools/render.py`; reading `make_art.py` is a good start if you want
-generative art for your theme. Only ship images you have the right to share.
+A theme's wallpaper is chosen with it (`surfctl theme set NAME`, or a theme card in Surf Settings);
+`--keep-wallpaper` changes only the colours. There are three ways to give a theme a wallpaper:
+
+```toml
+[dark]
+wallpaper = "wallpapers/reef-dark.jpg"   # 1. an image in your theme folder (JPEG or PNG; an .svg is rendered at package build)
+wallpaper = "ogarart-red-cave"           # 2. a picture surfd already has, by name (surfctl wallpaper list)
+
+[wallpaper]
+dynamic = "low-poly-mountain"            # 3. a dynamic (time-of-day) wallpaper set, for both styles
+```
+
+Only ship images you have the right to share. The themes for surfd's bundled wallpapers are written by
+`theme/tools/make_wallpaper_themes.py`: it takes a few colours picked from each picture and derives the
+rest under the contrast rules above, which makes it a good start for a theme of your own.
 
 ## Extra CSS
 

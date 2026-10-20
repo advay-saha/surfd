@@ -1,0 +1,45 @@
+# Red Cave — a surfd theme pack, written by theme/tools/make_wallpaper_themes.py. Format: docs/theme-making.md
+
+[meta]
+name = "Red Cave"
+description = "Colours from 'Red cave' by ogarart."
+author = "surfd contributors"
+license = "CC-BY-SA-4.0"
+version = "1.0"
+
+[cursor]
+theme = "breeze_cursors"
+size = 24
+
+[dark]
+background  = "#1c1018"
+surface     = "#271621"
+surface_alt = "#3e2335"
+text        = "#eee2ea"
+text_muted  = "#b59bad"
+accent      = "#f65c52"
+accent2     = "#e0607a"
+urgent      = "#ec797d"
+warning     = "#f4c871"
+success     = "#92d685"
+icon_theme  = "Papirus-Dark"
+wallpaper   = "ogarart-red-cave"   # a picture from the wallpaper gallery
+# ANSI colours 0-7, then bright 8-15
+terminal = [
+  "#381e30",
+  "#e76a69",
+  "#8fbd6e",
+  "#ebb864",
+  "#87a3d1",
+  "#d48dcb",
+  "#7ec1bc",
+  "#d4c4cf",
+  "#744e67",
+  "#f4908f",
+  "#a9d589",
+  "#f7ce8b",
+  "#a6bee5",
+  "#e7ade0",
+  "#99d9d4",
+  "#f7f3f5",
+]

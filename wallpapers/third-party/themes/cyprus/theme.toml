@@ -1,0 +1,79 @@
+# Cyprus — a surfd theme pack, written by theme/tools/make_wallpaper_themes.py. Format: docs/theme-making.md
+
+[meta]
+name = "Cyprus"
+description = "The Cyprus dynamic wallpaper: light by day, dark by night."
+author = "surfd contributors"
+license = "CC-BY-SA-4.0"
+version = "1.0"
+
+[cursor]
+theme = "breeze_cursors"
+size = 24
+
+[wallpaper]
+dynamic = "cyprus"   # choosing this theme turns on this dynamic wallpaper
+
+[dark]
+background  = "#10171b"
+surface     = "#172026"
+surface_alt = "#24323d"
+text        = "#e2e9ee"
+text_muted  = "#9baab5"
+accent      = "#93b4cc"
+accent2     = "#e8c07a"
+urgent      = "#ec797d"
+warning     = "#f4c871"
+success     = "#92d685"
+icon_theme  = "Papirus-Dark"
+# ANSI colours 0-7, then bright 8-15
+terminal = [
+  "#1e2e38",
+  "#db7578",
+  "#83c77d",
+  "#dfc273",
+  "#7baedf",
+  "#c898d9",
+  "#72cccb",
+  "#c4cdd4",
+  "#4e6474",
+  "#ec979a",
+  "#9fdd9a",
+  "#efd796",
+  "#9ec7ef",
+  "#deb9eb",
+  "#90e1e0",
+  "#f3f5f7",
+]
+
+[light]
+background  = "#f3f2ef"
+surface     = "#fcfbfb"
+surface_alt = "#e6e5e0"
+text        = "#2d2916"
+text_muted  = "#726d4f"
+accent      = "#3f6e85"
+accent2     = "#5f6b2f"
+urgent      = "#ab2b2b"
+warning     = "#975f0c"
+success     = "#2d7326"
+icon_theme  = "Papirus-Light"
+# ANSI colours 0-7, then bright 8-15
+terminal = [
+  "#322e1b",
+  "#9e3336",
+  "#327934",
+  "#8c6b1f",
+  "#2c679f",
+  "#874a9e",
+  "#258080",
+  "#d2d0c6",
+  "#78745e",
+  "#882124",
+  "#206321",
+  "#715411",
+  "#1b5387",
+  "#74338c",
+  "#166767",
+  "#fcfcfa",
+]

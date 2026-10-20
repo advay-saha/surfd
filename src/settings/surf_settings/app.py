@@ -150,7 +150,7 @@ class Window(Adw.ApplicationWindow):
         g_theme = Adw.PreferencesGroup(title="Theme", description="Theme packs set colours, wallpaper and icons. "
                                        "Drop your own into ~/.local/share/surfd/themes.")
         style = self.combo("theme.variant", {"dark": "Dark", "light": "Light"})
-        picker = ThemePicker(lambda name: self._set("theme.name", name, now=True))
+        picker = ThemePicker(lambda name: None if self.updating else self.ctl.change_now(themes.selection(name)))
         picker.set_margin_top(12)
         self.refreshers.append(lambda: picker.populate(self.ctl.get("theme.name"), self.ctl.get("theme.variant")))
         g_theme.add(style)

@@ -12,7 +12,7 @@ gi.require_version("Gtk", "4.0")
 gi.require_version("Adw", "1")
 from gi.repository import Adw, Gio, Gtk  # noqa: E402
 
-from surfd import paths, system  # noqa: E402
+from surfd import paths, system, themes  # noqa: E402
 
 from .controller import Controller  # noqa: E402
 from .widgets import APP_CSS, AccentRow, ThemePicker, css, keycap_row, logo_path  # noqa: E402
@@ -145,7 +145,7 @@ class Welcome(Adw.ApplicationWindow):
         (dark if self.ctl.get("theme.variant") == "dark" else light).set_active(True)
         style.append(dark)
         style.append(light)
-        picker = ThemePicker(lambda n: (self.ctl.change_now({"theme.name": n}), picker.select(n)))
+        picker = ThemePicker(lambda n: (self.ctl.change_now(themes.selection(n)), picker.select(n)))
         picker.set_max_children_per_line(3)
         accent = AccentRow(lambda c: (self.ctl.change_now({"theme.accent": c}), accent.show_value(c)))
         accent.set_halign(Gtk.Align.CENTER)

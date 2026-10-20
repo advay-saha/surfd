@@ -44,6 +44,16 @@ def run_steps(app: App) -> bool:
         accent = themes.resolve(config.load())[1].accent
         check(accent in (paths.generated_dir() / "waybar" / "style.css").read_text(),
               f"bar style regenerated with kelp accent {accent}")
+        w = config.load()["wallpaper"]
+        check((w["dynamic"], w["path"]) == ("", ""), "a theme with its own picture shows it (dynamic wallpaper off)")
+        check("/kelp-dark-3840x2160.jpg" in (paths.generated_dir() / "sway" / "config").read_text(),
+              "the Sway config shows Kelp's colourway picture")
+        theme_picker.on_pick("low-poly-mountain")
+        check(config.load()["wallpaper"]["dynamic"] == "low-poly-mountain",
+              "a dynamic theme card turns on its dynamic wallpaper")
+        theme_picker.on_pick("kelp")
+        win.ctl.change_now({"wallpaper.dynamic": "low-poly-mountain"})  # back to the default wallpaper for the steps below
+        win.refresh()
         # 2. accent swatch
         accent_row = _find(picker, "AccentRow")
         accent_row.buttons["#e88bc4"].emit("clicked")

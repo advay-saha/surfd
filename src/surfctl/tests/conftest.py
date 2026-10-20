@@ -18,6 +18,7 @@ def env(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> Path:
     (system / "defaults").mkdir(parents=True)
     shutil.copy(REPO / "config" / "defaults" / "surfd.toml", system / "defaults" / "surfd.toml")
     shutil.copytree(REPO / "theme" / "themes", system / "themes")
+    shutil.copytree(REPO / "wallpapers" / "third-party" / "themes", system / "themes", dirs_exist_ok=True)
     # the default dynamic wallpaper, as the packages install it
     shutil.copytree(REPO / "wallpapers" / "third-party" / "dynamic" / "low-poly-mountain",
                     system / "wallpapers" / "dynamic" / "low-poly-mountain")

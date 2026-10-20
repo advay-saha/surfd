@@ -7,11 +7,10 @@ Needs rsvg-convert (librsvg2-tools) and Pillow (python3-pillow). Run by surfd-th
 so the git repository only contains SVG sources.
 
 OUTDIR layout (mirrors where surfd-theme.spec installs things):
-  themes/<name>/...                theme packs with rendered wallpapers
+  themes/<name>/...                theme packs (SVG wallpapers in a pack are rendered to JPEG)
   plymouth/surfd/                  boot splash theme
   anaconda/                        installer sidebar/topbar art
   logos/                           PNG logos at common sizes
-  greeter/background               default login background (JPEG)
 """
 
 from __future__ import annotations
@@ -106,12 +105,6 @@ def logos(out: Path) -> None:
     rsvg(ROOT / "logos" / "surfd-logo-dark.svg", d / "surfd-logo-dark.png", height=128)
 
 
-def greeter(out: Path) -> None:
-    src = out / "themes" / "tide" / "wallpapers" / "tide-dark.jpg"
-    (out / "greeter").mkdir(parents=True, exist_ok=True)
-    shutil.copy(src, out / "greeter" / "background")
-
-
 def main() -> int:
     if len(sys.argv) != 2:
         print(__doc__)
@@ -124,7 +117,6 @@ def main() -> int:
     plymouth(out)
     anaconda(out)
     logos(out)
-    greeter(out)
     print(f"rendered artwork into {out}")
     return 0
 

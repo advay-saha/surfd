@@ -1,0 +1,79 @@
+# Plants — a surfd theme pack, written by theme/tools/make_wallpaper_themes.py. Format: docs/theme-making.md
+
+[meta]
+name = "Plants"
+description = "The Plants dynamic wallpaper: light by day, dark by night."
+author = "surfd contributors"
+license = "CC-BY-SA-4.0"
+version = "1.0"
+
+[cursor]
+theme = "breeze_cursors"
+size = 24
+
+[wallpaper]
+dynamic = "plants"   # choosing this theme turns on this dynamic wallpaper
+
+[dark]
+background  = "#0c171f"
+surface     = "#12212b"
+surface_alt = "#1f3341"
+text        = "#e2e9ee"
+text_muted  = "#9baab5"
+accent      = "#ef6f8e"
+accent2     = "#a98bd8"
+urgent      = "#ec797d"
+warning     = "#f4c871"
+success     = "#92d685"
+icon_theme  = "Papirus-Dark"
+# ANSI colours 0-7, then bright 8-15
+terminal = [
+  "#1e2e38",
+  "#e66c70",
+  "#8ebf75",
+  "#eaba6c",
+  "#86a6d8",
+  "#d390d2",
+  "#7dc3c4",
+  "#c4cdd4",
+  "#4e6474",
+  "#f39295",
+  "#a8d790",
+  "#f6d093",
+  "#a7c1ea",
+  "#e7afe6",
+  "#99dadb",
+  "#f3f5f7",
+]
+
+[light]
+background  = "#ecf4f6"
+surface     = "#fafcfc"
+surface_alt = "#dbe9eb"
+text        = "#16292d"
+text_muted  = "#4f6d72"
+accent      = "#a33566"
+accent2     = "#0c6c8a"
+urgent      = "#ab2b2b"
+warning     = "#975f0c"
+success     = "#2d7326"
+icon_theme  = "Papirus-Light"
+# ANSI colours 0-7, then bright 8-15
+terminal = [
+  "#1b2e32",
+  "#aa2c32",
+  "#3e7230",
+  "#98651b",
+  "#38609c",
+  "#93439a",
+  "#317a7c",
+  "#c6d0d2",
+  "#5e7478",
+  "#921b21",
+  "#2b5b1e",
+  "#7c4f0e",
+  "#254c87",
+  "#7f2e87",
+  "#1f6365",
+  "#fafcfc",
+]

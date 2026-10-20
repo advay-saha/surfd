@@ -66,13 +66,18 @@ generic-logos covers the system logo paths.
 %{__python3} theme/tools/render.py build/art
 
 %install
-# theme packs + rendered wallpapers
+# theme packs: surfd's own (surfd-theme) and one per wallpaper (surfd-wallpapers, with the pictures)
 install -d %{buildroot}%{_datadir}/surfd/themes
 cp -a build/art/themes/. %{buildroot}%{_datadir}/surfd/themes/
+cp -a wallpapers/third-party/themes/. %{buildroot}%{_datadir}/surfd/themes/
+find %{buildroot}%{_datadir}/surfd/themes -type d -exec chmod 0755 {} +
 find %{buildroot}%{_datadir}/surfd/themes -type f -exec chmod 0644 {} +
-# default login background is the Tide (dark) wallpaper
+for t in wallpapers/third-party/themes/*/; do
+  echo "%{_datadir}/surfd/themes/$(basename "$t")"
+done > wallpaper-themes.list
+# default login background is the Tide (dark) colourway
 install -d %{buildroot}%{_datadir}/surfd/greeter
-ln -s ../themes/tide/wallpapers/tide-dark.jpg %{buildroot}%{_datadir}/surfd/greeter/background
+ln -s ../wallpapers/surfd/tide/tide-dark-3840x2160.jpg %{buildroot}%{_datadir}/surfd/greeter/background
 
 # surfd's own gradient wallpapers (surfd-theme), one folder per colourway, every size
 for c in tide driftwood kelp dusk; do
@@ -108,12 +113,16 @@ install -d %{buildroot}%{_datadir}/anaconda/pixmaps/surfd
 install -pm 0644 theme/anaconda/surfd.css build/art/anaconda/*.png %{buildroot}%{_datadir}/anaconda/pixmaps/surfd/
 
 %check
-# every theme has both variants and a rendered wallpaper for each
-for t in %{buildroot}%{_datadir}/surfd/themes/*/; do
-  for v in dark light; do
-    ls "$t"wallpapers/*-$v.jpg >/dev/null
+# every theme's wallpaper is installed: a gallery picture by name, or a dynamic set
+w=%{buildroot}%{_datadir}/surfd/wallpapers
+test -n "$(ls $w/surfd/tide/tide-dark-3840x2160.jpg)" && test -e %{buildroot}%{_datadir}/surfd/greeter/background
+for t in %{buildroot}%{_datadir}/surfd/themes/*/theme.toml; do
+  for pic in $(sed -n 's/^wallpaper *= *"\([^"/]*\)".*/\1/p' $t); do
+    ls $w/surfd/*/$pic.* $w/static/$pic.* 2>/dev/null | grep -q . || { echo "$t: no picture $pic"; exit 1; }
   done
+  for set in $(sed -n 's/^dynamic *= *"\(.*\)".*/\1/p' $t); do test -f $w/dynamic/$set/wallpaper.toml; done
 done
+test $(ls -d %{buildroot}%{_datadir}/surfd/themes/*/ | wc -l) -ge 30
 test $(ls %{buildroot}%{_datadir}/plymouth/themes/surfd/throbber-*.png | wc -l) -eq 36
 # every dynamic set is complete (every frame named in wallpaper.toml exists), the default among them
 test -f %{buildroot}%{_datadir}/surfd/wallpapers/dynamic/low-poly-mountain/wallpaper.toml
@@ -129,15 +138,20 @@ test $(ls %{buildroot}%{_datadir}/surfd/wallpapers/static | wc -l) -ge 18
 %license LICENSES/CC-BY-SA-4.0.txt LICENSES/MIT.txt
 %doc docs/theme-making.md
 %dir %{_datadir}/surfd
-%{_datadir}/surfd/themes
+%dir %{_datadir}/surfd/themes
+%{_datadir}/surfd/themes/tide
+%{_datadir}/surfd/themes/driftwood
+%{_datadir}/surfd/themes/kelp
+%{_datadir}/surfd/themes/dusk
 %{_datadir}/surfd/greeter
 %dir %{_datadir}/surfd/wallpapers
 %{_datadir}/surfd/wallpapers/surfd
 
-%files -n surfd-wallpapers
+%files -n surfd-wallpapers -f wallpaper-themes.list
 %license LICENSES/LicenseRef-third-party-unverified.txt
 %doc wallpapers/third-party/CREDITS.md docs/dynamic-wallpapers.md
 %dir %{_datadir}/surfd
+%dir %{_datadir}/surfd/themes
 %dir %{_datadir}/surfd/wallpapers
 %{_datadir}/surfd/wallpapers/dynamic
 %{_datadir}/surfd/wallpapers/static

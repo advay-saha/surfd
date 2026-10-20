@@ -1,0 +1,79 @@
+# Tokyo Street — a surfd theme pack, written by theme/tools/make_wallpaper_themes.py. Format: docs/theme-making.md
+
+[meta]
+name = "Tokyo Street"
+description = "The Tokyo Street dynamic wallpaper: light by day, dark by night."
+author = "surfd contributors"
+license = "CC-BY-SA-4.0"
+version = "1.0"
+
+[cursor]
+theme = "breeze_cursors"
+size = 24
+
+[wallpaper]
+dynamic = "tokyo-street"   # choosing this theme turns on this dynamic wallpaper
+
+[dark]
+background  = "#0c141f"
+surface     = "#121c2b"
+surface_alt = "#1f2d41"
+text        = "#e2e7ee"
+text_muted  = "#9ba6b5"
+accent      = "#6f9fe0"
+accent2     = "#c8a6c0"
+urgent      = "#ec797d"
+warning     = "#f4c871"
+success     = "#92d685"
+icon_theme  = "Papirus-Dark"
+# ANSI colours 0-7, then bright 8-15
+terminal = [
+  "#1e2938",
+  "#d7727a",
+  "#7fc57f",
+  "#dac076",
+  "#77abe2",
+  "#c395dc",
+  "#6ec9ce",
+  "#c4cad4",
+  "#4e5d74",
+  "#e9939a",
+  "#9bdc9b",
+  "#ebd598",
+  "#9bc5f1",
+  "#dab7ed",
+  "#8ddee2",
+  "#f3f4f7",
+]
+
+[light]
+background  = "#f6f0ec"
+surface     = "#fcfbfa"
+surface_alt = "#ebe2db"
+text        = "#2d1f16"
+text_muted  = "#725e4f"
+accent      = "#8a4a26"
+accent2     = "#9a5a68"
+urgent      = "#ab2b2b"
+warning     = "#975f0c"
+success     = "#2d7326"
+icon_theme  = "Papirus-Light"
+# ANSI colours 0-7, then bright 8-15
+terminal = [
+  "#32241b",
+  "#a72f2a",
+  "#3b7429",
+  "#956714",
+  "#356394",
+  "#904692",
+  "#2e7c74",
+  "#d2cbc6",
+  "#78695e",
+  "#8f1e19",
+  "#295c19",
+  "#775009",
+  "#224f7e",
+  "#7d307f",
+  "#1c655d",
+  "#fcfbfa",
+]

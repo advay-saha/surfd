@@ -1,0 +1,79 @@
+# Exodus — a surfd theme pack, written by theme/tools/make_wallpaper_themes.py. Format: docs/theme-making.md
+
+[meta]
+name = "Exodus"
+description = "The Exodus dynamic wallpaper: light by day, dark by night."
+author = "surfd contributors"
+license = "CC-BY-SA-4.0"
+version = "1.0"
+
+[cursor]
+theme = "breeze_cursors"
+size = 24
+
+[wallpaper]
+dynamic = "exodus"   # choosing this theme turns on this dynamic wallpaper
+
+[dark]
+background  = "#11121a"
+surface     = "#181a25"
+surface_alt = "#27293a"
+text        = "#e2e3ee"
+text_muted  = "#9b9eb5"
+accent      = "#d4807c"
+accent2     = "#c57d5f"
+urgent      = "#ec797d"
+warning     = "#f4c871"
+success     = "#92d685"
+icon_theme  = "Papirus-Dark"
+# ANSI colours 0-7, then bright 8-15
+terminal = [
+  "#1e2138",
+  "#e36e6e",
+  "#8bc173",
+  "#e6bc6a",
+  "#83a8d6",
+  "#d092d0",
+  "#7ac6c2",
+  "#c4c6d4",
+  "#4e5174",
+  "#f19393",
+  "#a5d88f",
+  "#f3d290",
+  "#a4c2e8",
+  "#e5b0e5",
+  "#97dcd9",
+  "#f3f3f7",
+]
+
+[light]
+background  = "#f3f1ef"
+surface     = "#fcfbfb"
+surface_alt = "#e7e4df"
+text        = "#2d2416"
+text_muted  = "#72654f"
+accent      = "#1f5a70"
+accent2     = "#3f7f7f"
+urgent      = "#ab2b2b"
+warning     = "#975f0c"
+success     = "#2d7326"
+icon_theme  = "Papirus-Light"
+# ANSI colours 0-7, then bright 8-15
+terminal = [
+  "#32291b",
+  "#9a3133",
+  "#2e7632",
+  "#89691c",
+  "#28659d",
+  "#83489b",
+  "#217e7d",
+  "#d2cdc6",
+  "#786e5e",
+  "#831f21",
+  "#1c5f20",
+  "#6d520f",
+  "#185084",
+  "#6f3288",
+  "#136463",
+  "#fcfbfa",
+]

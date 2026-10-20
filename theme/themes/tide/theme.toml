@@ -23,7 +23,7 @@ urgent      = "#f2777a"
 warning     = "#f4c76c"
 success     = "#8cd987"
 icon_theme  = "Papirus-Dark"
-wallpaper   = "wallpapers/tide-dark.jpg"   # rendered from the .svg source at build time
+wallpaper   = "tide-dark-3840x2160"   # a picture from the wallpaper gallery (surfd's own colourways)
 # ANSI colours 0-7, then bright 8-15
 terminal = [
   "#1a2b36",
@@ -56,7 +56,7 @@ urgent      = "#c43f45"
 warning     = "#9a6a10"
 success     = "#367f31"
 icon_theme  = "Papirus-Light"
-wallpaper   = "wallpapers/tide-light.jpg"   # rendered from the .svg source at build time
+wallpaper   = "tide-light-3840x2160"   # a picture from the wallpaper gallery (surfd's own colourways)
 # ANSI colours 0-7, then bright 8-15
 terminal = [
   "#15262f",

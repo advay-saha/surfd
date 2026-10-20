@@ -1,0 +1,45 @@
+# Breaking Wave — a surfd theme pack, written by theme/tools/make_wallpaper_themes.py. Format: docs/theme-making.md
+
+[meta]
+name = "Breaking Wave"
+description = "Colours from a breaking-wave photo from Pixabay."
+author = "surfd contributors"
+license = "CC-BY-SA-4.0"
+version = "1.0"
+
+[cursor]
+theme = "breeze_cursors"
+size = 24
+
+[light]
+background  = "#edf1f4"
+surface     = "#fafbfc"
+surface_alt = "#dce2ea"
+text        = "#16202d"
+text_muted  = "#4f5f72"
+accent      = "#134d5b"
+accent2     = "#2c6877"
+urgent      = "#ab2b2b"
+warning     = "#975f0c"
+success     = "#2d7326"
+icon_theme  = "Papirus-Light"
+wallpaper   = "pixabay-breaking-wave-coast"   # a picture from the wallpaper gallery
+# ANSI colours 0-7, then bright 8-15
+terminal = [
+  "#1b2532",
+  "#992f31",
+  "#2d752f",
+  "#87671a",
+  "#26639a",
+  "#824699",
+  "#1f7d7b",
+  "#c6cbd2",
+  "#5e6978",
+  "#821d1f",
+  "#1c5e1d",
+  "#6b4f0d",
+  "#164e81",
+  "#6e3086",
+  "#116260",
+  "#fafbfc",
+]

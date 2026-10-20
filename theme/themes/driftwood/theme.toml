@@ -22,7 +22,7 @@ urgent      = "#e06c6c"
 warning     = "#e3b45f"
 success     = "#a3c47c"
 icon_theme  = "Papirus-Dark"
-wallpaper   = "wallpapers/driftwood-dark.jpg"   # rendered from the .svg source at build time
+wallpaper   = "driftwood-dark-3840x2160"   # a picture from the wallpaper gallery (surfd's own colourways)
 # ANSI colours 0-7, then bright 8-15
 terminal = [
   "#2b2520",
@@ -54,7 +54,7 @@ urgent      = "#ad3f3f"
 warning     = "#94680f"
 success     = "#4e7c28"
 icon_theme  = "Papirus-Light"
-wallpaper   = "wallpapers/driftwood-light.jpg"   # rendered from the .svg source at build time
+wallpaper   = "driftwood-light-3840x2160"   # a picture from the wallpaper gallery (surfd's own colourways)
 # ANSI colours 0-7, then bright 8-15
 terminal = [
   "#2d241d",

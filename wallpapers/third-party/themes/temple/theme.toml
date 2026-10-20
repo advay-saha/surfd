@@ -1,0 +1,45 @@
+# Temple — a surfd theme pack, written by theme/tools/make_wallpaper_themes.py. Format: docs/theme-making.md
+
+[meta]
+name = "Temple"
+description = "Colours from 'Ancient oriental temple' by VorgBardo."
+author = "surfd contributors"
+license = "CC-BY-SA-4.0"
+version = "1.0"
+
+[cursor]
+theme = "breeze_cursors"
+size = 24
+
+[dark]
+background  = "#0c1a1f"
+surface     = "#12242b"
+surface_alt = "#1f3841"
+text        = "#e2ebee"
+text_muted  = "#9baeb5"
+accent      = "#a4d8cd"
+accent2     = "#e0675a"
+urgent      = "#ec797d"
+warning     = "#f4c871"
+success     = "#92d685"
+icon_theme  = "Papirus-Dark"
+wallpaper   = "vorgbardo-ancient-oriental-temple"   # a picture from the wallpaper gallery
+# ANSI colours 0-7, then bright 8-15
+terminal = [
+  "#1e3138",
+  "#dd7978",
+  "#85cc7d",
+  "#e1c673",
+  "#7db2df",
+  "#ca9cd9",
+  "#74d0cb",
+  "#c4d0d4",
+  "#4e6a74",
+  "#ed9c9b",
+  "#a2e19b",
+  "#f0da97",
+  "#a0cbef",
+  "#e0bdeb",
+  "#93e4df",
+  "#f3f6f7",
+]

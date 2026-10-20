@@ -1,0 +1,45 @@
+# Blue Mountains — a surfd theme pack, written by theme/tools/make_wallpaper_themes.py. Format: docs/theme-making.md
+
+[meta]
+name = "Blue Mountains"
+description = "Colours from 'Blue mountains' by wheazzy."
+author = "surfd contributors"
+license = "CC-BY-SA-4.0"
+version = "1.0"
+
+[cursor]
+theme = "breeze_cursors"
+size = 24
+
+[dark]
+background  = "#0c171f"
+surface     = "#12202b"
+surface_alt = "#1f3341"
+text        = "#e2e9ee"
+text_muted  = "#9baab5"
+accent      = "#5fa2dc"
+accent2     = "#8ec5f0"
+urgent      = "#ec797d"
+warning     = "#f4c871"
+success     = "#92d685"
+icon_theme  = "Papirus-Dark"
+wallpaper   = "wheazzy-blue-mountains"   # a picture from the wallpaper gallery
+# ANSI colours 0-7, then bright 8-15
+terminal = [
+  "#1e2d38",
+  "#d57279",
+  "#7dc57f",
+  "#d8c075",
+  "#75ace1",
+  "#c296db",
+  "#6ccacd",
+  "#c4cdd4",
+  "#4e6374",
+  "#e79399",
+  "#99dc9b",
+  "#ead596",
+  "#99c5f0",
+  "#d9b7ed",
+  "#8bdfe1",
+  "#f3f5f7",
+]

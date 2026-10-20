@@ -1,0 +1,79 @@
+# Japanese Garden — a surfd theme pack, written by theme/tools/make_wallpaper_themes.py. Format: docs/theme-making.md
+
+[meta]
+name = "Japanese Garden"
+description = "The Japanese Garden dynamic wallpaper: light by day, dark by night."
+author = "surfd contributors"
+license = "CC-BY-SA-4.0"
+version = "1.0"
+
+[cursor]
+theme = "breeze_cursors"
+size = 24
+
+[wallpaper]
+dynamic = "japanese-garden"   # choosing this theme turns on this dynamic wallpaper
+
+[dark]
+background  = "#0c171f"
+surface     = "#12212b"
+surface_alt = "#1f3341"
+text        = "#e2e9ee"
+text_muted  = "#9baab5"
+accent      = "#e86a5a"
+accent2     = "#f0b86a"
+urgent      = "#ec797d"
+warning     = "#f4c871"
+success     = "#92d685"
+icon_theme  = "Papirus-Dark"
+# ANSI colours 0-7, then bright 8-15
+terminal = [
+  "#1e2e38",
+  "#e56c6a",
+  "#8dbe6f",
+  "#e9b965",
+  "#85a5d2",
+  "#d28fcc",
+  "#7dc3bd",
+  "#c4cdd4",
+  "#4e6474",
+  "#f3918f",
+  "#a7d68a",
+  "#f6cf8b",
+  "#a4c0e6",
+  "#e6aee1",
+  "#99dad4",
+  "#f3f5f7",
+]
+
+[light]
+background  = "#f1ecf6"
+surface     = "#fbfafc"
+surface_alt = "#e3dbeb"
+text        = "#21162d"
+text_muted  = "#614f72"
+accent      = "#b03a2e"
+accent2     = "#6a5ab0"
+urgent      = "#ab2b2b"
+warning     = "#975f0c"
+success     = "#2d7326"
+icon_theme  = "Papirus-Light"
+# ANSI colours 0-7, then bright 8-15
+terminal = [
+  "#261b32",
+  "#ac2d2b",
+  "#3f722a",
+  "#9a6514",
+  "#396195",
+  "#954493",
+  "#327a75",
+  "#ccc6d2",
+  "#6b5e78",
+  "#941c1a",
+  "#2c5a19",
+  "#7d4f09",
+  "#254d80",
+  "#822e80",
+  "#20645f",
+  "#fbfafc",
+]

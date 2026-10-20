@@ -28,7 +28,8 @@ same thing with your current values.
 ```sh
 # look
 surfctl theme list
-surfctl theme set kelp                      # switch theme pack
+surfctl theme set kelp                      # switch theme pack (and to its wallpaper)
+surfctl theme set red-cave --keep-wallpaper # only the colours
 surfctl theme set tide --variant light
 surfctl theme variant toggle                # dark <-> light
 surfctl accent '#e88bc4'                    # accent colour
@@ -162,6 +163,9 @@ or your own image, when you set one, always wins. See [dynamic-wallpapers.md](dy
 The still pictures are surfd's own gradient wallpapers (Tide, Driftwood, Kelp and Dusk, dark and light,
 in 16:9, 16:10 and ultrawide sizes; pick the size that matches your screen) and 18 images by other artists.
 Pictures you put in `~/.local/share/surfd/wallpapers/static/` are listed first.
+
+Every one of these wallpapers also has a theme with colours picked from it (`surfctl theme list`): choosing
+the theme switches to its picture or dynamic wallpaper. The dynamic ones have a light and a dark style.
 
 ```sh
 surfctl wallpaper status                    # what is showing, and every frame of the set

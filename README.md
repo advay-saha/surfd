@@ -9,12 +9,21 @@ Fedora project** and is not endorsed by the Fedora Project. Fedora's packages,
 kernel and repositories are used unchanged; surfd adds its own release
 identity, theme, configuration layer and tools.
 
-![surfd desktop: Tide theme, dark](docs/screenshots/desktop-tide-dark.jpg)
+![surfd desktop: the Low-poly Mountain theme, dark, with its dynamic wallpaper](docs/screenshots/desktop-low-poly-mountain-dark.jpg)
+
+Every wallpaper comes with a theme whose colours were picked from it. Choosing the theme brings its wallpaper;
+the dynamic (time-of-day) ones have a light and a dark style.
 
 | | |
 |---|---|
-| ![Driftwood light, floating mode](docs/screenshots/desktop-driftwood-light-floating.jpg) | ![Surf Settings](docs/screenshots/settings-appearance.jpg) |
-| *Driftwood (light) in mouse-friendly floating mode* | *Surf Settings* |
+| ![Tokyo Street, light](docs/screenshots/desktop-tokyo-street-light.jpg) | ![Red Cave, dark](docs/screenshots/desktop-red-cave-dark.jpg) |
+| *Tokyo Street (light)* | *Red Cave* |
+| ![Japanese Garden, dark](docs/screenshots/desktop-japanese-garden-dark.jpg) | ![Bitter Coast, light](docs/screenshots/desktop-bitter-coast-light.jpg) |
+| *Japanese Garden (dark)* | *Bitter Coast* |
+| ![Plants, dark](docs/screenshots/desktop-plants-dark.jpg) | ![Scenery Sunset, dark](docs/screenshots/desktop-scenery-sunset-dark.jpg) |
+| *Plants (dark)* | *Scenery Sunset* |
+| ![Tropical Beach, light](docs/screenshots/desktop-tropical-beach-light.jpg) | ![Surf Settings](docs/screenshots/settings-appearance.jpg) |
+| *Tropical Beach* | *Surf Settings: pick a theme* |
 
 ## What you get
 
@@ -32,9 +41,10 @@ identity, theme, configuration layer and tools.
   Invalid changes are refused and nothing is touched; `surfctl reset` keeps a backup.
 - **Surf Settings.** A small GTK 4/libadwaita app over the same file, plus a
   first-login Welcome tour.
-- **Theme packs are folders.** Three original themes (Tide, Driftwood, Kelp; Tide uses the logo's teal and blue),
-  each dark and light, all artwork generated from code (CC BY-SA 4.0). Drop a
-  folder in `~/.local/share/surfd/themes/` or `surfctl theme install pack.tar.gz`.
+- **A theme for every wallpaper.** 30 themes: surfd's own four (Tide, Driftwood, Kelp, Dusk; Tide uses the
+  logo's teal and blue), one for each of the 18 still pictures, and one for each of the 8 dynamic wallpapers
+  with a light and a dark style. Picking a theme brings its wallpaper (`--keep-wallpaper` to keep yours).
+  Theme packs are folders: drop one in `~/.local/share/surfd/themes/` or `surfctl theme install pack.tar.gz`.
 - **One look everywhere.** Waybar, mako, fuzzel, foot, swaylock, GTK 3/4,
   Qt (qt6ct), the greetd login screen and the Plymouth boot splash all follow the theme.
 - **A simple installer.** Five screens — language & keyboard, disk (optional
@@ -47,7 +57,7 @@ identity, theme, configuration layer and tools.
 
 ```sh
 surfctl theme list                       # installed theme packs
-surfctl theme set driftwood --variant light
+surfctl theme set tokyo-street --variant light   # its colours and its dynamic wallpaper
 surfctl accent '#e88bc4'                 # or: surfctl accent reset
 surfctl wallpaper set ~/Pictures/beach.jpg
 surfctl wallpaper sync theme             # the default wallpaper follows light/dark (or: auto = time of day)

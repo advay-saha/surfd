@@ -1,0 +1,45 @@
+# Crimson Sunset — a surfd theme pack, written by theme/tools/make_wallpaper_themes.py. Format: docs/theme-making.md
+
+[meta]
+name = "Crimson Sunset"
+description = "Colours from 'A stunning sunset' by unreal."
+author = "surfd contributors"
+license = "CC-BY-SA-4.0"
+version = "1.0"
+
+[cursor]
+theme = "breeze_cursors"
+size = 24
+
+[dark]
+background  = "#160c1f"
+surface     = "#1f122b"
+surface_alt = "#321f41"
+text        = "#e8e2ee"
+text_muted  = "#a99bb5"
+accent      = "#f95e3f"
+accent2     = "#e0459a"
+urgent      = "#ec797d"
+warning     = "#f4c871"
+success     = "#92d685"
+icon_theme  = "Papirus-Dark"
+wallpaper   = "unreal-midjourney-a-stunning-sunset"   # a picture from the wallpaper gallery
+# ANSI colours 0-7, then bright 8-15
+terminal = [
+  "#2c1e38",
+  "#e76a67",
+  "#8fbd6c",
+  "#ebb862",
+  "#87a4ce",
+  "#d48ec8",
+  "#7fc1ba",
+  "#cdc4d4",
+  "#624e74",
+  "#f48f8d",
+  "#a9d587",
+  "#f7ce89",
+  "#a5bee3",
+  "#e7aedd",
+  "#9ad9d2",
+  "#f5f3f7",
+]

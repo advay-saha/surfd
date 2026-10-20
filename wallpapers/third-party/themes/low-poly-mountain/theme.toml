@@ -1,0 +1,79 @@
+# Low-poly Mountain — a surfd theme pack, written by theme/tools/make_wallpaper_themes.py. Format: docs/theme-making.md
+
+[meta]
+name = "Low-poly Mountain"
+description = "The Low-poly Mountain dynamic wallpaper: light by day, dark by night."
+author = "surfd contributors"
+license = "CC-BY-SA-4.0"
+version = "1.0"
+
+[cursor]
+theme = "breeze_cursors"
+size = 24
+
+[wallpaper]
+dynamic = "low-poly-mountain"   # choosing this theme turns on this dynamic wallpaper
+
+[dark]
+background  = "#13111b"
+surface     = "#1a1826"
+surface_alt = "#2a253c"
+text        = "#e5e2ee"
+text_muted  = "#a09bb5"
+accent      = "#63bcb6"
+accent2     = "#479ac2"
+urgent      = "#ec797d"
+warning     = "#f4c871"
+success     = "#92d685"
+icon_theme  = "Papirus-Dark"
+# ANSI colours 0-7, then bright 8-15
+terminal = [
+  "#241e38",
+  "#d57675",
+  "#7dc87a",
+  "#d9c370",
+  "#75afdd",
+  "#c299d7",
+  "#6dcdc8",
+  "#c7c4d4",
+  "#554e74",
+  "#e79796",
+  "#9ade97",
+  "#ead892",
+  "#98c7ed",
+  "#d9b9ea",
+  "#8ce1dd",
+  "#f4f3f7",
+]
+
+[light]
+background  = "#f3f6ec"
+surface     = "#fcfcfa"
+surface_alt = "#e6ebdb"
+text        = "#252d16"
+text_muted  = "#67724f"
+accent      = "#3d5f97"
+accent2     = "#2f8f88"
+urgent      = "#ab2b2b"
+warning     = "#975f0c"
+success     = "#2d7326"
+icon_theme  = "Papirus-Light"
+# ANSI colours 0-7, then bright 8-15
+terminal = [
+  "#2a321b",
+  "#9e3138",
+  "#327736",
+  "#8c6a21",
+  "#2b65a2",
+  "#8748a0",
+  "#247f82",
+  "#ced2c6",
+  "#6f785e",
+  "#871f26",
+  "#206123",
+  "#725313",
+  "#1a518a",
+  "#73328d",
+  "#156668",
+  "#fcfcfa",
+]

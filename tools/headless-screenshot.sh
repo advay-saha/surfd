@@ -7,6 +7,10 @@
 # artwork (python3 theme/tools/render.py build/art).
 #
 #   tools/headless-screenshot.sh build/art docs/screenshots [theme variant mode]
+#
+# mode is tiling or floating (a tour: theme list, key list, settings help), or
+# showcase: floating, two small windows so the theme's wallpaper shows, the
+# dynamic wallpaper pinned to the frame for the style (night for dark, day for light).
 set -Eeuo pipefail
 
 ART="$(realpath "${1:?rendered artwork dir}")"
@@ -21,12 +25,9 @@ mkdir -p "${OUT}"
 
 work="$(mktemp -d)"
 trap 'kill $(jobs -p) 2>/dev/null || true; rm -rf "${work}"' EXIT
-mkdir -p "${work}"/{home,run,bin,sys/defaults}
+mkdir -p "${work}"/{home,run,bin}
 chmod 700 "${work}/run"
-cp "${REPO}/config/defaults/surfd.toml" "${work}/sys/defaults/"
-ln -s "${ART}/themes" "${work}/sys/themes"
-mkdir -p "${work}/sys/wallpapers/dynamic"
-ln -s "${REPO}/wallpapers/third-party/dynamic/low-poly-mountain" "${work}/sys/wallpapers/dynamic/low-poly-mountain"
+"${REPO}/tools/stage-system.sh" "${ART}" "${work}/sys"   # every theme and wallpaper, as the packages install them
 cat > "${work}/bin/surfctl" <<EOF
 #!/bin/sh
 PYTHONPATH="${REPO}/src/surfctl" exec python3 -m surfd "\$@"
@@ -42,7 +43,14 @@ unset WAYLAND_DISPLAY SWAYSOCK DISPLAY
 
 surfctl init -q
 surfctl theme set "${THEME}" --variant "${VARIANT}" --no-reload >/dev/null
-surfctl mode "${MODE}" --no-reload >/dev/null
+if [[ "${MODE}" == showcase ]]; then
+    surfctl mode floating --no-reload >/dev/null
+    surfctl wallpaper sync theme --no-reload >/dev/null
+    cp "${REPO}/tools/showcase-term.sh" "${work}/bin/showcase-term"
+    chmod +x "${work}/bin/showcase-term"
+else
+    surfctl mode "${MODE}" --no-reload >/dev/null
+fi
 surfctl generate -q
 
 # A tiny stand-in for the welcome app and polkit agent in this test.
@@ -61,21 +69,29 @@ dbus-run-session -- bash -c '
   export WAYLAND_DISPLAY=$(ls "$XDG_RUNTIME_DIR" | grep -E "^wayland-[0-9]+$" | head -n1)
   swaymsg -q output HEADLESS-1 resolution 1920x1080
   sleep 2
-  swaymsg -q exec "foot -e sh -c \"echo \\\"\$ surfctl theme list\\\"; surfctl theme list; echo; echo \\\"\$ surfctl keys list | head\\\"; surfctl keys list | head -12; sleep 60\""
-  swaymsg -q exec "foot -e sh -c \"surfctl explain layout; sleep 60\""
+  if [ "$2" = showcase ]; then
+    swaymsg -q exec "foot -a showcase-a showcase-term palette"
+    swaymsg -q exec "foot -a showcase-b showcase-term keys"
+    sleep 2
+    swaymsg -q "[app_id=showcase-a] resize set 900 290, move position 90 690"
+    swaymsg -q "[app_id=showcase-b] resize set 560 400, move position 1250 300"
+  else
+    swaymsg -q exec "foot -e sh -c \"echo \\\"\$ surfctl theme list\\\"; surfctl theme list; echo; echo \\\"\$ surfctl keys list | head\\\"; surfctl keys list | head -12; sleep 60\""
+    swaymsg -q exec "foot -e sh -c \"surfctl explain layout; sleep 60\""
+  fi
   sleep 2
   gdbus call --session --dest org.freedesktop.Notifications --object-path /org/freedesktop/Notifications \
     --method org.freedesktop.Notifications.Notify surfd 0 preferences-desktop "Welcome to surfd" \
     "Press Super + / for the key cheat sheet." "[]" "{}" 0 >/dev/null || true
   sleep 1.5
   grim "$1-desktop.png"
-  if command -v fuzzel >/dev/null; then
+  if [ "$2" != showcase ] && command -v fuzzel >/dev/null; then
     swaymsg -q exec "fuzzel 2>$0/fuzzel.log"
     sleep 1.5
     grim "$1-launcher.png"
   fi
   swaymsg -q exit
-' "${work}" "${OUT}/${THEME}-${VARIANT}-${MODE}" || true
+' "${work}" "${OUT}/${THEME}-${VARIANT}-${MODE}" "${MODE}" || true
 
 shopt -s nullglob
 for f in "${OUT}/${THEME}-${VARIANT}-${MODE}"*.png; do echo "wrote $f"; done

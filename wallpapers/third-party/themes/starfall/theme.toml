@@ -1,0 +1,45 @@
+# Starfall — a surfd theme pack, written by theme/tools/make_wallpaper_themes.py. Format: docs/theme-making.md
+
+[meta]
+name = "Starfall"
+description = "Colours from 'Midjourney landscape' by totalcoconut."
+author = "surfd contributors"
+license = "CC-BY-SA-4.0"
+version = "1.0"
+
+[cursor]
+theme = "breeze_cursors"
+size = 24
+
+[dark]
+background  = "#0c0f1f"
+surface     = "#12162b"
+surface_alt = "#1f2441"
+text        = "#e2e4ee"
+text_muted  = "#9b9fb5"
+accent      = "#ec9ba8"
+accent2     = "#b88fc0"
+urgent      = "#ec797d"
+warning     = "#f4c871"
+success     = "#92d685"
+icon_theme  = "Papirus-Dark"
+wallpaper   = "totalcoconut-midjourney-landscape"   # a picture from the wallpaper gallery
+# ANSI colours 0-7, then bright 8-15
+terminal = [
+  "#1e2238",
+  "#e67273",
+  "#8ec478",
+  "#e9bf6f",
+  "#86abdb",
+  "#d295d5",
+  "#7dc9c7",
+  "#c4c6d4",
+  "#4e5374",
+  "#f39898",
+  "#a9db94",
+  "#f6d495",
+  "#a8c6ec",
+  "#e6b5e8",
+  "#9adfdd",
+  "#f3f3f7",
+]

@@ -202,19 +202,25 @@ def cmd_theme(args: argparse.Namespace) -> int:
         except (config.ConfigError, KeyError):
             current = ""
         found, problems = themes.discover()
+        nw = max((len(t.name) for t in found), default=0)
+        tw = max((len(t.title) for t in found), default=0)
         for t in found:
             mark = _c("32", "●") if t.name == current else " "
             where = "system" if t.is_system else "user"
-            print(f"{mark} {t.name:<14} {t.title:<16} {'/'.join(t.variants):<11} {where:<6} {t.meta.get('description', '')}")
+            print(f"{mark} {t.name:<{nw}}  {t.title:<{tw}}  {'/'.join(t.variants):<10} {where:<6} "
+                  f"{t.meta.get('description', '')}")
         for p in problems:
             print(_c("33", "  broken: ") + p)
         return 0
     if sub == "set":
+        theme = themes.find(args.name)
+        if theme is None:
+            return fail(f"theme '{args.name}' not found (installed: {', '.join(themes.names())})")
         changes: dict[str, Any] = {"theme.name": args.name}
         if args.variant:
             changes["theme.variant"] = args.variant
-        if themes.find(args.name) is None:
-            return fail(f"theme '{args.name}' not found (installed: {', '.join(themes.names())})")
+        if not args.keep_wallpaper:
+            changes.update(theme.wallpaper_changes())  # a theme comes with its wallpaper
         return apply_changes(changes, args, f"theme set to {args.name}")
     if sub == "variant":
         variant = args.variant
@@ -345,10 +351,10 @@ def cmd_wallpaper(args: argparse.Namespace) -> int:
         return session.wallpaper_daemon()
     if sub in ("list", None):
         found, _ = themes.discover()
-        for t in found:
+        for t in found:  # theme packs with their own image files (the rest use the pictures below)
             for v in t.variants:
                 wp = t.wallpaper(v)
-                if wp:
+                if wp and wp.is_relative_to(t.path.resolve()):
                     print(f"{t.name}/{v}: {wp}")
         for dset in dynwall.discover().values():
             print(f"dynamic {dset.name}: {dset.title}, {len(dset.frames)} frames, {dset.kind} based")
@@ -721,6 +727,7 @@ def build_parser() -> argparse.ArgumentParser:
     s = tsub.add_parser("set", help="switch theme")
     s.add_argument("name")
     s.add_argument("--variant", choices=("dark", "light"))
+    s.add_argument("--keep-wallpaper", action="store_true", help="change only the colours, not the wallpaper")
     s.add_argument("--no-reload", action="store_true")
     s = tsub.add_parser("variant", help="dark, light or toggle")
     s.add_argument("variant", choices=("dark", "light", "toggle"))

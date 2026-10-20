@@ -2,7 +2,8 @@
 
     mytheme/
       theme.toml          palette for [dark] and [light], metadata
-      wallpapers/         images referenced from theme.toml (optional)
+      wallpapers/         images referenced from theme.toml (optional; a theme can
+                          also name a gallery picture or a dynamic wallpaper set)
       waybar.css          appended to the generated bar style (optional)
       gtk.css             appended to the generated GTK 3/4 style (optional)
       LICENSE             licence for the artwork (recommended)
@@ -25,7 +26,7 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
 
-from . import color, paths
+from . import color, dynwall, gallery, paths
 
 COLOR_KEYS = (
     "background",  # desktop / window background
@@ -75,6 +76,7 @@ class Theme:
     path: Path
     meta: dict[str, Any]
     variants: dict[str, dict[str, Any]]
+    dynamic: str = ""  # [wallpaper] dynamic = "<set>": a time-of-day wallpaper that comes with the theme
     cursor_theme: str = "breeze_cursors"
     cursor_size: int = 24
     problems: list[str] = field(default_factory=list)
@@ -92,18 +94,31 @@ class Theme:
             return False
 
     def wallpaper(self, variant: str) -> Path | None:
+        """The theme's still image for a variant: a file in the theme folder, else a gallery picture
+        of that name (e.g. "ogarart-red-cave"), else the light/dark frame of the theme's dynamic set."""
         rel = self.variants.get(variant, {}).get("wallpaper")
-        if not rel:
-            return None
-        p = (self.path / rel).resolve()
-        # PNG renders are produced at package build time from the SVG
-        # sources; fall back to the other format if only one exists.
-        if not p.exists():
+        if rel:
+            p = (self.path / rel).resolve()
+            if p.exists():
+                return p
+            # PNG renders are produced at package build time from the SVG
+            # sources; fall back to the other format if only one exists.
             for alt in (p.with_suffix(".jpg"), p.with_suffix(".png"), p.with_suffix(".svg")):
                 if alt.exists():
                     return alt
-            return None
-        return p
+            if "/" not in str(rel) and (pic := gallery.find(str(rel))) is not None:
+                return pic.path
+        if self.dynamic and (dset := dynwall.find(self.dynamic)) is not None:
+            return dset.dark if variant == "dark" else dset.light
+        return None
+
+    def wallpaper_changes(self) -> dict[str, str]:
+        """Configuration that shows this theme's wallpaper when the theme is chosen ({} if it has none)."""
+        if self.dynamic:
+            return {"wallpaper.path": "", "wallpaper.dynamic": self.dynamic}
+        if any(v.get("wallpaper") for v in self.variants.values()):
+            return {"wallpaper.path": "", "wallpaper.dynamic": ""}
+        return {}
 
     def extra(self, filename: str) -> str:
         f = self.path / filename
@@ -172,17 +187,23 @@ def load(path: Path) -> Theme:
         raise ThemeError(f"{toml}: " + "; ".join(errs))
 
     cursor = data.get("cursor", {})
+    wall = data.get("wallpaper", {})
+    if not isinstance(wall, dict) or not isinstance(wall.get("dynamic", ""), str):
+        raise ThemeError(f'{toml}: [wallpaper] must be a table like dynamic = "low-poly-mountain"')
     theme = Theme(
         name=name,
         path=path,
         meta=data.get("meta", {}),
         variants=variants,
+        dynamic=wall.get("dynamic", ""),
         cursor_theme=str(cursor.get("theme", "breeze_cursors")),
         cursor_size=int(cursor.get("size", 24)),
     )
     for v, data in variants.items():
         if data.get("wallpaper") and theme.wallpaper(v) is None:
-            theme.problems.append(f"[{v}] wallpaper '{data['wallpaper']}' not found")
+            theme.problems.append(f"[{v}] wallpaper '{data['wallpaper']}' not found (a file here or a gallery picture)")
+    if theme.dynamic and dynwall.find(theme.dynamic) is None:
+        theme.problems.append(f"[wallpaper] dynamic wallpaper '{theme.dynamic}' is not installed")
     if "license" not in theme.meta:
         theme.problems.append("[meta] has no license; add one so others can share it")
     return theme
@@ -218,6 +239,12 @@ def discover() -> tuple[list[Theme], list[str]]:
 
 def names() -> list[str]:
     return [t.name for t in discover()[0]]
+
+
+def selection(name: str) -> dict[str, str]:
+    """The configuration changes for choosing a theme: its name and the wallpaper that comes with it."""
+    theme = find(name)
+    return {"theme.name": name, **(theme.wallpaper_changes() if theme else {})}
 
 
 def resolve(cfg: dict[str, Any]) -> tuple[Theme, Palette]:

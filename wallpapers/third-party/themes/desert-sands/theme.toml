@@ -1,0 +1,79 @@
+# Desert Sands — a surfd theme pack, written by theme/tools/make_wallpaper_themes.py. Format: docs/theme-making.md
+
+[meta]
+name = "Desert Sands"
+description = "The Desert Sands dynamic wallpaper: light by day, dark by night."
+author = "surfd contributors"
+license = "CC-BY-SA-4.0"
+version = "1.0"
+
+[cursor]
+theme = "breeze_cursors"
+size = 24
+
+[wallpaper]
+dynamic = "desert-sands"   # choosing this theme turns on this dynamic wallpaper
+
+[dark]
+background  = "#0c141f"
+surface     = "#121d2b"
+surface_alt = "#1f2e41"
+text        = "#e2e7ee"
+text_muted  = "#9ba7b5"
+accent      = "#5fd3a0"
+accent2     = "#4fb3c9"
+urgent      = "#ec797d"
+warning     = "#f4c871"
+success     = "#92d685"
+icon_theme  = "Papirus-Dark"
+# ANSI colours 0-7, then bright 8-15
+terminal = [
+  "#1e2a38",
+  "#d57872",
+  "#7dcb78",
+  "#d8c66e",
+  "#75b2da",
+  "#c29cd4",
+  "#6ccfc6",
+  "#c4cbd4",
+  "#4e5e74",
+  "#e79893",
+  "#9ae096",
+  "#e9da90",
+  "#97caeb",
+  "#dabbe8",
+  "#8be3db",
+  "#f3f5f7",
+]
+
+[light]
+background  = "#f6f1ec"
+surface     = "#fcfbfa"
+surface_alt = "#ebe3db"
+text        = "#2d2116"
+text_muted  = "#72614f"
+accent      = "#3e759e"
+accent2     = "#9c6a3f"
+urgent      = "#ab2b2b"
+warning     = "#975f0c"
+success     = "#2d7326"
+icon_theme  = "Papirus-Light"
+# ANSI colours 0-7, then bright 8-15
+terminal = [
+  "#32261b",
+  "#9e3439",
+  "#327937",
+  "#8c6c22",
+  "#2c68a2",
+  "#874ba1",
+  "#248183",
+  "#d2ccc6",
+  "#786b5e",
+  "#882126",
+  "#206324",
+  "#725513",
+  "#1b548a",
+  "#74348f",
+  "#156869",
+  "#fcfbfa",
+]

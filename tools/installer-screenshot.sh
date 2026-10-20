@@ -14,12 +14,9 @@ mkdir -p "${OUT}"
 
 work="$(mktemp -d)"
 trap 'kill $(jobs -p) 2>/dev/null || true; rm -rf "${work}"' EXIT
-mkdir -p "${work}"/{home,run,bin,sys/defaults,share/icons/hicolor/scalable/apps}
+mkdir -p "${work}"/{home,run,bin,share/icons/hicolor/scalable/apps}
 chmod 700 "${work}/run"
-cp "${REPO}/config/defaults/surfd.toml" "${work}/sys/defaults/"
-ln -s "${ART}/themes" "${work}/sys/themes"
-mkdir -p "${work}/sys/wallpapers/dynamic"
-ln -s "${REPO}/wallpapers/third-party/dynamic/low-poly-mountain" "${work}/sys/wallpapers/dynamic/low-poly-mountain"
+"${REPO}/tools/stage-system.sh" "${ART}" "${work}/sys"   # every theme and wallpaper, as the packages install them
 cp "${REPO}/src/installer/data/org.surfd.Installer.svg" "${work}/share/icons/hicolor/scalable/apps/"
 cat > "${work}/bin/surfctl" <<EOS
 #!/bin/sh
@@ -40,6 +37,7 @@ export GSK_RENDERER=cairo GDK_BACKEND=wayland
 unset WAYLAND_DISPLAY SWAYSOCK DISPLAY
 
 surfctl init -q
+surfctl wallpaper sync theme --no-reload >/dev/null   # the same frame whatever the time: night, for the dark style
 surfctl generate -q
 touch "${HOME}/.config/surfd/.welcome-done"
 

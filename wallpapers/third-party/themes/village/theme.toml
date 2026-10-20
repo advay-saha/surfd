@@ -1,0 +1,79 @@
+# Village — a surfd theme pack, written by theme/tools/make_wallpaper_themes.py. Format: docs/theme-making.md
+
+[meta]
+name = "Village"
+description = "The Village dynamic wallpaper: light by day, dark by night."
+author = "surfd contributors"
+license = "CC-BY-SA-4.0"
+version = "1.0"
+
+[cursor]
+theme = "breeze_cursors"
+size = 24
+
+[wallpaper]
+dynamic = "village"   # choosing this theme turns on this dynamic wallpaper
+
+[dark]
+background  = "#0d1a1e"
+surface     = "#12252b"
+surface_alt = "#1f3941"
+text        = "#e2ebee"
+text_muted  = "#9bafb5"
+accent      = "#a8d86a"
+accent2     = "#5fb0e0"
+urgent      = "#ec797d"
+warning     = "#f4c871"
+success     = "#92d685"
+icon_theme  = "Papirus-Dark"
+# ANSI colours 0-7, then bright 8-15
+terminal = [
+  "#1e3238",
+  "#de796c",
+  "#86cc71",
+  "#e1c667",
+  "#7eb2d4",
+  "#ca9ccd",
+  "#75d0bf",
+  "#c4d0d4",
+  "#4e6b74",
+  "#ee9a8f",
+  "#a2e18f",
+  "#f0da8b",
+  "#9ecae7",
+  "#e0b9e3",
+  "#94e4d5",
+  "#f3f6f7",
+]
+
+[light]
+background  = "#f6f3ec"
+surface     = "#fcfcfa"
+surface_alt = "#ebe7db"
+text        = "#2d2716"
+text_muted  = "#726a4f"
+accent      = "#5b6b1c"
+accent2     = "#8a5a20"
+urgent      = "#ab2b2b"
+warning     = "#975f0c"
+success     = "#2d7326"
+icon_theme  = "Papirus-Light"
+# ANSI colours 0-7, then bright 8-15
+terminal = [
+  "#322c1b",
+  "#a13329",
+  "#357827",
+  "#906b12",
+  "#2f6793",
+  "#8b4a91",
+  "#288073",
+  "#d2cfc6",
+  "#78725e",
+  "#892219",
+  "#245f17",
+  "#725307",
+  "#1d527c",
+  "#79337f",
+  "#18675c",
+  "#fcfcfa",
+]

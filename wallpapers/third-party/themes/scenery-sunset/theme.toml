@@ -1,0 +1,45 @@
+# Scenery Sunset — a surfd theme pack, written by theme/tools/make_wallpaper_themes.py. Format: docs/theme-making.md
+
+[meta]
+name = "Scenery Sunset"
+description = "Colours from 'Anime scenery sunset' by muriLLu."
+author = "surfd contributors"
+license = "CC-BY-SA-4.0"
+version = "1.0"
+
+[cursor]
+theme = "breeze_cursors"
+size = 24
+
+[dark]
+background  = "#110c1f"
+surface     = "#19122b"
+surface_alt = "#291f41"
+text        = "#e6e2ee"
+text_muted  = "#a39bb5"
+accent      = "#f2a97b"
+accent2     = "#e1827f"
+urgent      = "#ec797d"
+warning     = "#f4c871"
+success     = "#92d685"
+icon_theme  = "Papirus-Dark"
+wallpaper   = "muriLLu-anime-scenery-sunset"   # a picture from the wallpaper gallery
+# ANSI colours 0-7, then bright 8-15
+terminal = [
+  "#261e38",
+  "#e7736e",
+  "#8fc673",
+  "#eac169",
+  "#87add6",
+  "#d397cf",
+  "#7ecac1",
+  "#c9c4d4",
+  "#594e74",
+  "#f49894",
+  "#aadc90",
+  "#f6d690",
+  "#a8c7e8",
+  "#e7b6e4",
+  "#9cdfd7",
+  "#f4f3f7",
+]

@@ -1,0 +1,45 @@
+# Camino de Kazul — a surfd theme pack, written by theme/tools/make_wallpaper_themes.py. Format: docs/theme-making.md
+
+[meta]
+name = "Camino de Kazul"
+description = "Colours from 'Camino de Kazul' by voyager."
+author = "surfd contributors"
+license = "CC-BY-SA-4.0"
+version = "1.0"
+
+[cursor]
+theme = "breeze_cursors"
+size = 24
+
+[light]
+background  = "#ecf4f6"
+surface     = "#fafcfc"
+surface_alt = "#dbe9eb"
+text        = "#16292d"
+text_muted  = "#4f6d72"
+accent      = "#2b6f7f"
+accent2     = "#a0506a"
+urgent      = "#ab2b2b"
+warning     = "#975f0c"
+success     = "#2d7326"
+icon_theme  = "Papirus-Light"
+wallpaper   = "voyager-camino-de-kazul"   # a picture from the wallpaper gallery
+# ANSI colours 0-7, then bright 8-15
+terminal = [
+  "#1b2e32",
+  "#9c3335",
+  "#2f7933",
+  "#8a6b1e",
+  "#29679f",
+  "#854a9d",
+  "#22817f",
+  "#c6d0d2",
+  "#5e7478",
+  "#862123",
+  "#1d6221",
+  "#6f5410",
+  "#195287",
+  "#72338b",
+  "#136765",
+  "#fafcfc",
+]

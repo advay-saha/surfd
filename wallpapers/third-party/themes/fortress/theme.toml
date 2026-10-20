@@ -1,0 +1,45 @@
+# Fortress — a surfd theme pack, written by theme/tools/make_wallpaper_themes.py. Format: docs/theme-making.md
+
+[meta]
+name = "Fortress"
+description = "Colours from 'Fortress' by ogarart."
+author = "surfd contributors"
+license = "CC-BY-SA-4.0"
+version = "1.0"
+
+[cursor]
+theme = "breeze_cursors"
+size = 24
+
+[dark]
+background  = "#0c121f"
+surface     = "#121a2b"
+surface_alt = "#1f2a41"
+text        = "#e2e6ee"
+text_muted  = "#9ba3b5"
+accent      = "#70c7e1"
+accent2     = "#639cc5"
+urgent      = "#ec797d"
+warning     = "#f4c871"
+success     = "#92d685"
+icon_theme  = "Papirus-Dark"
+wallpaper   = "ogarart-fortress"   # a picture from the wallpaper gallery
+# ANSI colours 0-7, then bright 8-15
+terminal = [
+  "#1e2638",
+  "#d7777a",
+  "#7fca7f",
+  "#dac476",
+  "#77b0e2",
+  "#c49adc",
+  "#6ecece",
+  "#c4c9d4",
+  "#4e5974",
+  "#e9989b",
+  "#9ddf9d",
+  "#ebd998",
+  "#9bc9f1",
+  "#dbbced",
+  "#8de2e2",
+  "#f3f4f7",
+]

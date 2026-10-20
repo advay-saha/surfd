@@ -15,15 +15,9 @@ mkdir -p "${OUT}"
 
 work="$(mktemp -d)"
 trap 'kill $(jobs -p) 2>/dev/null || true; rm -rf "${work}"' EXIT
-mkdir -p "${work}"/{home,run,bin,sys/defaults}
+mkdir -p "${work}"/{home,run,bin}
 chmod 700 "${work}/run"
-cp "${REPO}/config/defaults/surfd.toml" "${work}/sys/defaults/"
-ln -s "${ART}/themes" "${work}/sys/themes"
-# wallpapers laid out as the packages install them: every dynamic set, the gallery
-mkdir -p "${work}/sys/wallpapers/dynamic" "${work}/sys/wallpapers/surfd"
-ln -s "${REPO}"/wallpapers/third-party/dynamic/* "${work}/sys/wallpapers/dynamic/"
-ln -s "${REPO}/wallpapers/third-party/static" "${work}/sys/wallpapers/static"
-for c in tide driftwood kelp dusk; do cp -rs "${REPO}/wallpapers/generated/$c" "${work}/sys/wallpapers/surfd/"; done
+"${REPO}/tools/stage-system.sh" "${ART}" "${work}/sys"   # every theme and wallpaper, as the packages install them
 cat > "${work}/bin/surfctl" <<EOF
 #!/bin/sh
 PYTHONPATH="${REPO}/src/surfctl" exec ${PY} -m surfd "\$@"
