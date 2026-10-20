@@ -23,7 +23,7 @@ Requires:       jetbrains-mono-fonts
 The theme packs that ship with surfd (Tide, Driftwood and Kelp, each with
 dark and light variants) and their original wallpapers, plus surfd's own
 gradient wallpapers (Tide, Driftwood, Kelp and Dusk; dark and light; 16:9,
-16:10 and ultrawide sizes). Theme packs are plain folders; the included
+16:10 and ultra-wide sizes). Theme packs are plain folders; the included
 theme-making guide explains the format.
 
 %package -n surfd-wallpapers
@@ -33,9 +33,11 @@ License:        LicenseRef-third-party-unverified
 Requires:       surfd-default-config
 
 %description -n surfd-wallpapers
-Eight wallpapers that change through the day (`[wallpaper] dynamic` in surfd.toml), including the
-default, "Low-poly mountain", and 18 still wallpapers for the Picture gallery in Surf Settings.
-They are other people's artwork; credits, sources and licence status:
+Eight wallpapers that change through the day (`[wallpaper] dynamic` in
+surfd.toml), including the default, "Low-poly mountain", 18 still wallpapers
+for the Picture gallery in Surf Settings, and a theme with colors picked from
+each of them. The wallpapers are other people's artwork; credits, sources and
+license status:
 /usr/share/doc/surfd-wallpapers/CREDITS.md.
 
 %package -n plymouth-theme-surfd
@@ -90,6 +92,11 @@ cp -a wallpapers/third-party/dynamic/. %{buildroot}%{_datadir}/surfd/wallpapers/
 install -pm 0644 wallpapers/third-party/static/* %{buildroot}%{_datadir}/surfd/wallpapers/static/
 find %{buildroot}%{_datadir}/surfd/wallpapers -type d -exec chmod 0755 {} +
 find %{buildroot}%{_datadir}/surfd/wallpapers -type f -exec chmod 0644 {} +
+# some dynamic sets reuse one picture for two frames: hard-link those instead of shipping copies
+(cd %{buildroot}%{_datadir}/surfd/wallpapers/dynamic &&
+ find . -type f -name '*.jpg' -exec md5sum {} + | sort |
+ awk '$1 == sum { print keep, $2; next } { sum = $1; keep = $2 }' |
+ while read -r keep dup; do ln -f "$keep" "$dup"; done)
 
 # plymouth
 install -d %{buildroot}%{_datadir}/plymouth/themes/surfd

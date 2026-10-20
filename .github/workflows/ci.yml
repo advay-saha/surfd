@@ -52,7 +52,12 @@ jobs:
         if: failure()
         run: tools/ci-log-tail.sh build.log
       - name: rpmlint
-        run: rpmlint -r packaging/surfd.rpmlintrc --ignore-unused-rpmlintrc out/repo/*.rpm
+        run: |
+          set -o pipefail
+          rpmlint -r packaging/surfd.rpmlintrc --ignore-unused-rpmlintrc out/repo/*.rpm 2>&1 | tee rpmlint.log
+      - name: Show rpmlint errors
+        if: failure()
+        run: tools/ci-log-tail.sh rpmlint.log 40
       - name: Every kickstart package exists in Fedora ${{ matrix.fedora }}
         run: ./build.sh --releasever ${{ matrix.fedora }} check
       - uses: actions/upload-artifact@v4

@@ -38,3 +38,6 @@ addFilter("non-conffile-in-etc /etc/(surfd-release|system-release-cpe)")
 addFilter("manpage-not-compressed bz2")
 # Graphical apps launched from the menu; `--help` documents the CLI arguments.
 addFilter("no-manual-page-for-binary surf-(settings|welcome|installer)")
+# Surf Settings and the installer load GTK 4 and libadwaita through GObject introspection,
+# so no library dependency is generated; the package name is the dependency.
+addFilter("explicit-lib-dependency libadwaita")
