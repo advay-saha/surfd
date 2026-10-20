@@ -9,6 +9,8 @@ Source0:        surfd-%{version}.tar.gz
 BuildArch:      noarch
 
 BuildRequires:  python3
+# python3-devel brings the Python RPM macros (python3_sitelib and friends)
+BuildRequires:  python3-devel
 BuildRequires:  python3-pytest
 BuildRequires:  python3-tomlkit
 

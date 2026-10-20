@@ -40,7 +40,7 @@ jobs:
       - name: Install build tools
         run: |
           dnf -y install --setopt=install_weak_deps=False git make rpm-build rpmlint createrepo_c \
-            pykickstart python3 python3-pytest python3-tomlkit python3-pillow librsvg2-tools \
+            pykickstart python3 python3-devel python3-pytest python3-tomlkit python3-pillow librsvg2-tools \
             desktop-file-utils appstream systemd-rpm-macros dnf5-plugins findutils tar gzip
       - uses: actions/checkout@v4
       - name: Build RPMs (real Fedora macros, %check runs the test suite)
