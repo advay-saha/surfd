@@ -13,7 +13,27 @@ if [[ -r "${kb}" ]]; then
     [[ -n "${options}" ]] && export XKB_DEFAULT_OPTIONS="${options}"
 fi
 
+# If the graphical login screen cannot run, never leave a dead screen: fall
+# back to greetd's text login, which can still start the surfd session.
+text_login() {
+    echo "surfd-greeter: $1; using the text login instead" >&2
+    printf '\nsurfd: the graphical login screen could not start (%s).\n' "$1"
+    printf 'Log in below; details: journalctl -b -u greetd\n\n'
+    exec agreety --cmd surfd-session
+}
+
+if [[ -z "${XDG_RUNTIME_DIR:-}" ]]; then
+    text_login "no XDG_RUNTIME_DIR: no login session (is the system bus, dbus-broker, running?)"
+fi
+
 export XDG_SESSION_TYPE=wayland
 args=()
 [[ -d /sys/module/nvidia ]] && args+=(--unsupported-gpu)
-exec sway "${args[@]}" --config /etc/surfd/greetd/sway-config
+started=${SECONDS}
+sway "${args[@]}" --config /etc/surfd/greetd/sway-config
+status=$?
+# A login ends the greeter normally (status 0). Dying within seconds means Sway could not start.
+if (( status != 0 && SECONDS - started < 10 )); then
+    text_login "Sway exited with status ${status}"
+fi
+exit "${status}"

@@ -8,6 +8,11 @@ mesa-vulkan-drivers
 mesa-va-drivers
 mesa-libEGL
 mesa-libgbm
+dbus
+dbus-broker
+dbus-common
+systemd-pam
+polkit
 plymouth
 plymouth-plugin-two-step
 selinux-policy-targeted
@@ -69,7 +74,6 @@ xdg-desktop-portal-wlr
 xdg-desktop-portal-gtk
 xdg-user-dirs
 xdg-utils
-polkit
 lxpolkit
 greetd
 greetd-selinux

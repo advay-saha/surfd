@@ -42,7 +42,14 @@ mesa-va-drivers
 mesa-libEGL
 mesa-libgbm
 
-# System
+# System. The message bus and logind's PAM module are named explicitly: with
+# --exclude-weakdeps they are not guaranteed, and without them there is no
+# login session (no XDG_RUNTIME_DIR, so Sway and the login screen cannot start).
+dbus
+dbus-broker
+dbus-common
+systemd-pam
+polkit
 plymouth
 plymouth-plugin-two-step
 selinux-policy-targeted
@@ -89,6 +96,14 @@ generic-logos
 %post --erroronfail
 # Default to the graphical session (greetd is enabled by its preset).
 systemctl set-default graphical.target
+
+# The system bus must run, or logind cannot start sessions. Enable it
+# explicitly and stop the build if anything a login session needs is missing.
+systemctl enable dbus-broker.service
+for f in /usr/bin/dbus-broker /usr/lib/systemd/system/dbus.socket /usr/lib/systemd/systemd-logind; do
+    [ -e "$f" ] || { echo "surfd: missing $f, the image would have no login sessions" >&2; exit 1; }
+done
+ls /usr/lib*/security/pam_systemd.so >/dev/null || { echo "surfd: pam_systemd.so missing" >&2; exit 1; }
 
 # Keep image builds reproducible: no background metadata churn in the image.
 systemctl disable dnf-makecache.timer 2>/dev/null || :
