@@ -16,7 +16,7 @@ addFilter("invalid-license (MIT|CC-BY-SA-4.0)")
 # Fedora's rpmlint config ignores the dist tag in changelog versions.
 addFilter("incoherent-version-in-changelog")
 # Words from file names in descriptions.
-addFilter("spelling-error .*(md|usr|toml|plymouth|swaylock|fuzzel|greetd|surfd|surfctl|hwprobe|Waybar|mako|Anaconda|Flathub|Sway|seafoam|sudo|config|sys|wordmark|dnf|libadwaita|GTK)")
+addFilter("spelling-error .*(md|usr|toml|proc|os|plymouth|swaylock|fuzzel|greetd|surfd|surfctl|hwprobe|Waybar|mako|Anaconda|Flathub|Sway|seafoam|sudo|config|sys|wordmark|dnf|libadwaita|GTK)")
 # "surfd" is a lowercase brand name.
 addFilter("summary-not-capitalized surfd")
 # Components are released in lockstep from one tarball.
