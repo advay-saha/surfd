@@ -19,18 +19,21 @@ def css(text: str) -> None:
                                               Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)
 
 
-APP_CSS = """
-.theme-card { padding: 6px; border-radius: 14px; background: alpha(currentColor, 0.04); }
-.theme-card:hover { background: alpha(currentColor, 0.08); }
-.theme-card.selected { box-shadow: inset 0 0 0 3px @accent_bg_color; }
-.theme-thumb { border-radius: 10px; }
-.swatch { min-width: 30px; min-height: 30px; border-radius: 999px; padding: 0; }
-.swatch.selected { box-shadow: 0 0 0 3px @window_bg_color, 0 0 0 5px currentColor; }
-.palette-dot { min-width: 14px; min-height: 14px; border-radius: 999px; }
-.keycap { font-family: monospace; font-size: 0.9em; padding: 2px 8px; border-radius: 6px;
-          background: alpha(currentColor, 0.1); }
-.welcome-title { font-size: 28pt; font-weight: 300; }
-"""
+_STYLE = Gtk.CssProvider()
+_STYLE_ADDED: list[bool] = []
+
+
+def apply_style() -> None:
+    """Load (or reload, after a theme change) the surfd look from the current settings."""
+    from surfd import gtkstyle
+    text = gtkstyle.current_css()
+    _STYLE.load_from_string(text) if hasattr(_STYLE, "load_from_string") else _STYLE.load_from_data(text.encode())
+    if not _STYLE_ADDED:
+        Gtk.StyleContext.add_provider_for_display(Gdk.Display.get_default(), _STYLE,
+                                                  Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)
+        _STYLE_ADDED.append(True)
+
+
 
 
 _THUMBS: dict[tuple[str, int, int], Gdk.Texture] = {}  # decoding big wallpapers is slow: once per picture

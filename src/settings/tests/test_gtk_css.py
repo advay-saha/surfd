@@ -75,3 +75,13 @@ def test_gtk4_css_parses(env, tmp_path, variant):  # noqa: F811
     from surfd import config
     config.set_values({"theme.variant": variant})
     _check("4.0", generate.gtk4_css(generate.build_context()), tmp_path)
+
+
+@pytest.mark.parametrize("theme,variant", [("tide", "dark"), ("tide", "light"), ("dusk", "dark")])
+def test_app_style_parses(env: Path, tmp_path: Path, theme: str, variant: str) -> None:  # noqa: F811
+    """The surfd look for Settings, Welcome and the installer (surfd.gtkstyle) is valid GTK 4 CSS."""
+    if not _gtk_available("4.0"):
+        pytest.skip("GTK 4 not available")
+    from surfd import gtkstyle, themes
+    pal = themes.find(theme).palette(variant)
+    _check("4.0", gtkstyle.app_css(pal, ui_font="Inter", mono_font="JetBrains Mono", radius=12), tmp_path)

@@ -118,6 +118,10 @@ def sway(ctx: Context) -> str:
         "titlebar_padding 10 5",
         f"gaps inner {int(c('layout.gaps_inner'))}",
         f"gaps outer {int(c('layout.gaps_outer'))}",
+        f"smart_gaps {'on' if c('layout.smart_gaps') else 'off'}",
+        f"hide_edge_borders {'smart' if c('layout.smart_borders') else 'none'}",
+        f"workspace_auto_back_and_forth {'yes' if c('layout.workspace_back_and_forth') else 'no'}",
+        "focus_on_window_activation smart",
         "",
         "# colours: border background text indicator child_border",
         f"client.focused          {p.accent} {p.accent} {p.accent_text} {p.accent} {p.accent}",
@@ -137,7 +141,13 @@ def sway(ctx: Context) -> str:
     scale = float(c("display.scale"))
     if scale > 0:
         out.append(f"output * scale {scale:g}")
+    if c("display.adaptive_sync"):
+        out.append("output * adaptive_sync on")
     out.append(f"seat seat0 xcursor_theme {ctx.theme.cursor_theme} {ctx.theme.cursor_size}")
+    if c("input.hide_cursor_typing"):
+        out.append("seat * hide_cursor when-typing enable")
+    if int(c("input.hide_cursor_after")) > 0:
+        out.append(f"seat * hide_cursor {int(c('input.hide_cursor_after')) * 1000}")
 
     accel = float(c("input.pointer_accel"))
     kb = [f'    xkb_layout "{c("input.keyboard_layout")}"']
@@ -145,23 +155,30 @@ def sway(ctx: Context) -> str:
         kb.append(f'    xkb_variant "{c("input.keyboard_variant")}"')
     if c("input.keyboard_options"):
         kb.append(f'    xkb_options "{c("input.keyboard_options")}"')
+    scroll = float(c("input.scroll_factor"))
     out += [
         "",
         "input type:keyboard {",
         *kb,
-        "    repeat_delay 300",
-        "    repeat_rate 40",
+        f"    repeat_delay {int(c('input.repeat_delay'))}",
+        f"    repeat_rate {int(c('input.repeat_rate'))}",
+        f"    xkb_numlock {'enabled' if c('input.numlock') else 'disabled'}",
         "}",
         "input type:touchpad {",
         f"    tap {'enabled' if c('input.touchpad_tap') else 'disabled'}",
+        "    drag enabled",
+        "    drag_lock disabled",
         f"    natural_scroll {'enabled' if c('input.natural_scroll') else 'disabled'}",
         "    dwt enabled",
         "    middle_emulation enabled",
         f"    pointer_accel {accel:g}",
+        f"    scroll_factor {scroll:g}",
         "}",
         "input type:pointer {",
         "    accel_profile adaptive",
         f"    pointer_accel {accel:g}",
+        f"    natural_scroll {'enabled' if c('input.mouse_natural_scroll') else 'disabled'}",
+        f"    scroll_factor {scroll:g}",
         "}",
         "",
         "# dialogs, utilities and pop-ups float",
@@ -172,6 +189,15 @@ def sway(ctx: Context) -> str:
         "floating enable, resize set 760 520",
         'for_window [app_id="^org.surfd.(Settings|Welcome)$"] floating enable',
         'for_window [title="^Picture-in-Picture$"] floating enable, sticky enable',
+        'for_window [app_id="^(swappy|system-config-printer|xdg-desktop-portal-gtk|lxpolkit)$"] floating enable',
+        'for_window [title="^(Open|Save|Choose|Select) (File|Files|Folder|As|Image)"] floating enable',
+        'for_window [app_id="^firefox$" title="^Library$"] floating enable',
+        'for_window [class="^steam$" title="^(Friends List|Steam - News|Steam Settings)"] floating enable',
+        'for_window [app_id="^surfd-monitor$"] floating enable, resize set width 70 ppt height 70 ppt, '
+        "move position center",
+        "# drop-down terminal (surfctl dropdown): lives in the scratchpad",
+        'for_window [app_id="^surfd-dropdown$"] floating enable, border pixel 2, sticky enable, '
+        "resize set width 90 ppt height 50 ppt, move position 5 ppt 0 ppt, move scratchpad, scratchpad show",
         "for_window [all] inhibit_idle fullscreen",
     ]
     if ctx.floating_mode:
@@ -185,6 +211,20 @@ def sway(ctx: Context) -> str:
     for b in keys.compile_bindings(ctx.cfg):
         flags = "--to-code" + (" --locked" if b.locked else "")
         out.append(f"bindsym {flags} {b.sway_combo} {b.command}")
+
+    if c("osd.enabled"):
+        osd = keys.osd_command({"step": c("osd.step"), "enabled": True})
+        out += [
+            "# Caps Lock and Num Lock show a flyout when released",
+            f"bindsym --release --locked Caps_Lock exec {osd} capslock",
+            f"bindsym --release --locked Num_Lock exec {osd} numlock",
+        ]
+    if c("display.clamshell"):
+        out += [
+            "# laptop lid: with another display connected, closing the lid turns the built-in screen off",
+            f"bindswitch --reload --locked lid:on exec {LIBEXEC}/surfd-lid close",
+            f"bindswitch --reload --locked lid:off exec {LIBEXEC}/surfd-lid open",
+        ]
 
     out += [
         "",
@@ -231,6 +271,14 @@ def sway(ctx: Context) -> str:
         f'exec_always {LIBEXEC}/surfd-bar "{waybar_cfg}" "{waybar_css}"',
         f"exec_always {LIBEXEC}/surfd-idle {lock} {off} {susp}",
         f"exec_always {LIBEXEC}/surfd-dynwall {'on' if ctx.dynamic_follows_clock else 'off'}",
+        f"exec_always makoctl mode -s {'do-not-disturb' if c('notifications.do_not_disturb') else 'default'}",
+        # helpers that follow settings (each restarts itself, or stops when switched off)
+        f"exec_always {LIBEXEC}/surfd-daemon autotile {'on' if c('layout.autotile') and not ctx.floating_mode else 'off'}",
+        f"exec_always {LIBEXEC}/surfd-daemon clipboard {'on' if c('clipboard.history') else 'off'}",
+        f"exec_always {LIBEXEC}/surfd-daemon power on",
+        f"exec_always {LIBEXEC}/surfd-daemon nightlight {c('display.night_light')}",
+        f"exec_always {LIBEXEC}/surfd-daemon updates {'on' if c('updates.check') else 'off'}",
+        "exec udiskie --automount --notify --smart-tray",
         "exec surfctl apply --desktop-settings",
         "exec surfctl doctor --notify --quiet",
         "exec surfctl first-run",
@@ -270,7 +318,21 @@ WAYBAR_MODULE_NAMES = {
     "media": "mpris",
     "idle": "idle_inhibitor",
     "power": "custom/power",
+    "notifications": "custom/notifications",
+    "recording": "custom/recording",
+    "updates": "custom/updates",
+    "profile": "custom/profile",
+    "nightlight": "custom/nightlight",
+    "mic": "pulseaudio#mic",
+    "disk": "disk",
+    "clipboard": "custom/clipboard",
 }
+
+
+def _status(module: str, interval: int, **extra: Any) -> dict[str, Any]:
+    """A surfd status module (libexec/surfd-status); SIGRTMIN+8 refreshes them all at once."""
+    return {"exec": f"{LIBEXEC}/surfd-status {module}", "return-type": "json", "interval": interval,
+            "signal": 8, "escape": False, **extra}
 
 
 def _lbl(label: str, value: str) -> str:
@@ -280,6 +342,8 @@ def _lbl(label: str, value: str) -> str:
 
 def waybar_config(ctx: Context) -> str:
     c = ctx.c
+    osd = keys.osd_command({"step": c("osd.step"), "enabled": c("osd.enabled")})
+    term = "foot --app-id surfd-monitor"
     floating = c("bar.style") == "floating"
     gap = max(int(c("layout.gaps_outer")) + int(c("layout.gaps_inner")), 6) if floating else 0
     pos = c("bar.position")
@@ -296,19 +360,37 @@ def waybar_config(ctx: Context) -> str:
         "sway/window": {"max-length": 60, "tooltip": False},
         "wlr/taskbar": {"format": "{icon} {title:.24}", "icon-size": 16, "on-click": "activate",
                         "on-click-middle": "close", "tooltip-format": "{title}"},
-        "clock": {"format": "{:%a %d %b  %H:%M}", "tooltip-format": "<tt>{calendar}</tt>",
-                  "calendar": {"mode": "month", "format": {"today": "<b><u>{}</u></b>"}}},
+        "clock": {"format": "{:%a %d %b  %H:%M}", "format-alt": "{:%A %d %B %Y  %H:%M:%S}", "interval": 1,
+                  "tooltip-format": "<tt>{calendar}</tt>",
+                  "calendar": {"mode": "month", "weeks-pos": "left", "on-scroll": 1,
+                               "format": {"today": "<b><u>{}</u></b>", "weeks": "<span alpha='50%'>{}</span>"}},
+                  "actions": {"on-scroll-up": "shift_up", "on-scroll-down": "shift_down",
+                              "on-click-right": "mode"}},
         "tray": {"icon-size": 16, "spacing": 8},
         "network": {"format-wifi": _lbl("wifi", "{essid}"), "format-ethernet": _lbl("eth", "{ifname}"),
                     "format-disconnected": _lbl("net", "off"), "tooltip-format": "{ipaddr} via {gwaddr}",
                     "on-click": "surfctl network-menu", "on-click-right": "nm-connection-editor"},
         "pulseaudio": {"format": _lbl("vol", "{volume}%"), "format-muted": _lbl("vol", "muted"),
-                       "on-click": "pavucontrol", "scroll-step": 5},
+                       "tooltip-format": "{desc} (click: sound output, right-click: mute, middle: mixer)",
+                       "on-click": "surfctl audio-menu", "on-click-right": f"{osd} volume mute",
+                       "on-click-middle": "pavucontrol",
+                       "on-scroll-up": f"{osd} volume up", "on-scroll-down": f"{osd} volume down"},
+        "pulseaudio#mic": {"format": "{format_source}", "format-source": _lbl("mic", "{volume}%"),
+                           "format-source-muted": _lbl("mic", "muted"), "tooltip": False,
+                           "on-click": f"{osd} mic mute", "on-scroll-up": f"{osd} mic up",
+                           "on-scroll-down": f"{osd} mic down"},
         "battery": {"format": _lbl("bat", "{capacity}%"), "format-charging": _lbl("bat", "{capacity}% +"),
-                    "states": {"warning": 25, "critical": 10}, "tooltip-format": "{timeTo}"},
-        "backlight": {"format": _lbl("lum", "{percent}%")},
+                    "format-plugged": _lbl("bat", "{capacity}% ="),
+                    "states": {"warning": int(c("power.battery_warning")) or 25,
+                               "critical": int(c("power.battery_critical")) or 10},
+                    "tooltip-format": "{timeTo} (click: power profile)", "on-click": "surfctl power-profile menu"},
+        "backlight": {"format": _lbl("lum", "{percent}%"), "on-scroll-up": f"{osd} brightness up",
+                      "on-scroll-down": f"{osd} brightness down"},
         "bluetooth": {"format": _lbl("bt", "{status}"), "format-connected": _lbl("bt", "{device_alias}"),
-                      "on-click": "blueman-manager"},
+                      "format-disabled": _lbl("bt", "off"), "on-click": "surfctl bluetooth-menu",
+                      "on-click-right": "blueman-manager"},
+        "disk": {"format": _lbl("disk", "{percentage_free}% free"), "path": "/", "interval": 60,
+                 "tooltip-format": "{used} of {total} used on {path}"},
         "cpu": {"format": _lbl("cpu", "{usage}%"), "interval": 5},
         "memory": {"format": _lbl("mem", "{percentage}%"), "interval": 10},
         "temperature": {"format": _lbl("tmp", "{temperatureC}°"), "critical-threshold": 85},
@@ -317,7 +399,18 @@ def waybar_config(ctx: Context) -> str:
                   "player-icons": {"default": "▸"}, "status-icons": {"paused": "॥"}},
         "idle_inhibitor": {"format": "{icon}", "format-icons": {"activated": _lbl("awake", "on"),
                                                                "deactivated": _lbl("awake", "off")}},
-        "custom/power": {"format": "⏻", "tooltip": False, "on-click": "surfctl power-menu"},
+        "custom/power": {"format": "⏻", "tooltip": False, "on-click": "surfctl power-menu",
+                         "on-click-right": "surfctl menu"},
+        "custom/notifications": _status("notifications", 5, **{"on-click": "surfctl dnd toggle",
+                                                               "on-click-right": "surfctl notifications",
+                                                               "on-click-middle": "makoctl dismiss --all"}),
+        "custom/recording": _status("recording", 1, **{"on-click": "surfctl record stop"}),
+        "custom/updates": _status("updates", 600, **{"on-click": f"{term} sh -c 'surfctl update; read -r _'"}),
+        "custom/profile": _status("profile", 30, **{"on-click": "surfctl power-profile next",
+                                                     "on-click-right": "surfctl power-profile menu"}),
+        "custom/nightlight": _status("nightlight", 30, **{"on-click": "surfctl nightlight toggle"}),
+        "custom/clipboard": {"format": _lbl("clip", "≡"), "tooltip-format": "Clipboard history (Super+V)",
+                             "on-click": "surfctl clipboard"},
     }
     if floating:
         side = "margin-top" if pos == "top" else "margin-bottom"
@@ -378,7 +471,9 @@ tooltip label {{ color: {p.text}; }}
 }}
 
 #window, #clock, #tray, #network, #pulseaudio, #battery, #backlight, #bluetooth,
-#cpu, #memory, #temperature, #language, #mpris, #idle_inhibitor, #custom-power, #taskbar {{
+#cpu, #memory, #temperature, #language, #mpris, #idle_inhibitor, #custom-power, #taskbar, #disk,
+#custom-notifications, #custom-recording, #custom-updates, #custom-profile, #custom-nightlight,
+#custom-clipboard {{
   padding: 0 10px;
   margin: 4px 0;
   color: {p.text};
@@ -387,9 +482,18 @@ tooltip label {{ color: {p.text}; }}
 }}
 #clock {{ font-weight: 600; }}
 #window {{ color: {p.text_muted}; }}
-#network:hover, #pulseaudio:hover, #bluetooth:hover, #custom-power:hover, #clock:hover {{
+#network:hover, #pulseaudio:hover, #bluetooth:hover, #custom-power:hover, #clock:hover,
+#battery:hover, #custom-notifications:hover, #custom-updates:hover, #custom-profile:hover,
+#custom-nightlight:hover, #custom-clipboard:hover, #backlight:hover {{
   background: {p.surface_alt};
 }}
+#custom-notifications.dnd {{ color: {p.warning}; }}
+#custom-recording {{ color: {color.readable_on(p.urgent)}; background: {p.urgent}; font-weight: 700; }}
+#custom-recording.idle, #custom-updates.none, #custom-profile.none {{ padding: 0; margin: 0; background: transparent; }}
+#custom-updates.available {{ color: {p.accent}; }}
+#custom-nightlight.on {{ color: {p.warning}; }}
+#custom-profile.performance {{ color: {p.warning}; }}
+#custom-profile.power-saver {{ color: {p.success}; }}
 #taskbar button {{ padding: 0 8px; border-radius: {max(r - 4, 0)}px; color: {p.text_muted}; }}
 #taskbar button.active {{ background: {p.surface_alt}; color: {p.text}; }}
 #battery.warning {{ color: {p.warning}; }}
@@ -436,7 +540,42 @@ text-color={p.text_muted}
 border-color={p.urgent}
 border-size=2
 default-timeout=0
+
+# flyouts for volume, brightness, Caps Lock... (libexec/surfd-osd); they replace each other
+[app-name=surfd-osd]
+anchor={c('osd.position')}
+format=%b
+font={c('fonts.mono')} {int(c('fonts.size')) + 1}
+width=420
+padding=12,18
+margin={gap + 40}
+border-size=1
+border-color={p.accent}88
+background-color={p.surface}f5
+icons=0
+text-alignment=center
+default-timeout=1400
+history=0
+group-by=none
+
+# do not disturb (surfctl dnd): hold notifications back, but flyouts and urgent ones still show
+[mode=do-not-disturb]
+invisible=1
+
+[mode=do-not-disturb urgency=critical]
+invisible=0
+
+[mode=do-not-disturb app-name=surfd-osd]
+invisible=0
 """
+
+
+def osd_env(ctx: Context) -> str:
+    """Colours and fonts for libexec/surfd-osd (sourced by bash)."""
+    p, c = ctx.pal, ctx.c
+    return (_header("#", "flyouts (surfd-osd)") +
+            f'ACCENT="{p.accent}"\nMUTED="{p.text_muted}"\nWARN="{p.urgent}"\n'
+            f'MONO="{c("fonts.mono")}"\nOSD_WIDTH=20\n')
 
 
 # ======================================================= launcher (fuzzel) ==
@@ -445,7 +584,7 @@ def fuzzel(ctx: Context) -> str:
     p, c = ctx.pal, ctx.c
     return _header("#", "app launcher (fuzzel)") + f"""
 [main]
-font={c('fonts.ui')}:size={int(c('fonts.size')) + 2}
+font={c('fonts.mono')}:size={int(c('fonts.mono_size')) + 1}
 terminal={c('apps.terminal')} -e
 icon-theme={p.icon_theme}
 prompt="> "
@@ -651,6 +790,46 @@ def qt6ct_conf(ctx: Context) -> str:
             f"general=\"{c('fonts.ui')},{c('fonts.size')},-1,5,50,0,0,0,0,0\"\n")
 
 
+# ========================================================= portals, swappy ==
+
+def portals_conf(ctx: Context) -> str:
+    """Which portal backend does what in a Sway session (xdg-desktop-portal 1.18+)."""
+    return _header("#", "desktop portals") + """
+[preferred]
+default=gtk
+org.freedesktop.impl.portal.Screenshot=wlr
+org.freedesktop.impl.portal.ScreenCast=wlr
+org.freedesktop.impl.portal.Inhibit=none
+"""
+
+
+def portal_wlr(ctx: Context) -> str:
+    """Screen sharing: pick the display with a fuzzel menu instead of a blind default."""
+    return _header("#", "screen sharing (xdg-desktop-portal-wlr)") + """
+[screencast]
+max_fps=60
+chooser_type=dmenu
+chooser_cmd=fuzzel --dmenu --prompt "share > " --lines 6 --width 36
+"""
+
+
+def swappy(ctx: Context) -> str:
+    c = ctx.c
+    folder = os.path.expanduser(c("capture.screenshots") or "~/Pictures/Screenshots")
+    return _header("#", "screenshot annotation (swappy)") + f"""
+[Default]
+save_dir={folder}
+save_filename_format=Screenshot_%Y-%m-%d_%H-%M-%S_edited.png
+show_panel=true
+line_size=5
+text_size=20
+text_font={c('fonts.ui')}
+paint_mode=brush
+early_exit=true
+fill_shape=false
+"""
+
+
 # ================================================================ session ==
 
 def session_env(ctx: Context) -> str:
@@ -735,6 +914,10 @@ def outputs(ctx: Context) -> list[Output]:
         Output(gen / "waybar" / "style.css", waybar_css(ctx), False),
         Output(gen / "session.env", session_env(ctx), False),
         Output(gen / "qt6ct" / "surfd-colors.conf", qt6ct_colors(ctx), False),
+        Output(gen / "osd.env", osd_env(ctx), False),
+        Output(home / "xdg-desktop-portal" / "sway-portals.conf", portals_conf(ctx), True),
+        Output(home / "xdg-desktop-portal-wlr" / "config", portal_wlr(ctx), True),
+        Output(home / "swappy" / "config", swappy(ctx), True),
         Output(home / "mako" / "config", mako(ctx), True),
         Output(home / "fuzzel" / "fuzzel.ini", fuzzel(ctx), True),
         Output(home / "foot" / "foot.ini", foot(ctx), True),

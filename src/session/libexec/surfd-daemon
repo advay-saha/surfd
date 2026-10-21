@@ -1,0 +1,39 @@
+#!/usr/bin/bash
+# surfd-daemon NAME MODE — keep exactly one copy of a surfd background helper.
+#
+#   autotile   on|off   split new windows along the longer side (surfctl daemon autotile)
+#   clipboard  on|off   remember copied text for Super+V (wl-paste --watch)
+#   power      on|off   low battery warnings, charger flyouts (surfctl daemon power)
+#   nightlight off|auto|on   warmer colours at night (wlsunset)
+#   updates    on|off   check for system updates now and then (surfctl daemon updates)
+#
+# Run by Sway on every start and reload (exec_always): it stops the previous
+# copy (its whole process group) and starts a new one with the current settings.
+set -u
+name="${1:?helper name}" mode="${2:-on}"
+run="${XDG_RUNTIME_DIR:-/tmp}"
+pidfile="${run}/surfd-${name}.pid"
+
+if [[ -r "${pidfile}" ]]; then
+    old="$(cat "${pidfile}")"
+    [[ "${old}" =~ ^[0-9]+$ ]] && kill -TERM -- "-${old}" 2>/dev/null
+    rm -f "${pidfile}"
+fi
+[[ "${mode}" == off ]] && exit 0
+
+case "${name}" in
+    autotile) cmd=(surfctl daemon autotile) ;;
+    clipboard)
+        command -v wl-paste >/dev/null || exit 0
+        cmd=(wl-paste --type text --watch surfctl clipboard store) ;;
+    power) cmd=(surfctl daemon power) ;;
+    nightlight)
+        command -v wlsunset >/dev/null || exit 0
+        cmd=(surfctl daemon nightlight "${mode}") ;;
+    updates) cmd=(surfctl daemon updates) ;;
+    *) echo "surfd-daemon: unknown helper '${name}'" >&2; exit 2 ;;
+esac
+
+# A new session (and process group) per helper, so stopping it also stops its children.
+setsid "${cmd[@]}" </dev/null >/dev/null 2>&1 &
+echo $! > "${pidfile}"

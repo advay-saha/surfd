@@ -1,6 +1,6 @@
 # surfd-settings — Surf Settings and the first-login Welcome app
 Name:           surfd-settings
-Version:        0.1.0
+Version:        0.2.0
 Release:        1%{?dist}
 Summary:        Settings and welcome apps for the surfd desktop
 License:        MIT AND CC-BY-SA-4.0
@@ -30,6 +30,7 @@ essential keys, and (on live media) start the installer.
 
 %package -n surfd-installer
 Summary:        Simple installer for surfd live media
+Requires:       surfctl = %{version}-%{release}
 Requires:       python3-gobject
 Requires:       gtk4
 Requires:       libadwaita
@@ -114,5 +115,10 @@ PYTHONDONTWRITEBYTECODE=1 %{__python3} -m pytest -q -p no:cacheprovider src/inst
 %{_datadir}/icons/hicolor/scalable/apps/org.surfd.Installer.svg
 
 %changelog
+* Wed Oct 21 2026 surfd contributors <surfd@example.invalid> - 0.2.0-1
+- Flyouts, do not disturb, the surfd menu, clipboard history, emoji and colour pickers,
+  screen recording, window switcher, auto-tiling, night light and more
+- Settings, Welcome and the installer use the surfd look
+
 * Mon Oct 19 2026 surfd contributors <surfd@example.invalid> - 0.1.0-1
 - Initial release

@@ -14,6 +14,7 @@ In surfd.toml:
 
 from __future__ import annotations
 
+import os
 import shlex
 from dataclasses import dataclass
 from typing import Any
@@ -56,6 +57,12 @@ ACTIONS: dict[str, Action] = {
     "editor": Action("Apps", "Open the text editor", "exec {apps.editor}"),
     "settings": Action("Apps", "Open Surf Settings", "exec surf-settings"),
     "cheatsheet": Action("Apps", "Show this cheat sheet", "exec {surfctl} cheatsheet"),
+    "control-menu": Action("Apps", "surfd menu: capture, toggles, theme, setup, system", "exec {surfctl} menu"),
+    "dropdown-terminal": Action("Apps", "Drop-down terminal (show / hide)", "exec {surfctl} dropdown"),
+    "system-monitor": Action("Apps", "System monitor", "exec {surfctl} monitor"),
+    "calculator": Action("Apps", "Calculator (result is copied)", "exec {surfctl} calc"),
+    "emoji": Action("Apps", "Emoji picker (copies and types it)", "exec {surfctl} emoji"),
+    "clipboard": Action("Apps", "Clipboard history", "exec {surfctl} clipboard"),
     # windows
     "close": Action("Windows", "Close the window", "kill"),
     "fullscreen": Action("Windows", "Toggle fullscreen", "fullscreen toggle"),
@@ -68,28 +75,66 @@ ACTIONS: dict[str, Action] = {
     "resize-mode": Action("Windows", "Resize with arrow keys (Esc to finish)", 'mode "resize"'),
     "scratchpad": Action("Windows", "Show / hide the scratchpad", "scratchpad show"),
     "move-to-scratchpad": Action("Windows", "Send the window to the scratchpad", "move scratchpad"),
+    "window-switcher": Action("Windows", "Switch to any open window", "exec {surfctl} windows"),
+    "sticky": Action("Windows", "Pin the floating window to every workspace", "sticky toggle"),
+    "opacity": Action("Windows", "Make the window see-through / solid", "exec {surfctl} window opacity"),
+    "center": Action("Windows", "Centre the floating window", "move position center"),
+    "grow-width": Action("Windows", "Make the window wider", "resize grow width 40px"),
+    "shrink-width": Action("Windows", "Make the window narrower", "resize shrink width 40px"),
+    "grow-height": Action("Windows", "Make the window taller", "resize grow height 40px"),
+    "shrink-height": Action("Windows", "Make the window shorter", "resize shrink height 40px"),
+    "kill-all": Action("Windows", "Close every window on this workspace", "[workspace=__focused__] kill"),
     # workspaces
     "workspace-next": Action("Workspaces", "Next workspace", "workspace next_on_output"),
     "workspace-prev": Action("Workspaces", "Previous workspace", "workspace prev_on_output"),
     "workspace-last": Action("Workspaces", "Back to the last workspace", "workspace back_and_forth"),
+    "workspace-empty": Action("Workspaces", "Go to an empty workspace", "exec {surfctl} window empty-workspace"),
+    "workspace-to-output-left": Action("Workspaces", "Move this workspace to the display on the left",
+                                       "move workspace to output left"),
+    "workspace-to-output-right": Action("Workspaces", "Move this workspace to the display on the right",
+                                        "move workspace to output right"),
+    "focus-output-next": Action("Workspaces", "Focus the next display", "focus output right"),
+    # capture
+    "screenshot": Action("Capture", "Screenshot the whole screen", "exec {surfctl} screenshot full"),
+    "screenshot-area": Action("Capture", "Screenshot a selected area", "exec {surfctl} screenshot area"),
+    "screenshot-window": Action("Capture", "Screenshot the focused window", "exec {surfctl} screenshot window"),
+    "screenshot-output": Action("Capture", "Screenshot the current display", "exec {surfctl} screenshot output"),
+    "screenshot-edit": Action("Capture", "Screenshot an area and annotate it", "exec {surfctl} screenshot area --edit"),
+    "record-area": Action("Capture", "Record an area (press again to stop)", "exec {surfctl} record area"),
+    "record-screen": Action("Capture", "Record the display (press again to stop)", "exec {surfctl} record output"),
+    "color-picker": Action("Capture", "Pick a colour from the screen (hex is copied)", "exec {surfctl} colorpick"),
     # system
     "lock": Action("System", "Lock the screen", "exec {surfctl} lock"),
     "power-menu": Action("System", "Log out, suspend, restart, shut down", "exec {surfctl} power-menu"),
     "reload": Action("System", "Reload the desktop configuration", "exec {surfctl} reload"),
-    "screenshot": Action("System", "Screenshot the whole screen", "exec {surfctl} screenshot full"),
-    "screenshot-area": Action("System", "Screenshot a selected area", "exec {surfctl} screenshot area"),
     "notifications-dismiss": Action("System", "Dismiss notifications", "exec makoctl dismiss --all"),
     "notifications-restore": Action("System", "Show the last notification again", "exec makoctl restore"),
-    # hardware keys
-    "volume-up": Action("Media", "Volume up", "exec wpctl set-volume -l 1.0 @DEFAULT_AUDIO_SINK@ 5%+", True),
-    "volume-down": Action("Media", "Volume down", "exec wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-", True),
-    "volume-mute": Action("Media", "Mute / unmute", "exec wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle", True),
-    "mic-mute": Action("Media", "Mute / unmute microphone", "exec wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle", True),
-    "brightness-up": Action("Media", "Brightness up", "exec brightnessctl -q set 5%+", True),
-    "brightness-down": Action("Media", "Brightness down", "exec brightnessctl -q set 5%-", True),
-    "media-play": Action("Media", "Play / pause", "exec playerctl play-pause", True),
-    "media-next": Action("Media", "Next track", "exec playerctl next", True),
-    "media-prev": Action("Media", "Previous track", "exec playerctl previous", True),
+    "notification-history": Action("System", "Notification history", "exec {surfctl} notifications"),
+    "dnd-toggle": Action("System", "Do not disturb on / off", "exec {surfctl} dnd toggle"),
+    "nightlight-toggle": Action("System", "Night light on / off", "exec {surfctl} nightlight toggle"),
+    "idle-toggle": Action("System", "Keep awake on / off (no lock or sleep)", "exec {surfctl} awake toggle"),
+    "bar-toggle": Action("System", "Hide / show the bar", "exec pkill -x -USR1 waybar"),
+    "theme-menu": Action("System", "Pick a theme", "exec {surfctl} menu theme"),
+    "wallpaper-next": Action("System", "Next wallpaper", "exec {surfctl} wallpaper next"),
+    "style-toggle": Action("System", "Switch between dark and light style", "exec {surfctl} theme variant toggle"),
+    "wifi-menu": Action("System", "Wi-Fi networks", "exec {surfctl} network-menu"),
+    "bluetooth-menu": Action("System", "Bluetooth devices", "exec {surfctl} bluetooth-menu"),
+    "audio-menu": Action("System", "Choose the sound output", "exec {surfctl} audio-menu"),
+    "power-profile": Action("System", "Next power profile (saver, balanced, performance)", "exec {surfctl} power-profile next"),
+    "keyboard-layout-next": Action("System", "Next keyboard layout", "exec {osd} layout next"),
+    # hardware keys (they also show a flyout)
+    "volume-up": Action("Media", "Volume up", "exec {osd} volume up", True),
+    "volume-down": Action("Media", "Volume down", "exec {osd} volume down", True),
+    "volume-mute": Action("Media", "Mute / unmute", "exec {osd} volume mute", True),
+    "mic-mute": Action("Media", "Mute / unmute microphone", "exec {osd} mic mute", True),
+    "brightness-up": Action("Media", "Brightness up", "exec {osd} brightness up", True),
+    "brightness-down": Action("Media", "Brightness down", "exec {osd} brightness down", True),
+    "kbd-brightness-up": Action("Media", "Keyboard backlight up", "exec {osd} kbd-brightness up", True),
+    "kbd-brightness-down": Action("Media", "Keyboard backlight down", "exec {osd} kbd-brightness down", True),
+    "media-play": Action("Media", "Play / pause", "exec {osd} media play-pause", True),
+    "media-next": Action("Media", "Next track", "exec {osd} media next", True),
+    "media-prev": Action("Media", "Previous track", "exec {osd} media previous", True),
+    "media-stop": Action("Media", "Stop playback", "exec playerctl stop", True),
 }
 
 PARAM_ACTIONS = {
@@ -140,7 +185,14 @@ def normalize_combo(combo: str, modifier: str) -> str:
     return "+".join([*out, key])
 
 
-def resolve_action(action: str, apps: dict[str, Any]) -> tuple[str, str, str, bool]:
+def osd_command(osd: dict[str, Any]) -> str:
+    """The flyout helper with the user's step; --quiet changes values without showing a flyout."""
+    libexec = os.environ.get("SURFD_LIBEXEC", "/usr/libexec/surfd")
+    cmd = f"{libexec}/surfd-osd --step {int(osd.get('step', 5))}"
+    return cmd if osd.get("enabled", True) else cmd + " --quiet"
+
+
+def resolve_action(action: str, apps: dict[str, Any], osd: dict[str, Any] | None = None) -> tuple[str, str, str, bool]:
     """Return (sway_command, description, category, locked)."""
     action = action.strip()
     if not action:
@@ -170,7 +222,7 @@ def resolve_action(action: str, apps: dict[str, Any]) -> tuple[str, str, str, bo
     if action not in ACTIONS:
         raise BindingError(f"unknown action '{action}' (see `surfctl keys actions`)")
     a = ACTIONS[action]
-    cmd = a.command.replace("{surfctl}", SURFCTL)
+    cmd = a.command.replace("{surfctl}", SURFCTL).replace("{osd}", osd_command(osd or {}))
     for name, value in apps.items():
         cmd = cmd.replace("{apps." + name + "}", str(value))
     if a.command.startswith("exec {apps."):
@@ -206,7 +258,7 @@ def compile_bindings(cfg: dict[str, Any]) -> list[Binding]:
         if sway_combo in seen:
             raise BindingError(f"'{combo}' and '{seen[sway_combo]}' are the same key combination")
         seen[sway_combo] = combo
-        command, desc, category, locked = resolve_action(action, apps)
+        command, desc, category, locked = resolve_action(action, apps, cfg.get("osd", {}))
         result.append(Binding(combo, sway_combo, action, command, desc, category, locked))
     return result
 

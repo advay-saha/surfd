@@ -6,7 +6,7 @@ style**, or stays on **one frame**. surfd's default wallpaper is one: **Low-poly
 ## Using them
 
 Everything is a normal surfd setting (`[wallpaper]` in `surfd.toml`), so `surfctl`, Surf Settings
-(*Appearance -> Wallpaper*) and hand edits agree.
+(*Look -> Wallpaper*) and hand edits agree.
 
 ```sh
 surfctl wallpaper status               # what is showing, and every frame of the set

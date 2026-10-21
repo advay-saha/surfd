@@ -24,6 +24,8 @@ the dynamic (time-of-day) ones have a light and a dark style.
 | *Plants (dark)* | *Scenery Sunset* |
 | ![Tropical Beach, light](docs/screenshots/desktop-tropical-beach-light.jpg) | ![Surf Settings](docs/screenshots/settings-appearance.jpg) |
 | *Tropical Beach* | *Surf Settings: pick a theme* |
+| ![Volume flyout](docs/screenshots/flyout-volume.jpg) | ![The surfd menu](docs/screenshots/surfd-menu.jpg) |
+| *Flyouts for volume, brightness, Caps Lock…* | *The surfd menu (Super + Alt + Space)* |
 
 ## What you get
 
@@ -39,8 +41,15 @@ the dynamic (time-of-day) ones have a light and a dark style.
 - **`surfctl`, applied live.** `surfctl theme set kelp`, `surfctl accent '#88c0d0'`,
   `surfctl bar layout left=workspaces center=clock right=tray,audio,power`.
   Invalid changes are refused and nothing is touched; `surfctl reset` keeps a backup.
-- **Surf Settings.** A small GTK 4/libadwaita app over the same file, plus a
-  first-login Welcome tour.
+- **Surf Settings.** A small GTK 4 app over the same file, plus a first-login
+  Welcome tour. It (and the installer) wear the surfd look, not GNOME's: your
+  theme's colours, monospace headings and buttons, thin borders.
+- **Polished everyday tools.** Flyouts for volume, brightness and Caps Lock; do not
+  disturb; the surfd menu (**Super + Alt + Space**); clipboard history (**Super + V**);
+  emoji, colour and window pickers; screenshots of an area, a window or a display, with
+  annotation; screen recording; auto-tiling; a drop-down terminal; night light; power
+  profiles; low-battery warnings and update checks. About 100 of them, listed in
+  [docs/features.md](docs/features.md).
 - **A theme for every wallpaper.** 30 themes: surfd's own four (Tide, Driftwood, Kelp, Dusk; Tide uses the
   logo's teal and blue), one for each of the 18 still pictures, and one for each of the 8 dynamic wallpapers
   with a light and a dark style. Picking a theme brings its wallpaper (`--keep-wallpaper` to keep yours).
@@ -137,13 +146,14 @@ with Hyprland and river is in [docs/window-manager.md](docs/window-manager.md).
 
 ## Project status
 
-surfd is at 0.1.0. What has been verified, and how:
+surfd is at 0.2.0. The 0.1.1 ISO boots on real hardware (a ThinkPad L470). What has been verified, and how:
 
 | Area | Verified | How |
 |---|---|---|
 | Kickstarts (x86_64 + aarch64) | ✅ | `ksvalidator` F44 and F45, `ksflatten` |
 | Shell scripts | ✅ | `shellcheck`, clean |
-| surfctl / config / themes / keys / generators / hwprobe | ✅ | 103 pytest tests (+5 GTK CSS tests) |
+| surfctl / config / themes / keys / generators / hwprobe / 0.2 tools | ✅ | 271 pytest tests (+8 GTK CSS tests) |
+| Flyouts, menus, clipboard, recording, auto-tiling | ✅ | live headless Sway session: each triggered and captured |
 | Generated Sway config | ✅ | real `sway --validate`, every theme × variant × mode |
 | foot, fuzzel, Waybar, mako, GTK 3/4 config | ✅ | `foot --check-config`, live run, GTK CSS parser |
 | Whole session look | ✅ | real Sway + Waybar + mako + fuzzel + foot on a headless output |
@@ -152,7 +162,7 @@ surfd is at 0.1.0. What has been verified, and how:
 | Surf Installer engine | ✅ / ⚠️ | 37 tests + a real install onto a loop-device disk (partition, format, copy, fstab); bootloader, initramfs and SELinux steps need a VM |
 | RPM specs | ✅ | `rpmbuild` of all 5 specs (10 binary RPMs) + `rpmlint` clean |
 | Package names exist in Fedora 44 | ⚠️ | not verified here (no Fedora mirror access): run `./build.sh check` (CI does) |
-| Building and booting the ISO | ⚠️ | not done yet: see [docs/testing.md](docs/testing.md) |
+| Building and booting the ISO | ✅ / ⚠️ | 0.1.1 built in CI and booted on a laptop; 0.2 not booted yet: see [docs/testing.md](docs/testing.md) |
 | Greeter under SELinux enforcing, Anaconda branding, < 400 MB idle RAM, ISO < 1.5 GB | ⚠️ | needs a real boot: see the checklist |
 
 Next steps are in [docs/ROADMAP.md](docs/ROADMAP.md).

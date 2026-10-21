@@ -45,7 +45,7 @@ qemu-system-x86_64 -enable-kvm -machine q35 -cpu host -smp 4 -m 4096 \
   -device virtio-net-pci,netdev=n0 -netdev user,id=n0 \
   -device intel-hda -device hda-duplex \
   -drive file=/tmp/surfd.qcow2,if=virtio \
-  -cdrom out/iso/surfd-0.1.0-f44-x86_64.iso -boot d
+  -cdrom out/iso/surfd-0.2.0-f44-x86_64.iso -boot d
 ```
 
 BIOS: drop the two `pflash` lines. Secure Boot: use `OVMF_CODE.secboot.fd`
@@ -58,7 +58,7 @@ aarch64 (on an aarch64 host):
 qemu-system-aarch64 -enable-kvm -machine virt -cpu host -smp 4 -m 4096 \
   -bios /usr/share/edk2/aarch64/QEMU_EFI.fd \
   -device virtio-gpu-pci -display gtk -device qemu-xhci -device usb-kbd -device usb-tablet \
-  -drive file=/tmp/surfd-arm.qcow2,if=virtio -cdrom out/iso/surfd-0.1.0-f44-aarch64.iso
+  -drive file=/tmp/surfd-arm.qcow2,if=virtio -cdrom out/iso/surfd-0.2.0-f44-aarch64.iso
 ```
 
 ### virt-manager
@@ -115,6 +115,14 @@ Do each of these at least once, in a fresh VM disk each time:
 - [ ] `sudo dnf install htop` works (and pulls no weak deps)
 - [ ] Screenshots (**Print**, **Shift + Print**) saved to ~/Pictures/Screenshots and the clipboard
 - [ ] Lock (**Super + Esc**) and unlock; idle lock after 5 min
+- [ ] Volume, brightness and Caps Lock keys show a flyout at the bottom; holding a key updates one flyout
+- [ ] **Super + Alt + Space** opens the surfd menu; every sub-menu opens; an entry from each runs
+- [ ] **Super + Ctrl + D**: do not disturb holds `notify-send test` back; switching it off shows it
+- [ ] **Super + V** lists copied text; **Super + .** types an emoji; **Alt + Tab** switches windows
+- [ ] **Ctrl + Print** (window), **Super + Ctrl + Shift + S** (annotate), **Alt + Print** twice (recording saved as .webm, bar shows ● rec)
+- [ ] **Super + Shift + Return** drop-down terminal; **Super + Ctrl + N** night light; **Super + Alt + P** power profile
+- [ ] Three windows tile as a spiral (auto-tiling); a USB stick mounts with a notification
+- [ ] Surf Settings, Welcome and the installer use the surfd look (monospace headings, theme colours)
 - [ ] Suspend/resume (VM: `systemctl suspend`)
 
 **Budgets**

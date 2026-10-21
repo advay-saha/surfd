@@ -1,6 +1,6 @@
 # surfctl — the surfd configuration tool (and surfd-hwprobe)
 Name:           surfctl
-Version:        0.1.0
+Version:        0.2.0
 Release:        1%{?dist}
 Summary:        Configure the surfd desktop from one TOML file
 License:        MIT
@@ -74,5 +74,10 @@ PYTHONPATH=%{buildroot}%{python3_sitelib} %{buildroot}%{_bindir}/surfctl --versi
 %{_mandir}/man1/surfd-hwprobe.1*
 
 %changelog
+* Wed Oct 21 2026 surfd contributors <surfd@example.invalid> - 0.2.0-1
+- Flyouts, do not disturb, the surfd menu, clipboard history, emoji and colour pickers,
+  screen recording, window switcher, auto-tiling, night light and more
+- Settings, Welcome and the installer use the surfd look
+
 * Mon Oct 19 2026 surfd contributors <surfd@example.invalid> - 0.1.0-1
 - Initial release

@@ -1,0 +1,14 @@
+#!/usr/bin/bash
+# surfd-lid close|open — clamshell mode. With another display connected, closing
+# the laptop lid switches the built-in screen off (and opening switches it back
+# on). With no other display, logind suspends as usual and this does nothing.
+set -u
+outputs="$(swaymsg -t get_outputs 2>/dev/null | sed -n 's/^Output \([^ ]*\) .*/\1/p')"
+internal="$(grep -E '^(eDP|LVDS|DSI)' <<<"${outputs}" | head -n1)"
+[[ -n "${internal}" ]] || exit 0
+others="$(grep -cvE '^(eDP|LVDS|DSI)' <<<"${outputs}")"
+case "${1:-}" in
+    close) (( others > 0 )) && swaymsg -q output "${internal}" disable ;;
+    open) swaymsg -q output "${internal}" enable ;;
+esac
+exit 0

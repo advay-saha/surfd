@@ -14,10 +14,10 @@ gi.require_version("Gtk", "4.0")
 gi.require_version("Adw", "1")
 from gi.repository import Adw, Gio, GLib, Gtk  # noqa: E402
 
-from surfd import __version__, config, dynwall, gallery, keys, paths, schema, themes  # noqa: E402
+from surfd import __version__, config, dynwall, gallery, gtkstyle, keys, paths, schema, themes  # noqa: E402
 
 from .controller import Controller  # noqa: E402
-from .widgets import APP_CSS, AccentRow, ThemePicker, css, keycap_row  # noqa: E402
+from .widgets import AccentRow, ThemePicker, apply_style, keycap_row  # noqa: E402
 
 APP_ID = "org.surfd.Settings"
 PAGES = ("appearance", "layout", "bar", "input", "apps", "system")
@@ -58,7 +58,7 @@ class Window(Adw.ApplicationWindow):
         bp.add_setter(bottom, "reveal", True)
         self.add_breakpoint(bp)
 
-        self.stack.add_titled_with_icon(self.page_appearance(), "appearance", "Appearance", "applications-graphics-symbolic")
+        self.stack.add_titled_with_icon(self.page_appearance(), "appearance", "Look", "applications-graphics-symbolic")
         self.stack.add_titled_with_icon(self.page_layout(), "layout", "Windows", "view-grid-symbolic")
         self.stack.add_titled_with_icon(self.page_bar(), "bar", "Bar", "view-continuous-symbolic")
         self.stack.add_titled_with_icon(self.page_input(), "input", "Keyboard", "input-keyboard-symbolic")
@@ -73,7 +73,7 @@ class Window(Adw.ApplicationWindow):
             act.connect("activate", lambda *_a, f=cb: f())
             self.add_action(act)
 
-        self.ctl.subscribe(lambda _cfg: self.refresh())
+        self.ctl.subscribe(lambda _cfg: (apply_style(), self.refresh()))
         self.refresh()
 
     # --------------------------------------------------------------- feedback --
@@ -142,6 +142,7 @@ class Window(Adw.ApplicationWindow):
     def page(*groups: Adw.PreferencesGroup) -> Adw.PreferencesPage:
         p = Adw.PreferencesPage()
         for g in groups:
+            g.set_title(gtkstyle.section_title(g.get_title()))
             p.add(g)
         return p
 
@@ -202,15 +203,25 @@ class Window(Adw.ApplicationWindow):
         g.add(self.combo("layout.mode", {"tiling": "Tiling", "floating": "Floating (mouse-friendly)"}))
         g.add(self.switch("layout.titlebars"))
         g.add(self.switch("layout.focus_follows_mouse"))
+        g.add(self.switch("layout.autotile"))
+        g.add(self.switch("layout.workspace_back_and_forth"))
         g2 = Adw.PreferencesGroup(title="Spacing and shape")
         for k in ("layout.gaps_inner", "layout.gaps_outer", "layout.border_width", "layout.radius"):
             g2.add(self.spin(k))
+        g2.add(self.switch("layout.smart_gaps"))
+        g2.add(self.switch("layout.smart_borders"))
         g3 = Adw.PreferencesGroup(title="Display")
         g3.add(self.spin("display.scale", step=0.25, digits=2))
+        g3.add(self.combo("display.night_light", {"off": "Off", "auto": "Sunset to sunrise", "on": "Always on"}))
+        g3.add(self.spin("display.night_temperature", step=100))
+        g3.add(self.switch("display.adaptive_sync"))
+        g3.add(self.switch("display.clamshell"))
         g4 = Adw.PreferencesGroup(title="Screen lock and power",
                                   description="Seconds of inactivity; 0 turns a step off.")
         for k in ("idle.lock_after", "idle.screen_off_after", "idle.suspend_after"):
             g4.add(self.spin(k, step=60))
+        g4.add(self.spin("power.battery_warning"))
+        g4.add(self.spin("power.battery_critical"))
         return self.page(g, g2, g3, g4)
 
     def page_bar(self) -> Adw.PreferencesPage:
@@ -234,9 +245,16 @@ class Window(Adw.ApplicationWindow):
             self.refreshers.append(lambda r=row, d=dotted: r.set_text(", ".join(self.ctl.get(d))))
             g2.add(row)
         g3 = Adw.PreferencesGroup(title="Notifications")
+        g3.add(self.switch("notifications.do_not_disturb"))
         g3.add(self.combo("notifications.position"))
         g3.add(self.spin("notifications.timeout", step=1000))
-        return self.page(g, g2, g3)
+        g4 = Adw.PreferencesGroup(title="Flyouts",
+                                  description="The small pop-up when volume, brightness, Caps Lock or the "
+                                              "keyboard layout changes.")
+        g4.add(self.switch("osd.enabled"))
+        g4.add(self.combo("osd.position"))
+        g4.add(self.spin("osd.step"))
+        return self.page(g, g2, g3, g4)
 
     def page_input(self) -> Adw.PreferencesPage:
         g = Adw.PreferencesGroup(title="Keyboard")
@@ -248,6 +266,13 @@ class Window(Adw.ApplicationWindow):
         g2.add(self.switch("input.natural_scroll"))
         g2.add(self.switch("input.gestures"))
         g2.add(self.spin("input.pointer_accel", step=0.1, digits=1))
+        g2.add(self.spin("input.scroll_factor", step=0.1, digits=1))
+        g2.add(self.switch("input.mouse_natural_scroll"))
+        g2.add(self.switch("input.hide_cursor_typing"))
+        g2.add(self.spin("input.hide_cursor_after"))
+        for k in ("input.repeat_delay", "input.repeat_rate"):
+            g.add(self.spin(k, step=10 if k.endswith("delay") else 1))
+        g.add(self.switch("input.numlock"))
 
         self.g_keys = Adw.PreferencesGroup(title="Key bindings",
                                            description="Super + / shows these anywhere. Actions: "
@@ -306,7 +331,17 @@ class Window(Adw.ApplicationWindow):
         row.connect("apply", lambda r: self._set("autostart.commands", r.get_text(), now=True))
         self.refreshers.append(lambda: row.set_text(", ".join(self.ctl.get("autostart.commands"))))
         g2.add(row)
-        return self.page(g, g2)
+        g3 = Adw.PreferencesGroup(title="Screenshots and recordings",
+                                  description="Print, Shift+Print and Ctrl+Print take screenshots; Alt+Print "
+                                              "records. Everything is in the surfd menu (Super+Alt+Space).")
+        g3.add(self.entry("capture.screenshots"))
+        g3.add(self.entry("capture.recordings"))
+        g3.add(self.switch("capture.record_audio"))
+        g4 = Adw.PreferencesGroup(title="Clipboard and updates")
+        g4.add(self.switch("clipboard.history"))
+        g4.add(self.spin("clipboard.size", step=10))
+        g4.add(self.switch("updates.check"))
+        return self.page(g, g2, g3, g4)
 
     def page_system(self) -> Adw.PreferencesPage:
         g = Adw.PreferencesGroup(title="Configuration",
@@ -572,7 +607,7 @@ class Window(Adw.ApplicationWindow):
         groups: dict[str, Adw.PreferencesGroup] = {}
         for cat, combo, desc in keys.cheatsheet_lines(self.ctl.cfg):
             if cat not in groups:
-                groups[cat] = Adw.PreferencesGroup(title=cat)
+                groups[cat] = Adw.PreferencesGroup(title=gtkstyle.section_title(cat))
                 page.add(groups[cat])
             row = Adw.ActionRow(title=GLib.markup_escape_text(desc))
             row.add_suffix(keycap_row(combo))
@@ -608,7 +643,7 @@ class App(Adw.Application):
         return 0
 
     def do_activate(self) -> None:
-        css(APP_CSS)
+        apply_style()
         win = self.props.active_window or Window(self, self.page)
         if isinstance(win, Window) and self.page in PAGES:
             win.stack.set_visible_child_name(self.page)

@@ -499,7 +499,13 @@ class App(Adw.Application):
 
     def do_activate(self) -> None:
         provider = Gtk.CssProvider()
-        provider.load_from_data(CSS.encode())
+        text = CSS
+        try:  # the surfd look (same as Surf Settings), from the live user's theme or the default one
+            from surfd import gtkstyle
+            text = gtkstyle.current_css() + CSS
+        except Exception as e:
+            print(f"surf-installer: using the plain style ({e})", file=sys.stderr)
+        provider.load_from_data(text.encode())
         from gi.repository import Gdk
         Gtk.StyleContext.add_provider_for_display(Gdk.Display.get_default(), provider,
                                                   Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)

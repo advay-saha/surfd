@@ -8,6 +8,7 @@ immediately. Run `surfctl <command> --help` for details.
 from __future__ import annotations
 
 import argparse
+import json
 import os
 import pwd
 import shutil
@@ -17,17 +18,33 @@ from collections.abc import Callable
 from pathlib import Path
 from typing import Any
 
-from . import __version__, config, dynwall, gallery, generate, keys, paths, schema, session, system, themes
+from . import (
+    __version__,
+    capture,
+    config,
+    daemons,
+    desktop,
+    dynwall,
+    gallery,
+    generate,
+    keys,
+    paths,
+    schema,
+    session,
+    system,
+    themes,
+)
 
 BAR_PRESETS: dict[str, dict[str, list[str]]] = {
     "default": {"left": ["workspaces", "mode", "window"], "center": ["clock"],
-                "right": ["tray", "network", "audio", "battery", "power"]},
+                "right": ["tray", "recording", "updates", "notifications", "network", "audio", "battery", "power"]},
     "minimal": {"left": ["workspaces"], "center": ["clock"], "right": ["audio", "battery"]},
     "classic": {"left": ["workspaces", "taskbar"], "center": [],
                 "right": ["tray", "network", "audio", "battery", "clock", "power"]},
     "full": {"left": ["workspaces", "mode", "window"], "center": ["clock", "media"],
-             "right": ["tray", "idle", "cpu", "memory", "temperature", "network", "bluetooth",
-                       "audio", "backlight", "battery", "keyboard", "power"]},
+             "right": ["tray", "recording", "updates", "notifications", "idle", "nightlight", "cpu", "memory",
+                       "temperature", "disk", "network", "bluetooth", "audio", "mic", "backlight", "profile",
+                       "battery", "keyboard", "power"]},
 }
 
 USE_COLOR = sys.stdout.isatty() and os.environ.get("NO_COLOR") is None
@@ -298,6 +315,8 @@ def _wallpaper_status() -> int:
 
 def cmd_wallpaper(args: argparse.Namespace) -> int:
     sub = args.wp_cmd
+    if sub in ("next", "previous"):
+        return desktop.next_wallpaper(lambda ch, msg: apply_changes(ch, args, msg), 1 if sub == "next" else -1)
     if sub == "set":
         p = Path(args.path).expanduser().resolve()
         if not p.is_file():
@@ -388,7 +407,10 @@ def cmd_radius(args: argparse.Namespace) -> int:
 
 
 def cmd_mode(args: argparse.Namespace) -> int:
-    return apply_changes({"layout.mode": args.mode}, args, f"window mode set to {args.mode}")
+    mode = args.mode
+    if mode == "toggle":
+        mode = "floating" if config.load()["layout"]["mode"] == "tiling" else "tiling"
+    return apply_changes({"layout.mode": mode}, args, f"window mode set to {mode}")
 
 
 def parse_bar_layout(spec: list[str]) -> dict[str, list[str]]:
@@ -609,10 +631,176 @@ def cmd_lock(args: argparse.Namespace) -> int:
 
 
 def cmd_screenshot(args: argparse.Namespace) -> int:
-    path = session.screenshot(args.mode)
+    if args.open_folder:
+        capture.open_screenshots()
+        return 0
+    path = capture.screenshot(args.mode, edit=args.edit, delay=max(0, args.delay))
     if path:
         print(path)
     return 0
+
+
+def cmd_record(args: argparse.Namespace) -> int:
+    if args.what == "status":
+        state = capture.recording()
+        print(f"recording the {state['what']} to {state['file']}" if state else "not recording")
+        return 0
+    return capture.record(args.what)
+
+
+def cmd_colorpick(args: argparse.Namespace) -> int:
+    hexcol = capture.colorpick()
+    if hexcol:
+        print(hexcol)
+    return 0
+
+
+def _apply(args: argparse.Namespace) -> Callable[[dict[str, Any], str], int]:
+    return lambda changes, summary: apply_changes(changes, args, summary)
+
+
+def cmd_menu(args: argparse.Namespace) -> int:
+    if args.name == "theme":
+        return desktop.theme_menu(_apply(args))
+    desktop.control_menu(args.name or "")
+    return 0
+
+
+def cmd_windows(args: argparse.Namespace) -> int:
+    desktop.window_switcher()
+    return 0
+
+
+def cmd_window(args: argparse.Namespace) -> int:
+    {"opacity": desktop.window_opacity, "empty-workspace": desktop.empty_workspace}[args.what]()
+    return 0
+
+
+def cmd_dropdown(args: argparse.Namespace) -> int:
+    desktop.dropdown()
+    return 0
+
+
+def cmd_monitor(args: argparse.Namespace) -> int:
+    desktop.system_monitor()
+    return 0
+
+
+def cmd_calc(args: argparse.Namespace) -> int:
+    if args.expression:
+        try:
+            print(desktop.format_number(desktop.calculate(" ".join(args.expression))))
+        except desktop.CalcError as e:
+            return fail(str(e))
+        return 0
+    desktop.calculator()
+    return 0
+
+
+def cmd_emoji(args: argparse.Namespace) -> int:
+    if args.print:
+        for ch, name in desktop.emoji_list():
+            print(f"{ch}  {name}")
+        return 0
+    desktop.emoji_picker()
+    return 0
+
+
+def cmd_clipboard(args: argparse.Namespace) -> int:
+    what = args.what or "pick"
+    if what == "store":
+        data = sys.stdin.buffer.read()
+        try:
+            text = data.decode("utf-8")
+        except UnicodeDecodeError:
+            return 0
+        limit = int(config.get(config.load(), "clipboard.size") or 100)
+        desktop.clipboard_store(text, limit)
+        return 0
+    if what == "clear":
+        desktop.clipboard_save([])
+        ok("clipboard history cleared")
+        return 0
+    if what == "list":
+        for i, text in enumerate(desktop.clipboard_load()):
+            print(desktop.clipboard_label(i + 1, text))
+        return 0
+    desktop.clipboard_menu()
+    return 0
+
+
+def cmd_notifications(args: argparse.Namespace) -> int:
+    desktop.notifications_menu()
+    return 0
+
+
+def cmd_dnd(args: argparse.Namespace) -> int:
+    if args.state == "status":
+        print("on" if config.get(config.load(), "notifications.do_not_disturb") else "off")
+        return 0
+    print("do not disturb: " + ("on" if desktop.dnd(args.state) else "off"))
+    return 0
+
+
+def cmd_nightlight(args: argparse.Namespace) -> int:
+    if args.state == "toggle":
+        return desktop.nightlight_toggle(_apply(args))
+    rc = apply_changes({"display.night_light": args.state}, args, f"night light {args.state}")
+    desktop.refresh_bar()
+    return rc
+
+
+def cmd_awake(args: argparse.Namespace) -> int:
+    print("keep awake: " + ("on" if desktop.awake(args.state) else "off"))
+    return 0
+
+
+def cmd_power_profile(args: argparse.Namespace) -> int:
+    if args.choice == "get":
+        current, available = desktop.power_profiles()
+        print(current or "power profiles are not available")
+        return 0 if available else 1
+    desktop.power_profile(args.choice)
+    return 0
+
+
+def cmd_audio_menu(args: argparse.Namespace) -> int:
+    desktop.audio_menu()
+    return 0
+
+
+def cmd_bluetooth_menu(args: argparse.Namespace) -> int:
+    desktop.bluetooth_menu()
+    return 0
+
+
+def cmd_update(args: argparse.Namespace) -> int:
+    return daemons.update_system()
+
+
+def cmd_updates(args: argparse.Namespace) -> int:
+    if args.check:
+        daemons.write_updates(daemons.count_updates())
+        desktop.refresh_bar()
+    try:
+        data = json.loads(daemons.updates_file().read_text())
+    except (OSError, ValueError):
+        print("no check yet (run `surfctl updates --check`)")
+        return 0
+    print(f"{data.get('dnf', 0)} system updates, {data.get('flatpak', 0)} Flatpak updates")
+    return 0
+
+
+def cmd_daemon(args: argparse.Namespace) -> int:
+    if args.name == "autotile":
+        return daemons.autotile()
+    if args.name == "power":
+        return daemons.power()
+    if args.name == "nightlight":
+        return daemons.nightlight(args.mode or "auto")
+    if args.name == "updates":
+        return daemons.updates()
+    return fail(f"unknown helper {args.name}")
 
 
 def cmd_first_run(args: argparse.Namespace) -> int:
@@ -753,6 +941,9 @@ def build_parser() -> argparse.ArgumentParser:
     s.add_argument("path")
     s.add_argument("--mode", choices=("fill", "fit", "center", "tile", "stretch"))
     s.add_argument("--no-reload", action="store_true")
+    for name in ("next", "previous"):
+        s = wsub.add_parser(name, help=f"the {name} picture in the gallery")
+        s.add_argument("--no-reload", action="store_true")
     s = wsub.add_parser("reset", help="back to the default wallpaper (the dynamic one that follows the time of day)")
     s.add_argument("--no-reload", action="store_true")
     s = wsub.add_parser("dynamic", help="use a time-of-day wallpaper (or 'off'); see `list`")
@@ -782,7 +973,7 @@ def build_parser() -> argparse.ArgumentParser:
     sp = add("radius", cmd_radius, "corner radius for bar, notifications, launcher", live=True)
     sp.add_argument("value", type=int)
     sp = add("mode", cmd_mode, "tiling, or floating (mouse-friendly)", live=True)
-    sp.add_argument("mode", choices=("tiling", "floating"))
+    sp.add_argument("mode", choices=("tiling", "floating", "toggle"))
 
     bp = add("bar", cmd_bar, "bar layout, position, style and presets")
     bsub = bp.add_subparsers(dest="bar_cmd", metavar="<action>")
@@ -841,8 +1032,45 @@ def build_parser() -> argparse.ArgumentParser:
     add("power-menu", cmd_power_menu, "lock, log out, suspend, restart, shut down")
     add("network-menu", cmd_network_menu, "pick a Wi-Fi network (used by the bar)")
     add("lock", cmd_lock, "lock the screen")
-    sp = add("screenshot", cmd_screenshot, "save a screenshot to ~/Pictures/Screenshots and the clipboard")
-    sp.add_argument("mode", choices=("full", "area"), nargs="?", default="full")
+    sp = add("screenshot", cmd_screenshot, "save a screenshot (and copy it): full, area, window or output")
+    sp.add_argument("mode", choices=("full", "area", "window", "output"), nargs="?", default="full")
+    sp.add_argument("--edit", action="store_true", help="open it in the annotation tool (swappy)")
+    sp.add_argument("--delay", type=int, default=0, metavar="SECONDS", help="wait before taking it")
+    sp.add_argument("--open-folder", action="store_true", help="open the screenshots folder instead")
+    sp = add("record", cmd_record, "record the screen (area or output); run again, or 'stop', to finish")
+    sp.add_argument("what", choices=("area", "output", "stop", "status"))
+    add("colorpick", cmd_colorpick, "pick a colour on screen; its hex code is copied", aliases=("colourpick",))
+    sp = add("menu", cmd_menu, "the surfd menu (Super+Alt+Space): capture, toggles, theme, setup, system")
+    sp.add_argument("name", nargs="?", help="open a sub-menu directly: theme, capture, toggles, wallpaper, "
+                                            "connections, setup or system")
+    add("windows", cmd_windows, "switch to any open window (Alt+Tab)")
+    sp = add("window", cmd_window, "window helpers: opacity (see-through toggle), empty-workspace")
+    sp.add_argument("what", choices=("opacity", "empty-workspace"))
+    add("dropdown", cmd_dropdown, "show or hide the drop-down terminal")
+    add("monitor", cmd_monitor, "open the system monitor (btop)")
+    sp = add("calc", cmd_calc, "calculator: `surfctl calc 2^10/3` prints, without arguments opens a prompt")
+    sp.add_argument("expression", nargs="*")
+    sp = add("emoji", cmd_emoji, "emoji picker (copies and types the emoji)")
+    sp.add_argument("--print", action="store_true", help="list them instead")
+    sp = add("clipboard", cmd_clipboard, "clipboard history: pick (default), list, clear")
+    sp.add_argument("what", nargs="?", choices=("pick", "list", "clear", "store"))
+    add("notifications", cmd_notifications, "notification history")
+    sp = add("dnd", cmd_dnd, "do not disturb: on, off, toggle or status")
+    sp.add_argument("state", choices=("on", "off", "toggle", "status"))
+    sp = add("nightlight", cmd_nightlight, "night light: auto (sunset to sunrise), on, off or toggle", live=True)
+    sp.add_argument("state", choices=("auto", "on", "off", "toggle"))
+    sp = add("awake", cmd_awake, "keep awake (no lock, screen-off or sleep): on, off or toggle")
+    sp.add_argument("state", choices=("on", "off", "toggle"))
+    sp = add("power-profile", cmd_power_profile, "power profile: next, menu, get, or a profile name")
+    sp.add_argument("choice", nargs="?", default="next")
+    add("audio-menu", cmd_audio_menu, "choose the sound output and input")
+    add("bluetooth-menu", cmd_bluetooth_menu, "connect paired Bluetooth devices, turn Bluetooth on or off")
+    add("update", cmd_update, "install system and Flatpak updates (asks for your password)")
+    sp = add("updates", cmd_updates, "how many updates are available")
+    sp.add_argument("--check", action="store_true", help="check now (takes a moment)")
+    sp = add("daemon", cmd_daemon, argparse.SUPPRESS)
+    sp.add_argument("name", choices=("autotile", "power", "nightlight", "updates"))
+    sp.add_argument("mode", nargs="?")
     sp = add("first-run", cmd_first_run, argparse.SUPPRESS)
     sp.add_argument("--force", action="store_true")
 

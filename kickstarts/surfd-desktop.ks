@@ -34,6 +34,17 @@ slurp
 wl-clipboard
 brightnessctl
 playerctl
+libnotify
+# capture, emoji typing, night light, drives, power, monitor, displays (surfd 0.2 features)
+wf-recorder
+swappy
+wtype
+wlsunset
+udiskie
+power-profiles-daemon
+btop
+wdisplays
+gnome-keyring
 xorg-x11-server-Xwayland
 xdg-desktop-portal-wlr
 xdg-desktop-portal-gtk

@@ -1,0 +1,60 @@
+#!/usr/bin/bash
+# surfd-status MODULE — one line of JSON for a surfd Waybar module.
+#
+#   notifications  do not disturb on/off
+#   recording      the screen recording in progress (empty when none)
+#   updates        available updates (empty when none)
+#   profile        power profile
+#   nightlight     night light on/off
+#
+# Waybar polls these and also re-reads them on SIGRTMIN+8 (surfctl sends it after
+# every toggle). Bash on purpose: it runs every few seconds.
+set -u
+run="${XDG_RUNTIME_DIR:-/tmp}"
+lbl() { printf "<span alpha='55%%' size='small'>%s</span> %s" "$1" "$2"; }
+out() { printf '{"text": "%s", "class": "%s", "tooltip": "%s"}\n' "$1" "$2" "$3"; }
+
+case "${1:-}" in
+    notifications)
+        if makoctl mode 2>/dev/null | grep -qx do-not-disturb; then
+            out "$(lbl ntf dnd)" "dnd" "Do not disturb is on (click: off, right-click: history)"
+        else
+            out "$(lbl ntf on)" "on" "Notifications on (click: do not disturb, right-click: history)"
+        fi ;;
+    recording)
+        state="${run}/surfd-recording.json"
+        pid="$(sed -n 's/.*"pid": *\([0-9]*\).*/\1/p' "${state}" 2>/dev/null)"
+        if [[ -n "${pid}" ]] && kill -0 "${pid}" 2>/dev/null; then
+            started="$(sed -n 's/.*"started": *\([0-9]*\).*/\1/p' "${state}")"
+            secs=$(( $(date +%s) - ${started:-0} ))
+            out "● rec $(printf '%02d:%02d' $(( secs / 60 )) $(( secs % 60 )))" "recording" "Recording (click: stop)"
+        else
+            out "" "idle" ""
+        fi ;;
+    updates)
+        f="${XDG_CACHE_HOME:-${HOME:-/nonexistent}/.cache}/surfd/updates.json"
+        dnf="$(sed -n 's/.*"dnf": *\([0-9]*\).*/\1/p' "${f}" 2>/dev/null)"
+        flat="$(sed -n 's/.*"flatpak": *\([0-9]*\).*/\1/p' "${f}" 2>/dev/null)"
+        total=$(( ${dnf:-0} + ${flat:-0} ))
+        if (( total > 0 )); then
+            out "$(lbl upd "${total}")" "available" "${dnf:-0} system and ${flat:-0} Flatpak updates (click: update)"
+        else
+            out "" "none" ""
+        fi ;;
+    profile)
+        p="$(powerprofilesctl get 2>/dev/null)"
+        case "${p}" in
+            power-saver) short="saver" ;;
+            performance) short="perf" ;;
+            balanced) short="bal" ;;
+            *) out "" "none" ""; exit 0 ;;
+        esac
+        out "$(lbl pwr "${short}")" "${p}" "Power profile: ${p} (click: next)" ;;
+    nightlight)
+        if pgrep -x -u "${UID}" wlsunset >/dev/null; then
+            out "$(lbl night on)" "on" "Night light on (click: off)"
+        else
+            out "$(lbl night off)" "off" "Night light off (click: on)"
+        fi ;;
+    *) echo "usage: surfd-status notifications|recording|updates|profile|nightlight" >&2; exit 2 ;;
+esac

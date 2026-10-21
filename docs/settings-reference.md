@@ -45,6 +45,10 @@ Every key, its default and what it accepts. Change any of them with
 | `radius` | `12` | int 0–32 | Corner rounding for the bar, notifications, launcher and lock screen. (Sway draws square window borders.) |
 | `titlebars` | `false` | true / false | Show window title bars in tiling mode (always on in floating mode). |
 | `focus_follows_mouse` | `true` | true / false | Focus windows by hovering. |
+| `autotile` | `true` | true / false | Tiling: split each new window along the longer side of the focused one (a spiral, like Hyprland's dwindle). |
+| `smart_gaps` | `false` | true / false | No gaps around a window that is alone on its workspace. |
+| `smart_borders` | `true` | true / false | No border around a window that is alone on its workspace. |
+| `workspace_back_and_forth` | `true` | true / false | Pressing the shortcut of the workspace you are on goes back to the previous one. |
 
 ## [bar]
 
@@ -55,7 +59,7 @@ Every key, its default and what it accepts. Change any of them with
 | `height` | `34` | int 20–64 | Bar height in pixels. |
 | `left` | `["workspaces", "mode", "window"]` | list of bar modules | Modules on the left. |
 | `center` | `["clock"]` | list of bar modules | Modules in the centre. |
-| `right` | `["tray", "network", "audio", "battery", "power"]` | list of bar modules | Modules on the right. |
+| `right` | `["tray", "recording", "updates", "notifications", "network", "audio", "battery", "power"]` | list of bar modules | Modules on the right. |
 
 ## [input]
 
@@ -68,12 +72,23 @@ Every key, its default and what it accepts. Change any of them with
 | `natural_scroll` | `true` | true / false | Content follows your fingers on touchpads. |
 | `gestures` | `true` | true / false | Three-finger swipes switch workspaces; swipe up opens the launcher. |
 | `pointer_accel` | `0.0` | float -1–1 | Pointer speed from -1 (slow) to 1 (fast). |
+| `mouse_natural_scroll` | `false` | true / false | Natural (reversed) scrolling for mice too. |
+| `scroll_factor` | `1.0` | float 0.1–5 | Scroll speed multiplier for touchpads and mice. |
+| `repeat_delay` | `300` | int 100–1000 | Milliseconds a key is held before it repeats. |
+| `repeat_rate` | `40` | int 5–100 | Key repeats per second. |
+| `numlock` | `true` | true / false | Num Lock on when the session starts. |
+| `hide_cursor_typing` | `true` | true / false | Hide the mouse pointer while you type. |
+| `hide_cursor_after` | `0` | int 0–600 | Hide the pointer after this many idle seconds (0 = never). |
 
 ## [display]
 
 | Key | Default | Accepts | Description |
 |---|---|---|---|
 | `scale` | `0.0` | float 0–4 | Output scale for all displays; 0 lets Sway decide. |
+| `night_light` | `"off"` | `off` \| `auto` \| `on` | Warmer colours in the evening. auto: from sunset to sunrise (uses wallpaper.location or your time zone). on: always. off: never. |
+| `night_temperature` | `4000` | int 2500–6000 | Night light colour temperature in kelvin (lower is warmer). |
+| `adaptive_sync` | `false` | true / false | Variable refresh rate (FreeSync / G-Sync compatible) on displays that support it. |
+| `clamshell` | `true` | true / false | On a laptop with an external display, closing the lid turns the built-in screen off instead of suspending. |
 
 ## [apps]
 
@@ -99,6 +114,43 @@ Every key, its default and what it accepts. Change any of them with
 |---|---|---|---|
 | `position` | `"top-right"` | `top-right` \| `top-center` \| `top-left` \| `bottom-right` \| `bottom-center` \| `bottom-left` | Where notifications appear. |
 | `timeout` | `6000` | int 0–120000 | Milliseconds before a notification hides (0 = until dismissed). |
+| `do_not_disturb` | `false` | true / false | Hold notifications back until you switch it off (urgent ones still show). Toggle: Super+Ctrl+D. |
+
+## [osd]
+
+| Key | Default | Accepts | Description |
+|---|---|---|---|
+| `enabled` | `true` | true / false | Show a flyout when volume, brightness, Caps Lock or the keyboard layout changes. |
+| `position` | `"bottom-center"` | `bottom-center` \| `top-center` \| `center` \| `top-right` \| `bottom-right` | Where flyouts appear. |
+| `step` | `5` | int 1–25 | How much one key press changes volume or brightness, in percent. |
+
+## [power]
+
+| Key | Default | Accepts | Description |
+|---|---|---|---|
+| `battery_warning` | `20` | int 0–50 | Warn when the battery drops to this percentage (0 = never). |
+| `battery_critical` | `8` | int 0–30 | Urgent warning at this percentage (0 = never). |
+
+## [capture]
+
+| Key | Default | Accepts | Description |
+|---|---|---|---|
+| `screenshots` | `"~/Pictures/Screenshots"` | text | Folder for screenshots (~ is your home). |
+| `recordings` | `"~/Videos/Recordings"` | text | Folder for screen recordings (~ is your home). |
+| `record_audio` | `false` | true / false | Record the sound your computer plays along with the screen. |
+
+## [clipboard]
+
+| Key | Default | Accepts | Description |
+|---|---|---|---|
+| `history` | `true` | true / false | Keep a history of copied text (Super+V to pick from it). |
+| `size` | `100` | int 5–1000 | How many copied items to remember. |
+
+## [updates]
+
+| Key | Default | Accepts | Description |
+|---|---|---|---|
+| `check` | `true` | true / false | Check for system updates once a day and show them in the bar. |
 
 ## [keys]
 
@@ -126,6 +178,12 @@ disable a default binding.
 | `editor` | Open the text editor |
 | `settings` | Open Surf Settings |
 | `cheatsheet` | Show this cheat sheet |
+| `control-menu` | surfd menu: capture, toggles, theme, setup, system |
+| `dropdown-terminal` | Drop-down terminal (show / hide) |
+| `system-monitor` | System monitor |
+| `calculator` | Calculator (result is copied) |
+| `emoji` | Emoji picker (copies and types it) |
+| `clipboard` | Clipboard history |
 | `close` | Close the window |
 | `fullscreen` | Toggle fullscreen |
 | `toggle-floating` | Float / tile the window |
@@ -137,25 +195,60 @@ disable a default binding.
 | `resize-mode` | Resize with arrow keys (Esc to finish) |
 | `scratchpad` | Show / hide the scratchpad |
 | `move-to-scratchpad` | Send the window to the scratchpad |
+| `window-switcher` | Switch to any open window |
+| `sticky` | Pin the floating window to every workspace |
+| `opacity` | Make the window see-through / solid |
+| `center` | Centre the floating window |
+| `grow-width` | Make the window wider |
+| `shrink-width` | Make the window narrower |
+| `grow-height` | Make the window taller |
+| `shrink-height` | Make the window shorter |
+| `kill-all` | Close every window on this workspace |
 | `workspace-next` | Next workspace |
 | `workspace-prev` | Previous workspace |
 | `workspace-last` | Back to the last workspace |
+| `workspace-empty` | Go to an empty workspace |
+| `workspace-to-output-left` | Move this workspace to the display on the left |
+| `workspace-to-output-right` | Move this workspace to the display on the right |
+| `focus-output-next` | Focus the next display |
+| `screenshot` | Screenshot the whole screen |
+| `screenshot-area` | Screenshot a selected area |
+| `screenshot-window` | Screenshot the focused window |
+| `screenshot-output` | Screenshot the current display |
+| `screenshot-edit` | Screenshot an area and annotate it |
+| `record-area` | Record an area (press again to stop) |
+| `record-screen` | Record the display (press again to stop) |
+| `color-picker` | Pick a colour from the screen (hex is copied) |
 | `lock` | Lock the screen |
 | `power-menu` | Log out, suspend, restart, shut down |
 | `reload` | Reload the desktop configuration |
-| `screenshot` | Screenshot the whole screen |
-| `screenshot-area` | Screenshot a selected area |
 | `notifications-dismiss` | Dismiss notifications |
 | `notifications-restore` | Show the last notification again |
+| `notification-history` | Notification history |
+| `dnd-toggle` | Do not disturb on / off |
+| `nightlight-toggle` | Night light on / off |
+| `idle-toggle` | Keep awake on / off (no lock or sleep) |
+| `bar-toggle` | Hide / show the bar |
+| `theme-menu` | Pick a theme |
+| `wallpaper-next` | Next wallpaper |
+| `style-toggle` | Switch between dark and light style |
+| `wifi-menu` | Wi-Fi networks |
+| `bluetooth-menu` | Bluetooth devices |
+| `audio-menu` | Choose the sound output |
+| `power-profile` | Next power profile (saver, balanced, performance) |
+| `keyboard-layout-next` | Next keyboard layout |
 | `volume-up` | Volume up |
 | `volume-down` | Volume down |
 | `volume-mute` | Mute / unmute |
 | `mic-mute` | Mute / unmute microphone |
 | `brightness-up` | Brightness up |
 | `brightness-down` | Brightness down |
+| `kbd-brightness-up` | Keyboard backlight up |
+| `kbd-brightness-down` | Keyboard backlight down |
 | `media-play` | Play / pause |
 | `media-next` | Next track |
 | `media-prev` | Previous track |
+| `media-stop` | Stop playback |
 | `focus left\|right\|up\|down` | Move focus |
 | `move left\|right\|up\|down` | Move the window |
 | `workspace N` | Go to workspace N |
@@ -185,3 +278,11 @@ disable a default binding.
 | `media` | Now playing (MPRIS) |
 | `idle` | Keep-awake toggle |
 | `power` | Power menu button |
+| `notifications` | Notification count and do-not-disturb (click: toggle, right-click: history) |
+| `recording` | Screen recording indicator (shown while recording; click: stop) |
+| `updates` | Available system updates (shown when there are some; click: update) |
+| `profile` | Power profile (click: cycle power saver, balanced, performance) |
+| `nightlight` | Night light (click: toggle) |
+| `mic` | Microphone (click: mute, scroll: level) |
+| `disk` | Free disk space |
+| `clipboard` | Clipboard history button |

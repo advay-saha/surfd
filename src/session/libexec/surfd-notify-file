@@ -1,0 +1,19 @@
+#!/usr/bin/bash
+# surfd-notify-file TITLE FILE image|video — tell the user a capture was saved.
+# Clicking the notification opens the file; the buttons annotate it (images)
+# or open its folder. Waits in the background for the click.
+set -u
+title="${1:?}" file="${2:?}" kind="${3:-image}"
+command -v notify-send >/dev/null || exit 0
+args=(-a surfd -t 10000 --action=default=Open --action=folder="Show in folder")
+if [[ "${kind}" == image ]]; then
+    args+=(-i "${file}")
+    command -v swappy >/dev/null && args+=(--action=edit=Annotate)
+fi
+choice="$(notify-send "${args[@]}" "${title}" "${file##*/}" 2>/dev/null)"
+case "${choice}" in
+    default) exec xdg-open "${file}" ;;
+    folder) exec xdg-open "${file%/*}" ;;
+    edit) exec swappy -f "${file}" -o "${file}" ;;
+esac
+exit 0

@@ -69,6 +69,15 @@ slurp
 wl-clipboard
 brightnessctl
 playerctl
+libnotify
+wf-recorder
+swappy
+wtype
+wlsunset
+udiskie
+btop
+wdisplays
+gnome-keyring
 xorg-x11-server-Xwayland
 xdg-desktop-portal-wlr
 xdg-desktop-portal-gtk

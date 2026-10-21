@@ -1,6 +1,6 @@
 # surfd-theme — theme packs, wallpapers, boot splash and logos
 Name:           surfd-theme
-Version:        0.1.0
+Version:        0.2.0
 Release:        1%{?dist}
 Summary:        Theme packs and wallpapers for the surfd desktop
 # Artwork CC-BY-SA-4.0; the small render tooling is MIT.
@@ -181,5 +181,10 @@ test $(ls %{buildroot}%{_datadir}/surfd/wallpapers/static | wc -l) -ge 18
 %{_datadir}/anaconda/pixmaps/surfd
 
 %changelog
+* Wed Oct 21 2026 surfd contributors <surfd@example.invalid> - 0.2.0-1
+- Flyouts, do not disturb, the surfd menu, clipboard history, emoji and colour pickers,
+  screen recording, window switcher, auto-tiling, night light and more
+- Settings, Welcome and the installer use the surfd look
+
 * Mon Oct 19 2026 surfd contributors <surfd@example.invalid> - 0.1.0-1
 - Initial release

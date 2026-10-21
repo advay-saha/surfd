@@ -1,0 +1,153 @@
+#!/usr/bin/bash
+# surfd-osd — change volume, brightness and friends, then show a flyout.
+#
+#   surfd-osd [--step N] [--quiet] volume up|down|mute|show
+#   surfd-osd [--step N] [--quiet] mic mute|up|down
+#   surfd-osd [--step N] [--quiet] brightness up|down
+#   surfd-osd [--quiet] kbd-brightness up|down
+#   surfd-osd [--quiet] capslock|numlock
+#   surfd-osd [--quiet] layout next|show
+#   surfd-osd [--quiet] media play-pause|next|previous
+#   surfd-osd message LABEL TEXT        (any other short flyout)
+#   surfd-osd markup LABEL MARKUP       (the same, TEXT is Pango markup)
+#
+# Flyouts are mako notifications from the app "surfd-osd"; surfctl styles them
+# (see [app-name=surfd-osd] in the generated mako config) and they replace each
+# other, so holding a key updates one flyout instead of stacking many.
+# Bound to the media keys by surfctl; fast on purpose (bash, no Python).
+set -u
+
+step=5 quiet=0
+while (( $# )); do
+    case "$1" in
+        --step) step="${2:-5}"; shift 2 ;;
+        --quiet) quiet=1; shift ;;
+        *) break ;;
+    esac
+done
+kind="${1:-}" action="${2:-}"
+
+# Theme colours and fonts written by surfctl (generated/osd.env); safe defaults otherwise.
+ACCENT="#5ecfc2" MUTED="#8aa2af" WARN="#f2777a" MONO="JetBrains Mono" OSD_WIDTH=20
+state="${XDG_STATE_HOME:-${HOME:-/nonexistent}/.local/state}/surfd/generated/osd.env"
+# shellcheck disable=SC1090
+[[ -r "${state}" ]] && . "${state}"
+
+idfile="${XDG_RUNTIME_DIR:-/tmp}/surfd-osd.id"
+
+esc() { local s="${1//&/&amp;}"; s="${s//</&lt;}"; printf '%s' "${s//>/&gt;}"; }
+
+# bar PERCENT [COLOUR] -> ██████░░░░ (OSD_WIDTH cells)
+bar() {
+    local pct="$1" colour="${2:-$ACCENT}" full i out=""
+    (( pct < 0 )) && pct=0
+    full=$(( (pct * OSD_WIDTH + 50) / 100 ))
+    (( full > OSD_WIDTH )) && full=$OSD_WIDTH
+    out+="<span foreground='${colour}'>"
+    for (( i = 0; i < full; i++ )); do out+="█"; done
+    out+="</span><span foreground='${MUTED}' alpha='45%'>"
+    for (( i = full; i < OSD_WIDTH; i++ )); do out+="░"; done
+    printf '%s</span>' "${out}"
+}
+
+# show LABEL LINE [SUBLINE] — one flyout, replacing the previous one
+show() {
+    (( quiet )) && return 0
+    command -v notify-send >/dev/null || return 0
+    local body="<span font_family='${MONO}'><span foreground='${MUTED}'>$1</span>  $2</span>"
+    [[ -n "${3:-}" ]] && body+=$'\n'"<span size='small' foreground='${MUTED}'>$(esc "$3")</span>"
+    local args=(-a surfd-osd -u low -t 1400 -p)
+    local old
+    old="$(cat "${idfile}" 2>/dev/null)"
+    [[ "${old}" =~ ^[0-9]+$ ]] && args+=(-r "${old}")
+    notify-send "${args[@]}" "surfd" "${body}" >"${idfile}.new" 2>/dev/null && mv -f "${idfile}.new" "${idfile}"
+}
+
+pct_line() { printf '%s  <b>%3s%%</b>' "$(bar "$1" "${2:-$ACCENT}")" "$1"; }
+
+volume() {
+    local target="$1" label="$2" out vol muted=0 pct desc
+    case "${action}" in
+        up)   wpctl set-mute "${target}" 0; wpctl set-volume -l 1.0 "${target}" "${step}%+" ;;
+        down) wpctl set-volume "${target}" "${step}%-" ;;
+        mute) wpctl set-mute "${target}" toggle ;;
+    esac
+    out="$(wpctl get-volume "${target}" 2>/dev/null)" || { show "${label}" "no audio device"; return; }
+    vol="$(awk '{print $2}' <<<"${out}")"
+    [[ "${out}" == *MUTED* ]] && muted=1
+    pct="$(awk -v v="${vol:-0}" 'BEGIN { printf "%d", v * 100 + 0.5 }')"
+    desc="$(wpctl inspect "${target}" 2>/dev/null | sed -n 's/.*node\.description = "\(.*\)"/\1/p' | head -n1)"
+    if (( muted )); then
+        show "${label}" "$(pct_line "${pct}" "${MUTED}")  <span foreground='${WARN}'>muted</span>" "${desc}"
+    else
+        show "${label}" "$(pct_line "${pct}")" "${desc}"
+    fi
+}
+
+brightness() {
+    local cls="$1" label="$2" pct dev
+    command -v brightnessctl >/dev/null || { show "${label}" "brightnessctl is not installed"; return; }
+    if [[ "${cls}" == kbd ]]; then
+        dev="$(brightnessctl -l -m 2>/dev/null | awk -F, '/kbd_backlight/ {print $1; exit}')"
+        [[ -n "${dev}" ]] || { show "${label}" "no keyboard backlight"; return; }
+        case "${action}" in
+            up) brightnessctl -q -d "${dev}" set +1 ;;
+            down) brightnessctl -q -d "${dev}" set 1- ;;
+        esac
+        pct="$(brightnessctl -m -d "${dev}" | awk -F, '{gsub("%", "", $4); print $4}')"
+    else
+        case "${action}" in
+            up) brightnessctl -q -c backlight set "${step}%+" ;;
+            # never all the way to black: a dark screen looks like a dead one
+            down) brightnessctl -q -c backlight -n 1% set "${step}%-" ;;
+        esac
+        pct="$(brightnessctl -m -c backlight 2>/dev/null | awk -F, '{gsub("%", "", $4); print $4; exit}')"
+        [[ -n "${pct}" ]] || { show "${label}" "no adjustable screen"; return; }
+    fi
+    show "${label}" "$(pct_line "${pct}")"
+}
+
+lockkey() {
+    local name="$1" label="$2" on=0 led
+    for led in /sys/class/leds/*::"${name}"/brightness; do
+        [[ -r "${led}" ]] && (( $(cat "${led}") > 0 )) && on=1 && break
+    done
+    if (( on )); then show "${label}" "<b><span foreground='${ACCENT}'>on</span></b>"
+    else show "${label}" "<span foreground='${MUTED}'>off</span>"; fi
+}
+
+layout() {
+    [[ "${action}" == next ]] && swaymsg -q input type:keyboard xkb_switch_layout next
+    local name
+    name="$(swaymsg -t get_inputs 2>/dev/null | sed -n 's/^ *Active Keyboard Layout: //p' | head -n1)"
+    show "kbd" "<b>$(esc "${name:-unknown}")</b>"
+}
+
+media() {
+    command -v playerctl >/dev/null || return 0
+    playerctl "${action}" 2>/dev/null || { show "media" "nothing is playing"; return; }
+    sleep 0.25
+    local status title
+    status="$(playerctl status 2>/dev/null)"
+    title="$(playerctl metadata --format '{{ artist }}{{ " — " if artist }}{{ title }}' 2>/dev/null)"
+    case "${status}" in
+        Playing) show "media" "<span foreground='${ACCENT}'>▶</span> $(esc "${title:-playing}")" ;;
+        Paused)  show "media" "<span foreground='${MUTED}'>॥</span> $(esc "${title:-paused}")" ;;
+        *)       show "media" "$(esc "${status:-stopped}")" ;;
+    esac
+}
+
+case "${kind}" in
+    volume) volume @DEFAULT_AUDIO_SINK@ "vol" ;;
+    mic) volume @DEFAULT_AUDIO_SOURCE@ "mic" ;;
+    brightness) brightness backlight "lum" ;;
+    kbd-brightness) brightness kbd "kbd" ;;
+    capslock) lockkey capslock "caps" ;;
+    numlock) lockkey numlock "num" ;;
+    layout) layout ;;
+    media) media ;;
+    message) show "${2:-surfd}" "$(esc "${3:-}")" ;;
+    markup) show "${2:-surfd}" "${3:-}" ;;
+    *) sed -n '2,12p' "$0" | sed 's/^# \{0,1\}//' >&2; exit 2 ;;
+esac
+exit 0

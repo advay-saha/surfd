@@ -73,6 +73,15 @@ def generated_dir() -> Path:
     return state_home() / "surfd" / "generated"
 
 
+def state_dir() -> Path:
+    """surfd's own state: clipboard history, recordings in progress, update counts."""
+    return state_home() / "surfd"
+
+
+def cache_dir() -> Path:
+    return _xdg("XDG_CACHE_HOME", ".cache") / "surfd"
+
+
 def backups_dir() -> Path:
     return state_home() / "surfd" / "backups"
 

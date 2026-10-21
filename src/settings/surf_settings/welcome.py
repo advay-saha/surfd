@@ -15,7 +15,7 @@ from gi.repository import Adw, Gio, Gtk  # noqa: E402
 from surfd import paths, system, themes  # noqa: E402
 
 from .controller import Controller  # noqa: E402
-from .widgets import APP_CSS, AccentRow, ThemePicker, css, keycap_row, logo_path  # noqa: E402
+from .widgets import AccentRow, ThemePicker, apply_style, keycap_row, logo_path  # noqa: E402
 
 APP_ID = "org.surfd.Welcome"
 
@@ -223,7 +223,7 @@ class App(Adw.Application):
         super().__init__(application_id=APP_ID, flags=Gio.ApplicationFlags.DEFAULT_FLAGS)
 
     def do_activate(self) -> None:
-        css(APP_CSS)
+        apply_style()
         (self.props.active_window or Welcome(self)).present()
 
 

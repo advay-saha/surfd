@@ -38,17 +38,22 @@ border_width = 2
 radius = 12              # rounding for bar, notifications, launcher, login screen
 titlebars = false        # title bars in tiling mode (always shown in floating mode)
 focus_follows_mouse = true
+autotile = true          # split new windows along the longer side (a spiral, like Hyprland's dwindle)
+smart_gaps = false       # no gaps around a lone window
+smart_borders = true     # no border around a lone window
+workspace_back_and_forth = true  # pressing the current workspace's key goes back to the previous one
 
 [bar]
 position = "top"         # "top" or "bottom"
 style = "floating"       # "floating" (detached, rounded) or "docked" (edge to edge)
 height = 34
-# Modules: workspaces mode window taskbar clock tray network audio battery
-#          backlight bluetooth cpu memory temperature keyboard media idle power
+# Modules: workspaces mode window taskbar clock tray network audio mic battery
+#          backlight bluetooth cpu memory temperature disk keyboard media idle
+#          notifications recording updates profile nightlight clipboard power
 # Presets: surfctl bar preset default | minimal | classic | full
 left = ["workspaces", "mode", "window"]
 center = ["clock"]
-right = ["tray", "network", "audio", "battery", "power"]
+right = ["tray", "recording", "updates", "notifications", "network", "audio", "battery", "power"]
 
 [input]
 keyboard_layout = "us"   # set from the installer on first login; e.g. "us,de"
@@ -58,9 +63,20 @@ touchpad_tap = true
 natural_scroll = true
 gestures = true          # 3-finger swipe: switch workspace; swipe up: launcher
 pointer_accel = 0.0      # -1 (slow) … 1 (fast)
+mouse_natural_scroll = false
+scroll_factor = 1.0      # scroll speed multiplier
+repeat_delay = 300       # ms before a held key repeats
+repeat_rate = 40         # repeats per second
+numlock = true           # Num Lock on at login
+hide_cursor_typing = true
+hide_cursor_after = 0    # hide an idle pointer after this many seconds; 0 = never
 
 [display]
 scale = 0.0              # 0 = let Sway decide; e.g. 1.5 for HiDPI laptops
+night_light = "off"      # "off", "auto" (sunset to sunrise) or "on"   (Super+Ctrl+N toggles)
+night_temperature = 4000 # kelvin; lower is warmer
+adaptive_sync = false    # variable refresh rate on displays that support it
+clamshell = true         # laptop lid closed + external display: switch the built-in screen off
 
 [apps]
 terminal = "foot"
@@ -77,6 +93,28 @@ suspend_after = 0
 [notifications]
 position = "top-right"   # top-right | top-center | top-left | bottom-right | bottom-center | bottom-left
 timeout = 6000           # milliseconds; 0 = stay until dismissed
+do_not_disturb = false   # hold notifications back (Super+Ctrl+D); urgent ones still show
+
+[osd]
+enabled = true           # flyouts for volume, brightness, Caps Lock, keyboard layout
+position = "bottom-center"
+step = 5                 # percent per key press
+
+[power]
+battery_warning = 20     # percent; 0 = never warn
+battery_critical = 8
+
+[capture]
+screenshots = "~/Pictures/Screenshots"
+recordings = "~/Videos/Recordings"
+record_audio = false     # record what the computer plays along with the screen
+
+[clipboard]
+history = true           # Super+V picks from recently copied text
+size = 100
+
+[updates]
+check = true             # look for system updates once a day; shown in the bar
 
 [autostart]
 # Extra commands to run at login. Apps that install an XDG autostart entry
@@ -98,6 +136,13 @@ modifier = "Super"       # what "Mod" means below: "Super" (Windows key) or "Alt
 "Mod+e" = "files"
 "Mod+comma" = "settings"
 "Mod+slash" = "cheatsheet"
+"Mod+Alt+space" = "control-menu"
+"Mod+Shift+Return" = "dropdown-terminal"
+"Ctrl+Shift+Escape" = "system-monitor"
+"Mod+Ctrl+c" = "calculator"
+"XF86Calculator" = "calculator"
+"Mod+period" = "emoji"
+"Mod+v" = "clipboard"
 # windows
 "Mod+q" = "close"
 "Mod+f" = "fullscreen"
@@ -110,6 +155,15 @@ modifier = "Super"       # what "Mod" means below: "Super" (Windows key) or "Alt
 "Mod+r" = "resize-mode"
 "Mod+grave" = "scratchpad"
 "Mod+Shift+grave" = "move-to-scratchpad"
+"Alt+Tab" = "window-switcher"
+"Mod+p" = "sticky"
+"Mod+o" = "opacity"
+"Mod+Alt+c" = "center"
+"Mod+Alt+Right" = "grow-width"
+"Mod+Alt+Left" = "shrink-width"
+"Mod+Alt+Down" = "grow-height"
+"Mod+Alt+Up" = "shrink-height"
+"Mod+Ctrl+q" = "kill-all"
 "Mod+Left" = "focus left"
 "Mod+Right" = "focus right"
 "Mod+Up" = "focus up"
@@ -150,15 +204,42 @@ modifier = "Super"       # what "Mod" means below: "Super" (Windows key) or "Alt
 "Mod+Ctrl+Right" = "workspace-next"
 "Mod+Ctrl+Left" = "workspace-prev"
 "Mod+z" = "workspace-last"
+"Mod+x" = "workspace-empty"
+"Mod+Ctrl+Shift+Left" = "workspace-to-output-left"
+"Mod+Ctrl+Shift+Right" = "workspace-to-output-right"
+"Mod+Ctrl+Tab" = "focus-output-next"
 # system
 "Mod+Escape" = "lock"
 "Mod+Shift+e" = "power-menu"
 "Mod+Shift+c" = "reload"
-"Print" = "screenshot"
-"Shift+Print" = "screenshot-area"
-"Mod+Shift+s" = "screenshot-area"
 "Mod+n" = "notifications-dismiss"
 "Mod+Shift+n" = "notifications-restore"
+"Mod+Alt+n" = "notification-history"
+"Mod+Ctrl+d" = "dnd-toggle"
+"Mod+Ctrl+n" = "nightlight-toggle"
+"Mod+Ctrl+i" = "idle-toggle"
+"Mod+Shift+b" = "bar-toggle"
+"Mod+Shift+t" = "theme-menu"
+"Mod+Ctrl+space" = "wallpaper-next"
+"Mod+Shift+d" = "style-toggle"
+"Mod+Alt+w" = "wifi-menu"
+"Mod+Alt+b" = "bluetooth-menu"
+"Mod+Alt+a" = "audio-menu"
+"Mod+XF86AudioMute" = "audio-menu"
+"Mod+Alt+p" = "power-profile"
+"Mod+Alt+k" = "keyboard-layout-next"
+# capture (Print, or Super+Shift+letter on keyboards without Print)
+"Print" = "screenshot"
+"Shift+Print" = "screenshot-area"
+"Ctrl+Print" = "screenshot-window"
+"Mod+Shift+s" = "screenshot-area"
+"Mod+Shift+w" = "screenshot-window"
+"Mod+Ctrl+Shift+s" = "screenshot-edit"
+"Alt+Print" = "record-area"
+"Ctrl+Alt+Print" = "record-screen"
+"Mod+Shift+r" = "record-area"
+"Mod+Print" = "color-picker"
+"Mod+Shift+x" = "color-picker"
 # hardware keys (also work on the lock screen)
 "XF86AudioRaiseVolume" = "volume-up"
 "XF86AudioLowerVolume" = "volume-down"
@@ -169,3 +250,6 @@ modifier = "Super"       # what "Mod" means below: "Super" (Windows key) or "Alt
 "XF86AudioPlay" = "media-play"
 "XF86AudioNext" = "media-next"
 "XF86AudioPrev" = "media-prev"
+"XF86AudioStop" = "media-stop"
+"XF86KbdBrightnessUp" = "kbd-brightness-up"
+"XF86KbdBrightnessDown" = "kbd-brightness-down"

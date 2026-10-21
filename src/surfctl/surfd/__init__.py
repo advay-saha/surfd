@@ -5,4 +5,4 @@ turns it into Sway, Waybar, mako, fuzzel, foot, swaylock, GTK and Qt
 configuration and applies it to the running session.
 """
 
-__version__ = "0.1.0"
+__version__ = "0.2.0"

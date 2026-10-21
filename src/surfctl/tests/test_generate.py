@@ -56,7 +56,7 @@ def test_gestures_toggle(env: Path) -> None:
 
 def test_media_keys_work_when_locked(env: Path) -> None:
     text = generate.sway(_ctx())
-    assert re.search(r"^bindsym --to-code --locked XF86AudioRaiseVolume exec wpctl", text, re.M)
+    assert re.search(r"^bindsym --to-code --locked XF86AudioRaiseVolume exec \S*/surfd-osd --step 5 volume up$", text, re.M)
     assert re.search(r"^bindsym --to-code Mod4\+Return exec foot$", text, re.M)
 
 

@@ -1,6 +1,6 @@
 # surfd-default-config — the surfd session, login screen and defaults
 Name:           surfd-default-config
-Version:        0.1.0
+Version:        0.2.0
 Release:        1%{?dist}
 Summary:        Default configuration and session for the surfd desktop
 License:        MIT
@@ -41,6 +41,18 @@ Requires:       NetworkManager
 Requires:       flatpak
 Requires:       /usr/bin/gdbus
 Requires:       /usr/bin/gsettings
+# flyouts and capture notifications (notify-send), the bar's status modules and toggles
+Requires:       /usr/bin/notify-send
+Requires:       procps-ng
+# screenshots, recording, annotation, typing emoji, night light, removable drives
+Recommends:     wf-recorder
+Recommends:     swappy
+Recommends:     wtype
+Recommends:     wlsunset
+Recommends:     udiskie
+Recommends:     power-profiles-daemon
+Recommends:     btop
+Recommends:     wdisplays
 Requires(post): systemd
 
 %description
@@ -84,7 +96,9 @@ install -Dpm 0755 src/session/surfd-session %{buildroot}%{_bindir}/surfd-session
 install -Dpm 0644 docs/man/surfd-session.1 %{buildroot}%{_mandir}/man1/surfd-session.1
 install -d %{buildroot}%{_libexecdir}/surfd
 install -pm 0755 src/session/libexec/surfd-bar src/session/libexec/surfd-idle \
-    src/session/libexec/surfd-dynwall src/session/libexec/surfd-greeter %{buildroot}%{_libexecdir}/surfd/
+    src/session/libexec/surfd-dynwall src/session/libexec/surfd-greeter \
+    src/session/libexec/surfd-osd src/session/libexec/surfd-daemon src/session/libexec/surfd-lid \
+    src/session/libexec/surfd-status src/session/libexec/surfd-notify-file %{buildroot}%{_libexecdir}/surfd/
 install -Dpm 0644 src/session/surfd.desktop %{buildroot}%{_datadir}/wayland-sessions/surfd.desktop
 install -Dpm 0644 config/systemd/surfd-session.target %{buildroot}%{_userunitdir}/surfd-session.target
 install -d %{buildroot}%{_sysconfdir}/surfd/sway.d
@@ -144,6 +158,11 @@ for f in %{buildroot}%{_libexecdir}/surfd/*; do bash -n "$f"; done
 %{_libexecdir}/surfd/surfd-idle
 %{_libexecdir}/surfd/surfd-dynwall
 %{_libexecdir}/surfd/surfd-greeter
+%{_libexecdir}/surfd/surfd-osd
+%{_libexecdir}/surfd/surfd-daemon
+%{_libexecdir}/surfd/surfd-lid
+%{_libexecdir}/surfd/surfd-status
+%{_libexecdir}/surfd/surfd-notify-file
 %{_datadir}/wayland-sessions/surfd.desktop
 %{_userunitdir}/surfd-session.target
 %dir %{_sysconfdir}/surfd
@@ -168,5 +187,10 @@ for f in %{buildroot}%{_libexecdir}/surfd/*; do bash -n "$f"; done
 %{_datadir}/anaconda/post-scripts/90-surfd-live-cleanup.ks
 
 %changelog
+* Wed Oct 21 2026 surfd contributors <surfd@example.invalid> - 0.2.0-1
+- Flyouts, do not disturb, the surfd menu, clipboard history, emoji and colour pickers,
+  screen recording, window switcher, auto-tiling, night light and more
+- Settings, Welcome and the installer use the surfd look
+
 * Mon Oct 19 2026 surfd contributors <surfd@example.invalid> - 0.1.0-1
 - Initial release

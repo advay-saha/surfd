@@ -3,7 +3,7 @@
 # Lists the 40 largest installed packages from the ISO's root filesystem.
 # Needs root (loop mounts) on a Linux host with rpm installed.
 #
-#   sudo tools/iso-size-report.sh out/iso/surfd-0.1.0-f44-x86_64.iso
+#   sudo tools/iso-size-report.sh out/iso/surfd-0.2.0-f44-x86_64.iso
 set -Eeuo pipefail
 
 ISO="${1:?usage: $0 path/to/surfd.iso}"
