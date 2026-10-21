@@ -101,7 +101,10 @@ def terminal_cmd(app_id: str, *argv: str) -> list[str]:
     """A terminal with its own app id (foot), running argv."""
     if shutil.which("foot"):
         return ["foot", "--app-id", app_id, *argv]
-    term = config.get(config.load(), "apps.terminal") or "foot"
+    try:
+        term = config.get(config.load(), "apps.terminal") or "foot"
+    except config.ConfigError:
+        term = "foot"
     return [*term.split(), "-e", *argv]
 
 

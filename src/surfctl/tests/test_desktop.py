@@ -157,7 +157,8 @@ def test_unique_names(tmp_path: Path) -> None:
 
 # ------------------------------------------------------------ menus, audio --
 
-def test_control_menu_tree_is_well_formed() -> None:
+def test_control_menu_tree_is_well_formed(env: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setattr(desktop.shutil, "which", lambda _x: None)  # no foot: falls back to apps.terminal
     def check(entries: list) -> int:
         n = 0
         for label, value in entries:
@@ -167,6 +168,8 @@ def test_control_menu_tree_is_well_formed() -> None:
         return n
     assert check(desktop.control_menu_tree()) >= 35
     assert {"capture", "toggles", "connections", "setup", "system"} <= set(desktop.menu_names())
+    monkeypatch.setenv("SURFD_SYSTEM_DIR", "/nonexistent")  # no settings at all (an RPM build): still works
+    assert desktop.terminal_cmd("x", "btop")[-1] == "btop"
 
 
 def test_audio_devices_from_wpctl(monkeypatch: pytest.MonkeyPatch) -> None:
