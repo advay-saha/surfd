@@ -33,6 +33,8 @@ lint:
 	    || { echo "containers/packages-$$a.txt is stale: run make container-packages"; exit 1; }; done
 	@$(PY) tools/gen_settings_doc.py | diff -q - docs/settings-reference.md >/dev/null \
 	  || { echo "docs/settings-reference.md is stale: run make docs"; exit 1; }
+	@grep -q "^run-name: surfd $$(cat VERSION) ISO" .github/workflows/iso.yml \
+	  || { echo ".github/workflows/iso.yml run-name does not match VERSION ($$(cat VERSION))"; exit 1; }
 	@echo "lint: OK"
 
 test:

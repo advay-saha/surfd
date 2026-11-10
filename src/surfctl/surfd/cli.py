@@ -540,6 +540,22 @@ REQUIRED_BINARIES = ["sway", "waybar", "fuzzel", "mako", "makoctl", "foot", "swa
                      "swayidle", "grim", "slurp", "wl-copy", "wpctl", "brightnessctl", "playerctl", "gsettings"]
 
 
+# Tools behind single features: surfd works without them, minus that feature.
+OPTIONAL_BINARIES = {
+    "notify-send": "flyouts and capture notifications",
+    "wf-recorder": "screen recording",
+    "swappy": "annotating screenshots",
+    "wtype": "typing the picked emoji",
+    "wlsunset": "night light",
+    "udiskie": "mounting USB drives automatically",
+    "powerprofilesctl": "power profiles",
+    "btop": "the system monitor",
+    "wdisplays": "arranging displays",
+    "bluetoothctl": "the Bluetooth menu",
+    "nmcli": "the Wi-Fi menu",
+}
+
+
 def cmd_doctor(args: argparse.Namespace) -> int:
     if getattr(args, "quiet", False):
         import contextlib
@@ -589,6 +605,11 @@ def _doctor(args: argparse.Namespace) -> int:
         print(_c("1", "Programs"))
         missing = [b for b in REQUIRED_BINARIES if shutil.which(b) is None]
         report("warning" if missing else "ok", f"missing: {', '.join(missing)}" if missing else "all session programs found")
+        extras = {tool: what for tool, what in OPTIONAL_BINARIES.items() if shutil.which(tool) is None}
+        for tool, what in extras.items():
+            report("warning", f"{tool} is not installed: {what} will not work (sudo dnf install {tool})")
+        if not extras:
+            report("ok", "all everyday tools found (recording, annotation, night light, drives, ...)")
         print(_c("1", "Hand-edited files (surfctl leaves these alone)"))
         try:
             taken = [o.path for o in generate.outputs(generate.build_context())

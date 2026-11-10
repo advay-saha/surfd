@@ -1,4 +1,4 @@
-"""surfd 0.2 desktop features: flyouts, menus, pickers, capture, helpers and the configs behind them."""
+"""surfd desktop features: flyouts, menus, pickers, capture, helpers and the configs behind them."""
 
 from __future__ import annotations
 

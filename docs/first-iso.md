@@ -11,7 +11,7 @@ servers, for free, using `.github/workflows/iso.yml`.
 2. If GitHub asks, click **I understand my workflows, go ahead and enable them**.
 3. In the left list pick **iso** → **Run workflow** → keep `44` → **Run workflow**.
 4. Wait (roughly 40–90 minutes; x86_64 and aarch64 build side by side).
-5. Open the finished run → **Artifacts** → download **surfd-iso-x86_64**
+5. Open the finished run → **Artifacts** → download **surfd-0.1.2-iso-x86_64**
    (a .zip containing the `.iso` and its `.sha256`).
 
 **A real release** (the ISO appears on the repository's *Releases* page with

@@ -1,6 +1,6 @@
 # What surfd does
 
-Everything below is in surfd 0.2. Keys use the default bindings (change them in
+Everything below is in surfd 0.1.2. Keys use the default bindings (change them in
 `~/.config/surfd/surfd.toml`, Surf Settings → Keyboard, or `surfctl keys`); **Super + /**
 lists every key, and **Super + Alt + Space** opens the surfd menu, which reaches almost
 everything here without remembering a key.
@@ -137,6 +137,18 @@ Hyprland and niri editions and Regolith: what they have that a Sway desktop usua
 | 93 | A keyring for apps that store passwords (browsers, editors, mail) | gnome-keyring |
 | 94 | Updates are checked a few minutes after login and every 6 hours (system and Flatpak) | `[updates] check` |
 | 95 | Background helpers stop at logout and restart cleanly on reload | — |
+
+## Everyday apps and defaults
+
+| # | Feature | How |
+|---|---|---|
+| 101 | PDF viewer (Evince), video and music player (Celluloid), archive manager (File Roller), calculator | in the launcher |
+| 102 | Double-clicking a file opens the right app (PDFs, pictures, videos, music, text, archives, links) | `/etc/xdg/sway-mimeapps.list`; your choices override it |
+| 103 | File manager: thumbnails, "extract here", phones over USB (MTP), "Open Terminal Here" uses your terminal | Thunar |
+| 104 | The power button opens the power menu instead of shutting down at once (hold it to force off) | power button |
+| 105 | "Get more apps" (Flathub) and firmware updates in the surfd menu | menu → setup |
+| 106 | `surfctl doctor` says which everyday tool is missing and what stops working without it | `surfctl doctor` |
+| 107 | A fresh install starts with the Low-poly Mountain theme, matching its wallpaper (Tide if the wallpapers package is absent) | `surfctl theme set tide` to change |
 
 ## Look
 

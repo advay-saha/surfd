@@ -137,3 +137,23 @@ def test_theme_with_missing_picture_or_set_is_flagged(env: Path) -> None:
                                   '\n[wallpaper]\ndynamic = "no-such-set"\n')
     t = themes.find("lost")
     assert any("no-such-picture" in p for p in t.problems) and any("no-such-set" in p for p in t.problems)
+
+
+def test_every_wallpaper_has_a_theme() -> None:
+    """Adding a wallpaper without a theme for it fails here (run theme/tools/make_wallpaper_themes.py)."""
+    import tomllib
+    tomls = [*(REPO / "theme" / "themes").glob("*/theme.toml"),
+             *(REPO / "wallpapers" / "third-party" / "themes").glob("*/theme.toml")]
+    pictures: set[str] = set()
+    dynamic: set[str] = set()
+    for f in tomls:
+        data = tomllib.loads(f.read_text())
+        dynamic.add(data.get("wallpaper", {}).get("dynamic", ""))
+        pictures |= {data[v]["wallpaper"] for v in ("dark", "light") if v in data and "wallpaper" in data[v]}
+    stills = {p.stem for p in (REPO / "wallpapers" / "third-party" / "static").iterdir()}
+    sets = {p.name for p in (REPO / "wallpapers" / "third-party" / "dynamic").iterdir()}
+    colourways = {p.name for p in (REPO / "wallpapers" / "generated").iterdir() if p.is_dir()}
+    assert stills <= pictures, f"still wallpapers without a theme: {sorted(stills - pictures)}"
+    assert sets <= dynamic, f"dynamic wallpapers without a theme: {sorted(sets - dynamic)}"
+    for c in colourways:
+        assert {f"{c}-dark-3840x2160", f"{c}-light-3840x2160"} <= pictures, c

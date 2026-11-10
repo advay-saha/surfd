@@ -11,7 +11,7 @@
 # ─────────────────────────────────────────────────────────────────────────
 
 [theme]
-name = "tide"            # surfctl theme list
+name = "low-poly-mountain"  # surfctl theme list (falls back to tide if it is not installed)
 variant = "dark"         # "dark" or "light"   (surfctl theme variant toggle)
 accent = ""              # "" = the theme's accent, or e.g. "#88c0d0"
 
@@ -251,5 +251,6 @@ modifier = "Super"       # what "Mod" means below: "Super" (Windows key) or "Alt
 "XF86AudioNext" = "media-next"
 "XF86AudioPrev" = "media-prev"
 "XF86AudioStop" = "media-stop"
+"XF86PowerOff" = "power-menu"
 "XF86KbdBrightnessUp" = "kbd-brightness-up"
 "XF86KbdBrightnessDown" = "kbd-brightness-down"

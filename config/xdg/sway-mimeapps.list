@@ -1,0 +1,47 @@
+# Default apps in a surfd session ("open with" for double-clicks and links).
+# The first installed entry on each line wins; your own choices in
+# ~/.config/mimeapps.list (or "Open With" in the file manager) override this.
+[Default Applications]
+application/pdf=org.gnome.Evince.desktop;org.mozilla.firefox.desktop;firefox.desktop;
+application/postscript=org.gnome.Evince.desktop;
+image/vnd.djvu=org.gnome.Evince.desktop;
+image/png=imv.desktop;org.mozilla.firefox.desktop;firefox.desktop;
+image/jpeg=imv.desktop;org.mozilla.firefox.desktop;firefox.desktop;
+image/gif=imv.desktop;org.mozilla.firefox.desktop;firefox.desktop;
+image/webp=imv.desktop;org.mozilla.firefox.desktop;firefox.desktop;
+image/bmp=imv.desktop;
+image/tiff=imv.desktop;
+image/svg+xml=imv.desktop;org.mozilla.firefox.desktop;firefox.desktop;
+video/mp4=io.github.celluloid_player.Celluloid.desktop;mpv.desktop;
+video/x-matroska=io.github.celluloid_player.Celluloid.desktop;mpv.desktop;
+video/webm=io.github.celluloid_player.Celluloid.desktop;mpv.desktop;
+video/quicktime=io.github.celluloid_player.Celluloid.desktop;mpv.desktop;
+video/x-msvideo=io.github.celluloid_player.Celluloid.desktop;mpv.desktop;
+video/mpeg=io.github.celluloid_player.Celluloid.desktop;mpv.desktop;
+audio/mpeg=io.github.celluloid_player.Celluloid.desktop;mpv.desktop;
+audio/flac=io.github.celluloid_player.Celluloid.desktop;mpv.desktop;
+audio/ogg=io.github.celluloid_player.Celluloid.desktop;mpv.desktop;
+audio/x-wav=io.github.celluloid_player.Celluloid.desktop;mpv.desktop;
+audio/mp4=io.github.celluloid_player.Celluloid.desktop;mpv.desktop;
+audio/x-opus+ogg=io.github.celluloid_player.Celluloid.desktop;mpv.desktop;
+text/plain=org.xfce.mousepad.desktop;
+text/markdown=org.xfce.mousepad.desktop;
+text/x-python=org.xfce.mousepad.desktop;
+text/x-shellscript=org.xfce.mousepad.desktop;
+application/json=org.xfce.mousepad.desktop;
+application/toml=org.xfce.mousepad.desktop;
+application/xml=org.xfce.mousepad.desktop;
+inode/directory=thunar.desktop;
+application/zip=org.gnome.FileRoller.desktop;
+application/x-tar=org.gnome.FileRoller.desktop;
+application/x-compressed-tar=org.gnome.FileRoller.desktop;
+application/x-bzip2-compressed-tar=org.gnome.FileRoller.desktop;
+application/x-xz-compressed-tar=org.gnome.FileRoller.desktop;
+application/zstd=org.gnome.FileRoller.desktop;
+application/x-7z-compressed=org.gnome.FileRoller.desktop;
+application/vnd.rar=org.gnome.FileRoller.desktop;
+application/gzip=org.gnome.FileRoller.desktop;
+text/html=org.mozilla.firefox.desktop;firefox.desktop;
+x-scheme-handler/http=org.mozilla.firefox.desktop;firefox.desktop;
+x-scheme-handler/https=org.mozilla.firefox.desktop;firefox.desktop;
+x-scheme-handler/about=org.mozilla.firefox.desktop;firefox.desktop;

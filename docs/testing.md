@@ -45,7 +45,7 @@ qemu-system-x86_64 -enable-kvm -machine q35 -cpu host -smp 4 -m 4096 \
   -device virtio-net-pci,netdev=n0 -netdev user,id=n0 \
   -device intel-hda -device hda-duplex \
   -drive file=/tmp/surfd.qcow2,if=virtio \
-  -cdrom out/iso/surfd-0.2.0-f44-x86_64.iso -boot d
+  -cdrom out/iso/surfd-0.1.2-f44-x86_64.iso -boot d
 ```
 
 BIOS: drop the two `pflash` lines. Secure Boot: use `OVMF_CODE.secboot.fd`
@@ -58,7 +58,7 @@ aarch64 (on an aarch64 host):
 qemu-system-aarch64 -enable-kvm -machine virt -cpu host -smp 4 -m 4096 \
   -bios /usr/share/edk2/aarch64/QEMU_EFI.fd \
   -device virtio-gpu-pci -display gtk -device qemu-xhci -device usb-kbd -device usb-tablet \
-  -drive file=/tmp/surfd-arm.qcow2,if=virtio -cdrom out/iso/surfd-0.2.0-f44-aarch64.iso
+  -drive file=/tmp/surfd-arm.qcow2,if=virtio -cdrom out/iso/surfd-0.1.2-f44-aarch64.iso
 ```
 
 ### virt-manager

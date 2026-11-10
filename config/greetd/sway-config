@@ -10,4 +10,7 @@ exec "gtkgreet -l -s /etc/surfd/greetd/style.css -c surfd-session; swaymsg exit"
 # Ctrl+Alt+Delete on the login screen: restart or shut down
 bindsym Control+Mod1+Delete exec swaynag -t warning -m 'Power' -B 'Restart' 'systemctl reboot' -B 'Shut down' 'systemctl poweroff'
 
+# The power button on the login screen: ask, then shut down (logind leaves the key to us)
+bindsym XF86PowerOff exec swaynag -t warning -m 'Power' -B 'Shut down' 'systemctl poweroff' -B 'Restart' 'systemctl reboot'
+
 include /etc/surfd/greetd/sway.d/*.conf

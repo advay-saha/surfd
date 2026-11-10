@@ -1,6 +1,8 @@
 # Build the live ISOs when a version tag is pushed (git tag v0.1.0 && git push --tags)
 # and publish them, with SHA256 checksums, as a GitHub release.
 name: iso
+# Shown as the title of each run. Keep in step with VERSION (make lint checks it).
+run-name: surfd 0.1.2 ISO (${{ github.ref_name }})
 
 on:
   push:
@@ -70,10 +72,15 @@ jobs:
           ls -lh dist
           cat dist/*.sha256
 
+      - name: Read the version
+        id: version
+        if: always()
+        run: echo "version=$(cat VERSION)" >> "$GITHUB_OUTPUT"
+
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: surfd-iso-${{ matrix.arch }}
+          name: surfd-${{ steps.version.outputs.version }}-iso-${{ matrix.arch }}
           path: |
             dist/
             out/iso/livemedia-creator.log
@@ -88,7 +95,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/download-artifact@v4
         with:
-          pattern: surfd-iso-*
+          pattern: surfd-*-iso-*
           merge-multiple: true
           path: artifacts
       - name: Create GitHub release with ISOs and checksums

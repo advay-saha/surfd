@@ -35,7 +35,7 @@ wl-clipboard
 brightnessctl
 playerctl
 libnotify
-# capture, emoji typing, night light, drives, power, monitor, displays (surfd 0.2 features)
+# capture, emoji typing, night light, drives, power, monitor, displays (everyday tools)
 wf-recorder
 swappy
 wtype
@@ -91,6 +91,16 @@ thunar
 gvfs
 imv
 mousepad
+# everyday apps: PDF viewer, video and music player, archives, calculator
+evince
+celluloid
+file-roller
+gnome-calculator
+# file manager extras: thumbnails, archive menu, removable media, phones (MTP)
+tumbler
+thunar-archive-plugin
+thunar-volman
+gvfs-mtp
 network-manager-applet
 nm-connection-editor
 blueman

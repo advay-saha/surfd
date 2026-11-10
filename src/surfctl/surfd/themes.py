@@ -40,6 +40,7 @@ COLOR_KEYS = (
     "success",
 )
 VARIANTS = ("dark", "light")
+FALLBACK_THEME = "tide"
 NAME_RE = re.compile(r"^[a-z0-9][a-z0-9._-]{0,63}$")
 
 
@@ -250,7 +251,9 @@ def selection(name: str) -> dict[str, str]:
 def resolve(cfg: dict[str, Any]) -> tuple[Theme, Palette]:
     """The theme and palette selected by the configuration."""
     name = cfg["theme"]["name"]
-    theme = find(name)
+    # The default theme ships with the wallpapers (surfd-wallpapers); without that
+    # package, or with a theme that was removed, the desktop still starts, as Tide.
+    theme = find(name) or find(FALLBACK_THEME)
     if theme is None:
         raise ThemeError(f"theme '{name}' is not installed or is broken (try `surfctl theme list`)")
     return theme, theme.palette(cfg["theme"]["variant"], cfg["theme"].get("accent", ""))

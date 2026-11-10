@@ -830,6 +830,29 @@ fill_shape=false
 """
 
 
+# ====================================================== file manager helpers ==
+
+def xfce_helpers(ctx: Context) -> str:
+    """Thunar's "Open Terminal Here" uses your terminal (it asks Xfce's helper system)."""
+    return _header("#", "preferred apps for Thunar") + "TerminalEmulator=surfd-terminal\n"
+
+
+def xfce_terminal_helper(ctx: Context) -> str:
+    term = ctx.c("apps.terminal") or "foot"
+    binary = term.split()[0]
+    return _header("#", "the terminal Thunar opens") + f"""[Desktop Entry]
+NoDisplay=true
+Version=1.0
+Type=X-XFCE-Helper
+X-XFCE-Category=TerminalEmulator
+X-XFCE-Binaries={binary};
+X-XFCE-Commands=%B;
+X-XFCE-CommandsWithParameter=%B -e %s;
+Icon={binary}
+Name={binary}
+"""
+
+
 # ================================================================ session ==
 
 def session_env(ctx: Context) -> str:
@@ -918,6 +941,8 @@ def outputs(ctx: Context) -> list[Output]:
         Output(home / "xdg-desktop-portal" / "sway-portals.conf", portals_conf(ctx), True),
         Output(home / "xdg-desktop-portal-wlr" / "config", portal_wlr(ctx), True),
         Output(home / "swappy" / "config", swappy(ctx), True),
+        Output(home / "xfce4" / "helpers.rc", xfce_helpers(ctx), True),
+        Output(paths.data_home() / "xfce4" / "helpers" / "surfd-terminal.desktop", xfce_terminal_helper(ctx), True),
         Output(home / "mako" / "config", mako(ctx), True),
         Output(home / "fuzzel" / "fuzzel.ini", fuzzel(ctx), True),
         Output(home / "foot" / "foot.ini", foot(ctx), True),

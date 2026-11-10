@@ -10,7 +10,7 @@ Every key, its default and what it accepts. Change any of them with
 
 | Key | Default | Accepts | Description |
 |---|---|---|---|
-| `name` | `"tide"` | text | Theme pack name (a folder in ~/.local/share/surfd/themes or /usr/share/surfd/themes). |
+| `name` | `"low-poly-mountain"` | text | Theme pack name (a folder in ~/.local/share/surfd/themes or /usr/share/surfd/themes). |
 | `variant` | `"dark"` | `dark` \| `light` | Dark or light colours. |
 | `accent` | `""` | `""` or `"#rrggbb"` | Accent colour like "#88c0d0"; empty uses the theme's accent. |
 

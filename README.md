@@ -146,13 +146,13 @@ with Hyprland and river is in [docs/window-manager.md](docs/window-manager.md).
 
 ## Project status
 
-surfd is at 0.2.0. The 0.1.1 ISO boots on real hardware (a ThinkPad L470). What has been verified, and how:
+surfd is at 0.1.2. The 0.1.1 ISO boots on real hardware (a ThinkPad L470). What has been verified, and how:
 
 | Area | Verified | How |
 |---|---|---|
 | Kickstarts (x86_64 + aarch64) | ✅ | `ksvalidator` F44 and F45, `ksflatten` |
 | Shell scripts | ✅ | `shellcheck`, clean |
-| surfctl / config / themes / keys / generators / hwprobe / 0.2 tools | ✅ | 271 pytest tests (+8 GTK CSS tests) |
+| surfctl / config / themes / keys / generators / hwprobe / 0.1.2 tools | ✅ | 271 pytest tests (+8 GTK CSS tests) |
 | Flyouts, menus, clipboard, recording, auto-tiling | ✅ | live headless Sway session: each triggered and captured |
 | Generated Sway config | ✅ | real `sway --validate`, every theme × variant × mode |
 | foot, fuzzel, Waybar, mako, GTK 3/4 config | ✅ | `foot --check-config`, live run, GTK CSS parser |
@@ -162,7 +162,7 @@ surfd is at 0.2.0. The 0.1.1 ISO boots on real hardware (a ThinkPad L470). What 
 | Surf Installer engine | ✅ / ⚠️ | 37 tests + a real install onto a loop-device disk (partition, format, copy, fstab); bootloader, initramfs and SELinux steps need a VM |
 | RPM specs | ✅ | `rpmbuild` of all 5 specs (10 binary RPMs) + `rpmlint` clean |
 | Package names exist in Fedora 44 | ⚠️ | not verified here (no Fedora mirror access): run `./build.sh check` (CI does) |
-| Building and booting the ISO | ✅ / ⚠️ | 0.1.1 built in CI and booted on a laptop; 0.2 not booted yet: see [docs/testing.md](docs/testing.md) |
+| Building and booting the ISO | ✅ / ⚠️ | 0.1.1 built in CI and booted on a laptop; 0.1.2 not booted yet: see [docs/testing.md](docs/testing.md) |
 | Greeter under SELinux enforcing, Anaconda branding, < 400 MB idle RAM, ISO < 1.5 GB | ⚠️ | needs a real boot: see the checklist |
 
 Next steps are in [docs/ROADMAP.md](docs/ROADMAP.md).

@@ -101,7 +101,7 @@ def run_steps(app: App) -> bool:
         check(paths.user_config().read_text() == before, "invalid bar module rejected, file unchanged")
         # 5. reset keeps a backup and restores defaults
         win.ctl.reset()
-        check(config.load()["theme"]["name"] == "tide", "reset restores defaults")
+        check(config.load()["theme"]["name"] == "low-poly-mountain", "reset restores defaults")
         check(bool(config.list_backups()), "reset kept a backup")
         win.ctl.restore_latest()
         check(config.load()["layout"]["gaps_inner"] == 14, "restore brings back the previous file")

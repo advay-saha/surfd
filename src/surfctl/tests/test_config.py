@@ -25,7 +25,7 @@ def test_partial_user_file_falls_back_to_defaults(env: Path) -> None:
     cfg = config.load()
     assert cfg["layout"]["gaps_inner"] == 20
     assert cfg["layout"]["gaps_outer"] == 6  # from defaults
-    assert cfg["theme"]["name"] == "tide"
+    assert cfg["theme"]["name"] == "low-poly-mountain"
     assert config.errors(config.validate(cfg)) == []
 
 
@@ -62,6 +62,18 @@ def test_unknown_theme_is_an_error(env: Path) -> None:
     config.ensure_user_config()
     with pytest.raises(config.ConfigError, match="not found"):
         config.set_value("theme.name", "does-not-exist")
+
+
+def test_missing_default_theme_falls_back_to_tide(env: Path) -> None:
+    """Without surfd-wallpapers the default theme is absent: a warning, and Tide is used."""
+    import shutil
+
+    from surfd import themes
+    shutil.rmtree(paths.system_themes_dir() / "low-poly-mountain")
+    cfg = config.load()
+    problems = config.validate(cfg)
+    assert config.errors(problems) == [] and any("using tide" in p.message for p in problems)
+    assert themes.resolve(cfg)[0].name == "tide"
 
 
 def test_unknown_keys_are_warnings_not_errors(env: Path) -> None:

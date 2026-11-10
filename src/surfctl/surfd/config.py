@@ -144,8 +144,14 @@ def validate(cfg: dict[str, Any], *, check_theme: bool = True) -> list[Problem]:
 
         name = get(cfg, "theme.name", "")
         if isinstance(name, str) and name and themes.find(name) is None:
-            problems.append(Problem("error", "theme.name",
-                                    f"theme '{name}' not found (installed: {', '.join(themes.names()) or 'none'})"))
+            # Only the shipped default may be missing quietly (surfd-wallpapers not installed);
+            # any other missing theme is a mistake worth stopping for.
+            is_default = name == get(load_defaults(), "theme.name", "")
+            fallback = is_default and themes.find(themes.FALLBACK_THEME) is not None
+            problems.append(Problem(
+                "warning" if fallback else "error", "theme.name",
+                f"theme '{name}' not found (installed: {', '.join(themes.names()) or 'none'})"
+                + (f"; using {themes.FALLBACK_THEME}" if fallback else "")))
     return problems
 
 

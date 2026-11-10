@@ -113,6 +113,14 @@ thunar
 gvfs
 imv
 mousepad
+evince
+celluloid
+file-roller
+gnome-calculator
+tumbler
+thunar-archive-plugin
+thunar-volman
+gvfs-mtp
 network-manager-applet
 nm-connection-editor
 blueman

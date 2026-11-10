@@ -1,6 +1,6 @@
 # surfd-default-config — the surfd session, login screen and defaults
 Name:           surfd-default-config
-Version:        0.2.0
+Version:        0.1.2
 Release:        1%{?dist}
 Summary:        Default configuration and session for the surfd desktop
 License:        MIT
@@ -15,6 +15,8 @@ BuildRequires:  systemd-rpm-macros
 # Installing this package on any Fedora gives you the surfd desktop.
 Requires:       surfctl = %{version}-%{release}
 Requires:       surfd-theme = %{version}-%{release}
+# the default theme (Low-poly Mountain) and wallpaper; without it surfd falls back to Tide
+Recommends:     surfd-wallpapers = %{version}-%{release}
 # Any sway-config-* provider works: surfctl generates the real config.
 Requires:       sway
 Requires:       swaybg
@@ -102,6 +104,9 @@ install -pm 0755 src/session/libexec/surfd-bar src/session/libexec/surfd-idle \
 install -Dpm 0644 src/session/surfd.desktop %{buildroot}%{_datadir}/wayland-sessions/surfd.desktop
 install -Dpm 0644 config/systemd/surfd-session.target %{buildroot}%{_userunitdir}/surfd-session.target
 install -d %{buildroot}%{_sysconfdir}/surfd/sway.d
+# default apps for a surfd (sway) session, and the power button opening the power menu
+install -Dpm 0644 config/xdg/sway-mimeapps.list %{buildroot}%{_sysconfdir}/xdg/sway-mimeapps.list
+install -Dpm 0644 config/systemd/logind-surfd.conf %{buildroot}%{_prefix}/lib/systemd/logind.conf.d/50-surfd.conf
 
 # login screen
 install -Dpm 0644 config/greetd/config.toml %{buildroot}%{_datadir}/surfd/greetd/config.toml
@@ -165,6 +170,9 @@ for f in %{buildroot}%{_libexecdir}/surfd/*; do bash -n "$f"; done
 %{_libexecdir}/surfd/surfd-notify-file
 %{_datadir}/wayland-sessions/surfd.desktop
 %{_userunitdir}/surfd-session.target
+%config(noreplace) %{_sysconfdir}/xdg/sway-mimeapps.list
+%dir %{_prefix}/lib/systemd/logind.conf.d
+%{_prefix}/lib/systemd/logind.conf.d/50-surfd.conf
 %dir %{_sysconfdir}/surfd
 %dir %{_sysconfdir}/surfd/sway.d
 %dir %{_sysconfdir}/surfd/greetd
@@ -187,7 +195,7 @@ for f in %{buildroot}%{_libexecdir}/surfd/*; do bash -n "$f"; done
 %{_datadir}/anaconda/post-scripts/90-surfd-live-cleanup.ks
 
 %changelog
-* Wed Oct 21 2026 surfd contributors <surfd@example.invalid> - 0.2.0-1
+* Wed Oct 21 2026 surfd contributors <surfd@example.invalid> - 0.1.2-1
 - Flyouts, do not disturb, the surfd menu, clipboard history, emoji and colour pickers,
   screen recording, window switcher, auto-tiling, night light and more
 - Settings, Welcome and the installer use the surfd look
